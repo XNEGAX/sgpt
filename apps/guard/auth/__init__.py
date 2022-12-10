@@ -20,10 +20,12 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
                 user = self._authenticate_user()
         if user is not None:
             self._call_hook(user)
-            modulos = ConsultaBD('public.sp_web_get_permisos_modulo_usuario',(user.id,)).execute()
-            if len(modulos)>0:
-                request.session['perfil']=modulos[0].get('perfil')
-                request.session['modulos']=modulos[0].get('modulos')
+            data = ConsultaBD('public.sp_web_get_permisos_modulo_usuario',(user.id,)).execute()
+            if len(data)>0:
+                request.session['nombre_completo']=data[0].get('nombre_completo')
+                request.session['correo']=data[0].get('correo')
+                request.session['perfil']=data[0].get('perfil')
+                request.session['modulos']=data[0].get('modulos')
         return user
 
 class CustomAuthBackendDjango(ModelBackend):
@@ -38,10 +40,12 @@ class CustomAuthBackendDjango(ModelBackend):
             UserModel().set_password(password)
         else:
             if user.check_password(password) and self.user_can_authenticate(user):
-                modulos = ConsultaBD('public.sp_web_get_permisos_modulo_usuario',(user.id,)).execute()
-                if len(modulos)>0:
-                    request.session['perfil']=modulos[0].get('perfil')
-                    request.session['modulos']=modulos[0].get('modulos')
+                data = ConsultaBD('public.sp_web_get_permisos_modulo_usuario',(user.id,)).execute()
+                if len(data)>0:
+                    request.session['nombre_completo']=data[0].get('nombre_completo')
+                    request.session['correo']=data[0].get('correo')
+                    request.session['perfil']=data[0].get('perfil')
+                    request.session['modulos']=data[0].get('modulos')
                 return user
 
 
