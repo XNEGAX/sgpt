@@ -55,6 +55,34 @@ class Nacionalidad(models.Model):
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
         super(Nacionalidad, self).save(*args, **kwargs)
+
+class Persona(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
+    rut = models.CharField(max_length=12, unique=True,blank=False, null=False)
+    fecha_nacimiento = models.DateField(blank=False, null=False)
+    telefono = models.BigIntegerField(blank=True, null=True)
+    nacionalidad = models.ForeignKey(Nacionalidad, models.CASCADE, blank=True, null=True)
+    sexo = models.ForeignKey(Sexo, models.CASCADE, blank=False, null=False)
+    estado_civil = models.ForeignKey(EstadoCivil, models.CASCADE, blank=False, null=False,related_name='persona_estado_civil')
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_persona')
+
+    class Meta:
+        managed = True
+        db_table = 'persona'
+
+    def get_full_name(self):
+        return self.usuario.get_full_name()
+    
+    def get_short_name(self):
+        return self.usuario.get_short_name()
+
+    def save(self, *args, **kwargs):
+        self.rut = self.rut.replace('.','').strip()
+        super(Persona, self).save(*args, **kwargs)
+        User.objects.create_user(username=self.email,**kwargs)
+
     
 class TipoModulo(models.Model):
     id = models.BigAutoField(primary_key=True)
