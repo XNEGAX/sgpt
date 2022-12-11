@@ -156,6 +156,7 @@ MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
 REDIRECT_URI = 'http://localhost:8000/getAToken'
 LOGIN_URL = "/microsoft_authentication/login"
 LOGIN_REDIRECT_URL = "/admin"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 if DEBUG == True:
     LOGGING = {

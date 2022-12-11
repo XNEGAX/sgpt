@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path,include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('users/', admin.site.urls),
     path('microsoft/', include('microsoft_auth.urls', namespace='microsoft')),
     path('', include('apps.home.urls', namespace='home')),
     path('', include('apps.guard.urls', namespace='guard')),

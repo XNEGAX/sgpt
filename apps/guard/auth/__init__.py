@@ -8,15 +8,15 @@ from apps.guard.models import Parametro
 from apps.guard.models import UsuarioPerfilActivo
 from microsoft_auth.backends import MicrosoftAuthenticationBackend
 from microsoft_auth.client import MicrosoftClient
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
 
 class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
 
-    def enable_user(self,user):
+    def enable_user(self,user,request):
         if 'edu.udla.cl' in user.email:
+            request.session['not_domain']=False
             if not user.is_staff:
                 """se habilita el usuario"""
                 user.is_staff = True
@@ -43,8 +43,9 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
                         responsable_id = auth_user_auto
                     )
         else:
-            user.delete()
-            return redirect('guard:403')
+            user.is_active = False
+            user.save()
+            request.session['not_domain']=True
 
     def authenticate(self, request, code=None):
         self.microsoft = MicrosoftClient(request=request)
@@ -55,10 +56,9 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
                 user = self._authenticate_user()
         if user is not None:
             self._call_hook(user)
-            self.enable_user(user)
+            self.enable_user(user,request)
             data = ConsultaBD('public.sp_web_get_permisos_modulo_usuario',(user.id,)).execute_proc()
             if len(data)>0:
-                print(data)
                 request.session['perfil_activo']=data[0].get('perfil_activo')
                 request.session['cantidad_perfiles']=data[0].get('cantidad_perfiles')
                 request.session['modulos']=data[0].get('modulos')
@@ -74,8 +74,8 @@ class RoyalGuard(LoginRequiredMixin):
     login_url = '/admin/login/'
 
     def dispatch(self, request, *args, **kwargs):
-        rediredct_login = f'/admin/login/?next={request.path}'
-        if request.user and request.user.is_authenticated and request.path != '/admin':
+        rediredct_login = f'/users/login/?next={request.path}'
+        if request.user and request.user.is_authenticated and request.path != '/admin/':
             url_permitida = UsuarioPerfilRol.objects.filter(
                 perfil_rol__perfil__usuarioperfilactivo_set__usuario_id=request.user.id,
                 perfil_rol__rol__modulorol_set__modulo__url=resolve(request.path).app_name+':'+resolve(request.path).url_name,

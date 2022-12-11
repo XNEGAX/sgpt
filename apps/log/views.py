@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from apps.log.models import Log
 
 def format(instance,**kwargs):
-    print(type(instance))
     metadata = {}
     modelo = ContentType.objects.filter(model=instance._meta.db_table.replace('_','')).last()
     if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
