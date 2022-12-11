@@ -29,7 +29,7 @@ class Command(MigrateCommand):
             INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('tipo_modulo_banner',cast('{"tipo_modulo_id": "4"}' AS json),now(),0);
             --MODULOS
             INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
-            VALUES(1, 'HOME', 'home:home', 'tf-icons bx bx-home-circle', 0, '2022-12-07 09:16:27.498', NULL, 0, 1);
+            VALUES(1, 'Inicio', 'home:home', 'tf-icons bx bx-home-circle', 0, '2022-12-07 09:16:27.498', NULL, 0, 1);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
             VALUES(2, 'MANTENEDORES', '', '', 2, '2022-12-07 19:13:24.697', NULL, 0, 1);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)

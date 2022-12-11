@@ -60,6 +60,7 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
             if len(data)>0:
                 print(data)
                 request.session['perfil_activo']=data[0].get('perfil_activo')
+                request.session['cantidad_perfiles']=data[0].get('cantidad_perfiles')
                 request.session['modulos']=data[0].get('modulos')
                 submodulo_list = []
                 for modulo in data[0].get('modulos'):

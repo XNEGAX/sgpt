@@ -14,9 +14,13 @@
             <div class="card-body">
               <h5 class="card-title text-primary">Bienvenid@ {{ request.user.first_name|title }}! 🎉</h5>
               <p class="mb-4">
+                {% if request.session.cantidad_perfiles == 0 %}
+                Te hemos asignado el perfil de invitado, ya que no has sido dado de alta en este sistema.
+                {% else %}
                 You have done <span class="fw-bold">72%</span> more sales today.
                 Check your new badge in
-                your profile.
+                your profile. {{request.session.cantidad_perfiles}}
+                {% endif%}
               </p>
 
               <a href="javascript:;" class="btn btn-sm btn-outline-primary">View
