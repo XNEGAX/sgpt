@@ -210,6 +210,10 @@ class UsuarioPerfilRol(models.Model):
     def get_permiso(self):
         return json.loads(self.permiso)
 
+    def save(self, *args, **kwargs):
+        self.permiso = json.loads(self.permiso.strip())
+        super(UsuarioPerfilRol, self).save(*args, **kwargs)
+
     class Meta:
         managed = True
         db_table = 'usuario_perfil_rol'

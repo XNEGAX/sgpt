@@ -13,10 +13,20 @@ class ConsultaBD(object):
         columns = [i[0] for i in cursor.description]
         return [dict(zip(columns, row)) for row in cursor]
 
-    def execute(self):
+    def execute_proc(self):
         cursor = connections['default'].cursor()
         try:
             cursor.callproc(self.procedimiento,self.parametros)
+            data = self.rows_to_dict_list(cursor)
+            cursor.close()
+            return data
+        except Exception as exc:
+            return formatear_error(exc)
+
+    def execute_lines(self):
+        cursor = connections['default'].cursor()
+        try:
+            cursor.execute(self.procedimiento)
             data = self.rows_to_dict_list(cursor)
             cursor.close()
             return data

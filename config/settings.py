@@ -43,7 +43,7 @@ CREATED_APPS = [
     'apps.guard',
     'apps.log',
     'apps.home',
-    'config',
+    'docker'
 ]
 
 INSTALLED_APPS = BASE_APPS + CREATED_APPS
@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'nega',
         'PASSWORD': 'Nega6456519',
-        'HOST': 'localhost',
+        'HOST': 'db_postgres',
         'PORT': '5432',
     },
 }
@@ -132,7 +132,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_ROOT = f'{BASE_DIR}/staticfiles'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     f'{BASE_DIR}/static',
@@ -147,9 +146,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
     # 'microsoft_auth.backends.MicrosoftAuthenticationBackend',
-    # 'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
     'apps.guard.auth.CustomAuthBackendMicrosoft',
-    'apps.guard.auth.CustomAuthBackendDjango',
 ]
 
 MICROSOFT_AUTH_CLIENT_ID = 'f62e6859-a5f4-47e3-9af5-0ec70e2ec10f'
@@ -159,20 +157,20 @@ REDIRECT_URI = 'http://localhost:8000/getAToken'
 LOGIN_URL = "/microsoft_authentication/login"
 LOGIN_REDIRECT_URL = "/admin"
 
-
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'orm_to_query3.log',
-        }
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
+if DEBUG == True:
+    LOGGING = {
+        'version': 1,
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': 'orm_to_query3.log',
+            }
+        },
+        'loggers': {
+            'django.db.backends': {
+                'level': 'DEBUG',
+                'handlers': ['console'],
+            }
         }
     }
-}

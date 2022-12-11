@@ -12,6 +12,36 @@ services:
     - '5432:5432'
     container_name: db_postgres
 
+  django_app:
+    build: .
+    volumes:
+      - static:/sgpt/static
+      - .:/sgpt
+    depends_on:
+      - db_postgres
+    container_name: django_app
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py implementacion
+        python manage.py runserver 0.0.0.0:8001
+  
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - static:/sgpt/static
+    depends_on:
+      - django_app
+    container_name: nginx
+
 volumes:
   .:
   postgres_data:
+  static:
