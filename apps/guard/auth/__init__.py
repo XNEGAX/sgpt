@@ -75,7 +75,7 @@ class RoyalGuard(LoginRequiredMixin):
 
     def dispatch(self, request, *args, **kwargs):
         rediredct_login = f'/users/login/?next={request.path}'
-        if request.user and request.user.is_authenticated and request.path != '/admin/':
+        if request.user and request.user.is_authenticated:
             url_permitida = UsuarioPerfilRol.objects.filter(
                 perfil_rol__perfil__usuarioperfilactivo_set__usuario_id=request.user.id,
                 perfil_rol__rol__modulorol_set__modulo__url=resolve(request.path).app_name+':'+resolve(request.path).url_name,
