@@ -46,7 +46,7 @@
           </li>
           {% if request.session.cantidad_perfiles > 0%}
           <li>
-            <a class="dropdown-item" href="#">
+            <a class="dropdown-item" id="btn_cambio_perfil">
               <i class="bx bx-user me-2"></i>
               <span class="align-middle">Cambiar Perfil</span>
             </a>
@@ -85,3 +85,4 @@
     </ul>
   </div>
 </nav>
+{% include "guard/usuarios/mdl_cambio_perfil.html" %}

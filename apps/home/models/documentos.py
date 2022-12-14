@@ -1,7 +1,7 @@
+from apps.log.views import LogManager
 import json
 from django.db import models
 from django.contrib.auth.models import User
-from apps.log.views import LogManager
 
 class TipoDocumento(models.Model):
     id = models.AutoField(primary_key=True)

@@ -8,14 +8,14 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-        <title>Sistema de Gestión de Proyectos de Título</title>
+    <title>Sistema de Gestión de Proyectos de Título</title>
 
     <meta name="description" content="" />
     <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{% static 'udla/ico_miudla.ico' %}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'udla/img/ico_miudla.ico' %}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />
 
     <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}" />
+    <link rel="stylesheet" href="{% static 'udla/css/layouts.css' %}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
 
     <!-- Page CSS -->
 
@@ -64,8 +66,12 @@
 
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
+                    {% csrf_token %}
                     <!-- Content -->
-                    {% block content %} {% endblock content %}
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        {{request.session.breadcrumb | safe}}
+                        {% block content %} {% endblock content %}
+                    </div>
                     <!-- / Content -->
 
                     <!-- Footer -->
@@ -102,9 +108,18 @@
 
     <!-- Page JS -->
     <script src="{% static 'assets/js/dashboards-analytics.js' %}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js" charset="utf-8"></script>
+
+
+    <!-- customs -->
+
+    <script src="{% static 'udla/js/layouts.js' %}"></script>
+    {% block script%}{% endblock script%}
+    {% block modal%}{% endblock modal%}
 </body>
 
 </html>

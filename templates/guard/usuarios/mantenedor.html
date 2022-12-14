@@ -1,0 +1,62 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+{% block modal %}
+{% endblock modal%}
+{% block content %}
+<div class="card">
+  <h5 class="card-header">Bordered Table</h5>
+  <form method="get" action="{{ request.path }}">
+    <p>Filter: <input type="text" value={{filter}} name="filter" /></p>
+    <p><input type="submit" name="submit" value="submit" /></p>
+  </form>
+  <div class="card-body">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered" id="lista_usuarios">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>correo</th>
+            <th>Último ingreso</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for usuario in page_obj %}
+          <tr>
+            <td>
+              <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{usuario.username}}</strong>
+            </td>
+            <td>{{usuario.get_full_name}}</td>
+            <td>{{usuario.email}}</td>
+            <td><span class="badge bg-label-primary me-1">{{usuario.date_joined}}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer">
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/guard/mantenedor_usuarios.js' %}"></script>
+{% endblock script %}

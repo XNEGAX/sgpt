@@ -1,0 +1,18 @@
+{% load static %}
+<div class="row p-l-20">
+    {% for perfil in perfiles_disponibles%}
+    <div class="col clickeable btn_seleccionar_perfil" perfil="{{perfil.perfil_id}}">
+        <div class="row">
+            <div class="text-center">
+                <h5 class="card-title text-primary">{{perfil.perfil__nombre}}</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-center">
+                <img src="{{perfil.url_logo_perfil}}" alt="" style="height: 82px;width: 90px;">
+            </div>
+        </div>
+    </div>
+    {% endfor%}
+    <form action="/perfil/cambio/" method="post" id="form_cambio_perfil"></form>
+</div>
