@@ -1,6 +1,7 @@
 {% extends 'includes/base.html' %}
 {% load static %}
 {% block modal %}
+{% include "guard/usuarios/mdl_crud_usuario.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card">
@@ -18,21 +19,27 @@
       <table class="table table-bordered" id="lista_usuarios">
         <thead>
           <tr>
-            <th>Usuario</th>
-            <th>Nombre</th>
+            <th>rut</th>
+            <th>nombre completo</th>
             <th>correo</th>
-            <th>Último ingreso</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
           {% for usuario in page_obj %}
           <tr>
             <td>
-              <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{usuario.username}}</strong>
+              <strong>{{usuario.rut}}</strong>
             </td>
-            <td>{{usuario.get_full_name}}</td>
-            <td>{{usuario.email}}</td>
-            <td><span class="badge bg-label-primary me-1">{{usuario.date_joined}}</span></td>
+            <td>{{usuario.nombre_completo}}</td>
+            <td>{{usuario.correo}}</td>
+            <td class="text-center">
+              <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
+            </td>
+            <td class="text-center">
+              <i class='bx bx-x text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -40,25 +47,9 @@
     </div>
   </div>
   <div class="card-footer">
-    <div class="pagination">
-      <span class="step-links">
-        {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; first</a>
-        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-          Páginas {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">Atras &raquo;</a>
-        {% endif %}
-      </span>
-    </div>
+    {% include "includes/paginate.html" %}
     <div class="btn-footer-table">
-      <button class="btn btn-outline-primary" >Boton</button>
+      <button class="btn btn-primary" id="btn_crear_usuario">Nuevo</button>
     </div>
   </div>
 </div>

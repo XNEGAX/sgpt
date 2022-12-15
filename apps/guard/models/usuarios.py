@@ -58,13 +58,13 @@ class Nacionalidad(models.Model):
 
 class Persona(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
+    usuario = models.OneToOneField(User, models.CASCADE, blank=True, null=True,related_name='persona_relation_user')
     rut = models.CharField(max_length=12, unique=True,blank=False, null=False)
-    fecha_nacimiento = models.DateField(blank=False, null=False)
+    fecha_nacimiento = models.DateField(blank=True, null=True)
     telefono = models.BigIntegerField(blank=True, null=True)
-    nacionalidad = models.ForeignKey(Nacionalidad, models.CASCADE, blank=True, null=True)
-    sexo = models.ForeignKey(Sexo, models.CASCADE, blank=False, null=False)
-    estado_civil = models.ForeignKey(EstadoCivil, models.CASCADE, blank=False, null=False,related_name='persona_estado_civil')
+    nacionalidad = models.ForeignKey(Nacionalidad, models.CASCADE, blank=False, null=False,default=0)
+    sexo = models.ForeignKey(Sexo, models.CASCADE, blank=False, null=False,default=0)
+    estado_civil = models.ForeignKey(EstadoCivil, models.CASCADE, blank=False, null=False,default=0,related_name='persona_estado_civil')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_persona')
 

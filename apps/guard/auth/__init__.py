@@ -2,6 +2,7 @@ import json
 from django.urls import resolve
 from django.urls import reverse
 from django.shortcuts import redirect
+from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 from function import ConsultaBD,formatear_error
 from apps.guard.models import UsuarioPerfilModulo
@@ -91,6 +92,8 @@ class RoyalGuard(LoginRequiredMixin):
                 permiso__icontains=request.method
             ).exists()
             if not url_permitida:
+                if request.is_ajax():
+                    return HttpResponseForbidden(request)
                 return redirect('guard:403')
             else:
                 request.session['breadcrumb'] =''

@@ -62,6 +62,54 @@ class Command(MigrateCommand):
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,4,1,'["GET"]',NOW(),0);
             --ACCESO INVITADO
             INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('acceso_invitado','{"modulo_id": "1","perfil_id":"4","permiso":["GET"]}'::jsonb,now(),0);
+            --POBLAR SEXO
+            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(0,'N/A','N',now(),0);
+            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(1,'MASCULINO','M',now(),0);
+            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(2,'FEMENINO','F',now(),0);
+            --POBLAR NACIONALIDAD
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(0, 'N/D',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(38, 'INGLATERRA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(29, 'OTRA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(31, 'VARSOVIANO',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(1, 'CHILENA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(2, 'ARGENTINA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(4, 'ESPAÑOLA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(5, 'DANESA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(12, 'AUSTRALIANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(13, 'BRASILERA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(14, 'BULGARA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(15, 'CHINA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(16, 'COLOMBIANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(6, 'SUIZA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(7, 'PERUANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(8, 'CUBANA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(9, 'BOLIVIANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(10, 'ECUATORIANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(11, 'ITALIANA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(18, 'FRANCESA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(19, 'LIBANESA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(20, 'MEXICANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(21, 'SUECA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(22, 'TAIWANESA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(23, 'URUGUAYA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(24, 'VENEZOLANA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(25, 'ARGELINA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(27, 'CANADIENSE',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(28, 'ALEMANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(30, 'ESTADOUNIDENSE',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(32, 'LITUANA', now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(33, 'GUATELMATECA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(34, 'NEOZELANDES',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(35, 'PORTUGUESA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(36, 'HAITIANA',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(37, 'SENEGALES',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(39, 'IRANÍ',now(), 0);
+            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(40, 'DOMINICANA',now(), 0);
+            --POBLAR ESTADO CIVIL
+            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(0, 'N/D',now(), 0);
+            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(1, 'SOLTERO',now(), 0);
+            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(2, 'CASADO',now(), 0);
+            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(3, 'CONVIVE',now(), 0);
             -- SP PERMISOS MODULO USUARIO
             CREATE OR REPLACE FUNCTION public.sp_web_get_permisos_modulo_usuario(p_usuario_id int4)
             RETURNS TABLE(perfil_activo text,cantidad_perfiles int4,modulos json)

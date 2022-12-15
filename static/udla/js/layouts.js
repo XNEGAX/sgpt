@@ -6,11 +6,11 @@ $(document).ready(function () {
             type: 'GET',
             url: '/perfil/cambio/',
             beforeSend: function (xhr, settings) {
-                $('#mdl_cambio_perfil #modal-content').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+                $('#mdl_cambio_perfil #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
                 $('.btn').hide();
             },
             success: function (data, status, xhr) {
-                $('#mdl_cambio_perfil #modal-content').html(data);
+                $('#mdl_cambio_perfil #contenido').html(data);
             },
         });
     });
