@@ -408,3 +408,8 @@
   .no-clickeable{
     cursor: not-allowed !important;
   }
+  .btn-footer-table {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
