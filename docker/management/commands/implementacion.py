@@ -41,10 +41,10 @@ class Command(MigrateCommand):
             VALUES(4, 'USUARIO', 'guard:mantenedor_usuario', 'tf-icons bx bx-user-plus', 2, now(), 3, 0, 1);
             SELECT setval('modulo_id_seq',5, true);
             --PERFIL
-            INSERT INTO public.perfil(id,nombre, editable, fecha, responsable_id)VALUES(1,'ADMINISTRADOR', false,now(),0);
-            INSERT INTO public.perfil(id,nombre, editable, fecha, responsable_id)VALUES(2,'PROFESOR', false,now(),0);
-            INSERT INTO public.perfil(id,nombre, editable, fecha, responsable_id)VALUES(3,'ALUMNO', false,now(),0);
-            INSERT INTO public.perfil(id,nombre, editable, fecha, responsable_id)VALUES(4,'INVITADO', false,now(),0);
+            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(1,'ADMINISTRADOR',now(),0);
+            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(2,'PROFESOR',now(),0);
+            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(3,'ALUMNO',now(),0);
+            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(4,'INVITADO',now(),0);
             SELECT setval('perfil_id_seq',5, true);
             --PARAMETRO PERFIL INVITADO
             INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('perfil_invitado',cast('{"perfil_id": "4"}' AS json),now(),0);
@@ -52,13 +52,13 @@ class Command(MigrateCommand):
             INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1, 0, 1);
             --PERMISOS USUARIO DEMO
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,1,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,1,1,'["GET","POST"]',NOW(),0);
+            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,1,1,'["GET","PUT"]',NOW(),0);
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(3,1,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(4,1,1,'["GET","POST"]',NOW(),0);
+            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(4,1,1,'["GET","POST","PUT","DELETE"]',NOW(),0);
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,2,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,2,1,'["GET","POST"]',NOW(),0);
+            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,2,1,'["GET","PUT"]',NOW(),0);
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,3,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,3,1,'["GET","POST"]',NOW(),0);
+            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,3,1,'["GET","PUT"]',NOW(),0);
             INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,4,1,'["GET"]',NOW(),0);
             --ACCESO INVITADO
             INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('acceso_invitado','{"modulo_id": "1","perfil_id":"4","permiso":["GET"]}'::jsonb,now(),0);

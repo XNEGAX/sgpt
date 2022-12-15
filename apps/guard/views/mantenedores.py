@@ -13,7 +13,7 @@ class MantenedorUsuario(RoyalGuard,ListView):
     model = User
 
     def get_queryset(self):
-        filter_val = self.request.GET.get('filter')
+        filter_val = self.request.GET.get('filter','17')
         new_context = User.objects.filter(
             Q(first_name__icontains=filter_val)|Q(last_name__icontains=filter_val)|Q(username__icontains=filter_val),
             email__icontains='edu.udla.cl',id__gte=1,
@@ -22,5 +22,5 @@ class MantenedorUsuario(RoyalGuard,ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MantenedorUsuario, self).get_context_data(**kwargs)
-        context['filter'] = self.request.GET.get('filter')
+        context['filter'] = self.request.GET.get('filter','1234')
         return context

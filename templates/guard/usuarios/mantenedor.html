@@ -4,10 +4,14 @@
 {% endblock modal%}
 {% block content %}
 <div class="card">
-  <h5 class="card-header">Bordered Table</h5>
-  <form method="get" action="{{ request.path }}">
-    <p>Filter: <input type="text" value={{filter}} name="filter" /></p>
-    <p><input type="submit" name="submit" value="submit" /></p>
+  <h5 class="card-header">Lista de usuarios</h5>
+  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
+    <div class="card-body demo-vertical-spacing demo-only-element">
+      <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
+        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter"/>
+        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+      </div>
+    </div>
   </form>
   <div class="card-body">
     <div class="table-responsive text-nowrap">
