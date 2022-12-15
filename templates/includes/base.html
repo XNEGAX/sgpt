@@ -37,10 +37,10 @@
     <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />
 
     <link rel="stylesheet" href="{% static 'assets/vendor/libs/apex-charts/apex-charts.css' %}" />
-    <link rel="stylesheet" href="{% static 'udla/css/layouts.css' %}" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
 
-    <!-- Page CSS -->
+    <!-- custom css -->
+    <link rel="stylesheet" href="{% static 'udla/css/layouts.css' %}?q={{csrf_token}}" />
 
     <!-- Helpers -->
     <script src="{% static 'assets/vendor/js/helpers.js' %}"></script>

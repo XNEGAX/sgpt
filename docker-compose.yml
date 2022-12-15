@@ -15,7 +15,7 @@ services:
   django_app:
     build: .
     volumes:
-      - static:/sgpt/static
+      # - static:/sgpt/static
       - .:/sgpt
     depends_on:
       - db_postgres
@@ -36,7 +36,7 @@ services:
       - 80:80
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
-      - static:/sgpt/static
+      # - static:/sgpt/static
     depends_on:
       - django_app
     container_name: nginx
@@ -44,4 +44,4 @@ services:
 volumes:
   .:
   postgres_data:
-  static:
+  # static:
