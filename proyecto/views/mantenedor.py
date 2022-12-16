@@ -12,14 +12,12 @@ from function import validar_rut
 from django.contrib.auth.models import User
 # forms
 from proyecto.content import UsuarioModelForm
-
 from proyecto.models import Perfil
 
-PERFIL_CHOICES = tuple()
 
 class MantenedorUsuario(RoyalGuard,ListView):
     template_name = 'mantenedor/usuario/index.html'
-    paginate_by = 1
+    paginate_by = 10
     model = User
 
     def get_queryset(self):
