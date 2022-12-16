@@ -18,126 +18,70 @@ class Command(MigrateCommand):
             VALUES(1, '', now(), false, '173733321@ACADEMICOS.uamericas.cl', 'CARLOS', 'MARIN GONZALEZ', 'carlos.marin.gonzalez@edu.udla.cl', true, true, now());
             SELECT setval('auth_user_id_seq',2, true);
             --PARAMETROS BASE PARA TIPO MODULO
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('auth_user_auto',cast('{"auth_user_id": "0"}' AS json),now(),0);
-            --TIPOS DE MODULOS
-            INSERT INTO public.tipo_modulo(id,nombre, fecha, responsable_id)VALUES(1,'MENU',now(),0);
-            INSERT INTO public.tipo_modulo(id,nombre, fecha, responsable_id)VALUES(2,'API',now(), 0);
-            INSERT INTO public.tipo_modulo(id,nombre, fecha, responsable_id)VALUES(3,'BOTÓN',now(), 0);
-            INSERT INTO public.tipo_modulo(id,nombre, fecha, responsable_id)VALUES(4,'BANNER',now(), 0);
-            SELECT setval('tipo_modulo_id_seq',5, true);
-            --PARAMETROS BASE PARA TIPO MODULO
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('tipo_modulo_menu',cast('{"tipo_modulo_id": "1"}' AS json),now(),0);
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('tipo_modulo_api',cast('{"tipo_modulo_id": "2"}' AS json),now(),0);
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('tipo_modulo_boton',cast('{"tipo_modulo_id": "3"}' AS json),now(),0);
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('tipo_modulo_banner',cast('{"tipo_modulo_id": "4"}' AS json),now(),0);
+            INSERT INTO public.parametro(nombre, metadatos)VALUES('auth_user_auto',cast('{"auth_user_id": "0"}' AS json));
             --MODULOS
-            INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
-            VALUES(1, 'Inicio', 'home:home', 'tf-icons bx bx-home-circle', 0, now(), NULL, 0, 1);
-            INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
-            VALUES(2, 'Cambio Perfil', 'guard:cambio_perfil', 'tf-icons bx bx-home-circle', 0, now(), NULL, 0, 2);
-            INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
-            VALUES(3, 'MANTENEDORES', '', '', 2, now(), NULL, 0, 1);
-            INSERT INTO public.modulo(id, nombre, url, icono, orden, fecha, modulo_padre_id, responsable_id, tipo_modulo_id)
-            VALUES(4, 'USUARIO', 'guard:mantenedor_usuario', 'tf-icons bx bx-user-plus', 2, now(), 3, 0, 1);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            values(1,'Inicio','proyecto:home','tf-icons bx bx-home-circle', 0, true, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            values(2,'Cambio Perfil','proyecto:cambio_perfil','', 0, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            values(3,'MANTENEDOR','','tf-icons bx bxs-brightness', 1, true, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            values(4,'USUARIO','proyecto:mantenedor_usuario','', 1, true, 3);
             SELECT setval('modulo_id_seq',5, true);
             --PERFIL
-            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(1,'ADMINISTRADOR',now(),0);
-            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(2,'PROFESOR',now(),0);
-            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(3,'ALUMNO',now(),0);
-            INSERT INTO public.perfil(id,nombre, fecha, responsable_id)VALUES(4,'INVITADO',now(),0);
+            INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
+            INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
+            INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(3,'ALUMNO',true);
+            INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(4,'INVITADO',false);
             SELECT setval('perfil_id_seq',5, true);
             --PARAMETRO PERFIL INVITADO
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('perfil_invitado',cast('{"perfil_id": "4"}' AS json),now(),0);
+            INSERT INTO public.parametro(nombre,metadatos)VALUES('perfil_invitado',cast('{"perfil_id": "4"}' AS json));
             --PERFIL ACTIVO USUARIO DEMO
             INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1, 0, 1);
-            --PERMISOS USUARIO DEMO
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,1,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,1,1,'["GET","PUT"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(3,1,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(4,1,1,'["GET","POST","PUT","DELETE"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,2,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,2,1,'["GET","PUT"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,3,1,'["GET"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(2,3,1,'["GET","PUT"]',NOW(),0);
-            INSERT INTO public.usuario_perfil_modulo(modulo_id,perfil_id,usuario_id,permiso,fecha,responsable_id)VALUES(1,4,1,'["GET"]',NOW(),0);
-            --ACCESO INVITADO
-            INSERT INTO public.parametro(nombre,metadatos, fecha, responsable_id)VALUES('acceso_invitado','{"modulo_id": "1","perfil_id":"4","permiso":["GET"]}'::jsonb,now(),0);
-            --POBLAR SEXO
-            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(0,'N/A','N',now(),0);
-            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(1,'MASCULINO','M',now(),0);
-            INSERT INTO public.sexo(id,nombre,acronimo,fecha,responsable_id)VALUES(2,'FEMENINO','F',now(),0);
-            --POBLAR NACIONALIDAD
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(0, 'N/D',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(38, 'INGLATERRA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(29, 'OTRA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(31, 'VARSOVIANO',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(1, 'CHILENA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(2, 'ARGENTINA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(4, 'ESPAÑOLA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(5, 'DANESA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(12, 'AUSTRALIANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(13, 'BRASILERA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(14, 'BULGARA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(15, 'CHINA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(16, 'COLOMBIANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(6, 'SUIZA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(7, 'PERUANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(8, 'CUBANA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(9, 'BOLIVIANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(10, 'ECUATORIANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(11, 'ITALIANA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(18, 'FRANCESA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(19, 'LIBANESA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(20, 'MEXICANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(21, 'SUECA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(22, 'TAIWANESA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(23, 'URUGUAYA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(24, 'VENEZOLANA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(25, 'ARGELINA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(27, 'CANADIENSE',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(28, 'ALEMANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(30, 'ESTADOUNIDENSE',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(32, 'LITUANA', now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(33, 'GUATELMATECA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(34, 'NEOZELANDES',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(35, 'PORTUGUESA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(36, 'HAITIANA',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(37, 'SENEGALES',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(39, 'IRANÍ',now(), 0);
-            INSERT INTO public.nacionalidad(id, nombre, fecha, responsable_id)VALUES(40, 'DOMINICANA',now(), 0);
-            --POBLAR ESTADO CIVIL
-            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(0, 'N/D',now(), 0);
-            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(1, 'SOLTERO',now(), 0);
-            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(2, 'CASADO',now(), 0);
-            INSERT INTO public.estado_civil(id, nombre, fecha, responsable_id)VALUES(3, 'CONVIVE',now(), 0);
+            --PERMISOS POR PERFIL
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(1,1,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(2,1,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(3,1,3);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(4,1,4);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(5,2,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(6,2,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(7,2,3);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(8,3,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(9,3,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(10,4,1);
+            --ACCESSO USUARIO DEMO
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,1);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,1);
             -- SP PERMISOS MODULO USUARIO
             CREATE OR REPLACE FUNCTION public.sp_web_get_permisos_modulo_usuario(p_usuario_id int4)
             RETURNS TABLE(perfil_activo text,cantidad_perfiles int4,modulos json)
             LANGUAGE plpgsql
             AS $function$BEGIN
             RETURN QUERY 	 
-            select T2.nombre as perfil_activo, (
-                select count(distinct p1.perfil_id) from public.usuario_perfil_modulo  p1
+            select T2.nombre as perfil_activo,(
+                select count(distinct p1.perfil_id) from public.perfil_usuario p1
                 where p1.usuario_id = t1.usuario_id and p1.perfil_id::int4 != (
                     SELECT (pa1.metadatos::jsonb->>'perfil_id')::int4 FROM public.parametro pa1 WHERE pa1.nombre='perfil_invitado' limit 1
                 )::int4
             )::int4 as cantidad_perfiles,(
                 select to_json(array_agg(row_to_json(listado_modulos))) from (
-                    select initcap(m2.nombre) as nombre, m2.url,m2.icono,m3.nombre as tipo,to_jsonb(m1.permiso) as permisos, m2.orden,(
+                    select initcap(m3.nombre) as nombre, m3.url,m3.icono,m3.ind_url as is_url,m3.orden,(
                         select to_json(array_agg(row_to_json(listado_submodulos))) from (
-                            select initcap(s2.nombre) as nombre, s2.url,s2.icono,s3.nombre as tipo,to_jsonb(s1.permiso) as permisos, s2.orden
-                            from public.usuario_perfil_modulo s1
-                            inner join public.modulo s2 on s1.modulo_id = s2.id
-                            inner join public.tipo_modulo s3 on s2.tipo_modulo_id = s3.id
-                            where s1.usuario_id = t1.usuario_id and s1.perfil_id = t2.id and s2.modulo_padre_id = m1.modulo_id
-                            order by s2.orden 
+                            select initcap(s3.nombre) as nombre, s3.url,s3.icono,s3.ind_url as is_url,s3.orden
+                            from public.perfil_usuario s1
+                            inner join public.perfil_modulo s2 on s1.perfil_id = s2.perfil_id
+                            inner join public.modulo s3 on s2.modulo_id = s3.id
+                            where s1.usuario_id = t1.usuario_id and s1.perfil_id = t1.perfil_id and s3.modulo_padre_id = m2.modulo_id
+                            order by s3.orden
                         ) listado_submodulos
                     ) as submodulos
-                    from public.usuario_perfil_modulo m1
-                    inner join public.modulo m2 on m1.modulo_id = m2.id
-                    inner join public.tipo_modulo m3 on m2.tipo_modulo_id = m3.id
-                    where m1.usuario_id = t1.usuario_id and m1.perfil_id = t2.id and m2.modulo_padre_id is null
-                    order by m2.orden
+                    from public.perfil_usuario m1
+                    inner join public.perfil_modulo m2 on m1.perfil_id = m2.perfil_id
+                    inner join public.modulo m3 on m2.modulo_id = m3.id
+                    where m1.usuario_id = t1.usuario_id and m1.perfil_id = t1.perfil_id and m3.modulo_padre_id is null
+                    order by m3.orden 
                 ) listado_modulos
             ) as modulos
             from public.usuario_perfil_activo t1
