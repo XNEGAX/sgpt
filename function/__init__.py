@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from datetime import datetime
 from django.utils.html import strip_tags
 
+
 def formatear_error(error):
     return f'Error en la linea {format(sys.exc_info()[-1].tb_lineno)} {type(error).__name__} {error}'
 
@@ -40,37 +41,22 @@ class ConsultaBD(object):
 class JsonGenericView(object):
     """ Se extiende de esta clase cuando se requiere obtener la respuesta de una vista generica en formato json """
     def form_invalid(self, form):
-        errores = []
         for elem in form:
             for k, v in form.errors.items():
                 if k == elem.name:
-                    detalles = {
-                        'elemento':elem.name,
-                        'descripcion':elem.label,
-                        'error':strip_tags(v)
-                    }
-                    errores.append(detalles)
-        context = {
-            'estado': '1',
-            'errores': errores
-        }
-        return JsonResponse(context, status=200)
+                    return JsonResponse({
+                        'estado': '1',
+                        'error': strip_tags(v)
+                    }, status=200,safe=False)
 
     def form_valid(self, form):
-        usuario = self.request.session.get('username', False)
-        for elem in form:
-            nomenclatura = str(elem.name).split('_')[0]
-            new_login_actualizacion = f'form.instance.{nomenclatura}_login_actualizacion = "{usuario}"'
-            exec(new_login_actualizacion)
-            new_fecha_actualizacion = f'form.instance.{nomenclatura}_fecha_actualizacion = "{datetime.now()}"'
-            exec(new_fecha_actualizacion)
-            new_login_registro = f'form.instance.{nomenclatura}_login_registro = "{usuario}"'
-            exec(new_login_registro)
-            break
-        self.object = form.save()
-        context = {
-            'estado': '0',
-            'mensaje': 'Operación exitosa',
-            'id': self.object.pk,
-        }
-        return JsonResponse(context)
+        try:
+            self.object = form.save()
+            context = {
+                'estado': '0',
+                'mensaje': 'Operación exitosa',
+                'id': self.object.pk,
+            }
+            return JsonResponse(context)
+        except Exception as exc:
+            print(formatear_error(exc))

@@ -27,4 +27,8 @@ $(document).ready(function () {
         document.getElementById("form_cambio_perfil").appendChild(token)
         document.getElementById("form_cambio_perfil").submit();
     });
+    $('.modal').modal({
+        backdrop: 'static',
+        keyboard: false
+    })
 });

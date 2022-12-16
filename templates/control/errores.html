@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-xxl container-p-y">
+  <div class="card">
+    <div class="card-body text-center">
+      <div class="misc-wrapper">
+        <div class="mt-3">
+          {% if estado == 400 %}
+          <img src="/static/assets/img/illustrations/400.jpg" alt="page-misc-error-light" width="500" class="img-fluid"
+            data-app-dark-img="/static/assets/img/illustrations/400.jpg"
+            data-app-light-img="/static/assets/img/illustrations/400.jpg" />
+          {% elif estado == 403 %}
+          <img src="/static/assets/img/illustrations/403.jpg" alt="page-misc-error-light" width="500" class="img-fluid"
+            data-app-dark-img="/static/assets/img/illustrations/403.jpg"
+            data-app-light-img="/static/assets/img/illustrations/403.jpg" />
+          {% elif estado == 404 %}
+          <img src="/static/assets/img/illustrations/404.jpg" alt="page-misc-error-light" width="500" class="img-fluid"
+            data-app-dark-img="/static/assets/img/illustrations/404.jpg"
+            data-app-light-img="/static/assets/img/illustrations/404.jpg" />
+          {% elif estado == 500 %}
+          <img src="/static/assets/img/illustrations/500.jpg" alt="page-misc-error-light" width="500" class="img-fluid"
+            data-app-dark-img="/static/assets/img/illustrations/500.jpg"
+            data-app-light-img="/static/assets/img/illustrations/500.jpg" />
+          {% endif %}
+        </div>
+      </div>
+      <a href="/" class="btn btn-primary">Volver al inicio</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

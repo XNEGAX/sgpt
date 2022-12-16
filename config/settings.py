@@ -40,9 +40,7 @@ BASE_APPS = [
     'microsoft_auth',
 ]
 CREATED_APPS = [
-    'apps.guard',
-    'apps.log',
-    'apps.home',
+    'proyecto',
     'docker'
 ]
 
@@ -91,8 +89,9 @@ DATABASES = {
         },
         'NAME': 'postgres',
         'USER': 'nega',
-        'PASSWORD': 'Nega6456519',
+        # 'PASSWORD': 'Nega6456519',
         'HOST': 'db_postgres',
+        'HOST': 'localhost',
         'PORT': '5432',
     },
 }
@@ -145,9 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTHENTICATION_BACKENDS = [
-    # 'microsoft_auth.backends.MicrosoftAuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend',
-    'apps.guard.auth.CustomAuthBackendMicrosoft',
+    'proyecto.auth.CustomAuthBackendMicrosoft',
 ]
 
 MICROSOFT_AUTH_CLIENT_ID = 'f62e6859-a5f4-47e3-9af5-0ec70e2ec10f'

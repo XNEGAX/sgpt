@@ -19,6 +19,5 @@ from django.urls import path,include
 urlpatterns = [
     path('users/', admin.site.urls),
     path('microsoft/', include('microsoft_auth.urls', namespace='microsoft')),
-    path('', include('apps.home.urls', namespace='home')),
-    path('', include('apps.guard.urls', namespace='guard')),
+    path('', include('proyecto.urls', namespace='proyecto')),
 ]

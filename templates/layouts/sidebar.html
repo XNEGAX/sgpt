@@ -1,0 +1,50 @@
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a href="/" class="app-brand-link">
+            <img src="{% static 'udla/img/logo_udla.png' %}" alt="" style="position: absolute;right: 12px;left: 23px;height: 58px;">
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+
+    <ul class="menu-inner py-1">
+        {% if request.session.modulos%}
+            {% for m1 in request.session.modulos %}
+                {% url m1.url as url_m1 %}
+                {% if m1.is_url %}
+                <li class="menu-item
+                    {% if request.path == url_m1 and not m1.submodulos %}
+                        active 
+                    {% elif request.path != url_m1 and request.path in request.session.submodulo_list and not m1.url%}
+                        active open
+                    {% else %}
+                        ggg
+                    {% endif %}">
+                    <a href="{% if not m1.submodulos %}{{url_m1}}{% else %}javascript:void(0);{% endif %}" 
+                        class="menu-link{% if m1.submodulos %} menu-toggle{% endif %}">
+                        <i class="menu-icon {{m1.icono}}"></i>
+                        <div data-i18n="Layouts">{{m1.nombre}}</div>
+                    </a>
+                    {% if m1.submodulos%}
+                        <ul class="menu-sub">
+                        {% for m2 in m1.submodulos %}
+                        {% url m2.url as url_m2 %}
+                        <li class="menu-item {% if request.path == url_m2 %}active{% endif %}">
+                            <a href={{url_m2}} class="menu-link">
+                                <div data-i18n="Account">{{m2.nombre}}</div>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+</aside>

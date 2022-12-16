@@ -1,0 +1,20 @@
+from django.urls import path
+from proyecto.views import Home
+from proyecto.views import Salir
+from proyecto.views import CambioPerfil
+from proyecto.views import Error403
+from proyecto.views.mantenedor import MantenedorUsuario
+from proyecto.views.mantenedor import CrearUsuario
+from proyecto.views.mantenedor import ActualizarUsuario
+
+app_name = 'proyecto'
+
+urlpatterns = [
+    path('', Home.as_view(), name="home"),
+    path('403/', Error403.as_view(), name="403"),
+    path("salir", Salir.as_view(), name="salir"),
+    path("perfil/cambio/", CambioPerfil.as_view(), name="cambio_perfil"),
+    path("mantenedor/usuario/", MantenedorUsuario.as_view(), name="mantenedor_usuario"),
+    path("mantenedor/usuario/crear/", CrearUsuario.as_view(), name="mantenedor_usuario_crear"),
+    path('mantenedor/usuario/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar")
+]
