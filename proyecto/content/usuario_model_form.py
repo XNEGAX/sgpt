@@ -11,7 +11,7 @@ class UsuarioModelForm(forms.ModelForm):
     username = forms.CharField(required=True, error_messages={'required': 'Ingrese Rut del usuario'},label='RUT',widget=forms.TextInput(attrs={'class':'form-control','id':'username','tabindex':'0'}))
     first_name = forms.CharField(required=True,error_messages={'required': 'Ingrese Nombre del usuario'},label='NOMBRE',widget=forms.TextInput(attrs={'class':'form-control','id':'first_name','tabindex':'1'}))
     last_name= forms.CharField(required=True,error_messages={'required': 'Ingrese Apellidos del usuario'},label='APELLIDOS',widget=forms.TextInput(attrs={'class':'form-control','id':'last_name','tabindex':'2'}))
-    email = forms.EmailField(required=True,error_messages={'required': 'Ingrese Email institucional del usuario'},label='Email Institucional',widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Ej: usuario@edu.udla.cl','id':'email'}))
+    email = forms.EmailField(required=True,error_messages={'required': 'Ingrese Email institucional del usuario'},label='Email Institucional',widget=forms.EmailInput(attrs={'class': 'form-control','placeholder':'Ej: usuario@edu.udla.cl','id':'email','tabindex':'3'}))
         
     class Meta:
         model = User
@@ -38,6 +38,7 @@ class UsuarioModelForm(forms.ModelForm):
         usuario = super(UsuarioModelForm, self).save(*args, **kwargs)
         usuario.is_staff =True
         usuario.save()
+        PerfilUsuario.objects.filter(usuario=usuario).delete()
         for perfil in self.perfiles:
             if not PerfilUsuario.objects.filter(perfil_id=perfil,usuario=usuario).exists():
                 PerfilUsuario.objects.create(
@@ -45,13 +46,13 @@ class UsuarioModelForm(forms.ModelForm):
                     usuario=usuario,
                     responsable=self.responsable
                 )
+        PerfilUsuarioActivo.objects.filter(usuario=usuario).delete()
         if self.perfiles:
-            if not PerfilUsuarioActivo.objects.filter(usuario=usuario).exists():
-                PerfilUsuarioActivo.objects.create(
-                    perfil_id=self.perfiles[0],
-                    usuario=usuario,
-                    responsable=self.responsable
-                )
+            PerfilUsuarioActivo.objects.create(
+                perfil_id=self.perfiles[0],
+                usuario=usuario,
+                responsable=self.responsable
+            )
         return usuario
 
     def clean_username(self):
@@ -59,7 +60,7 @@ class UsuarioModelForm(forms.ModelForm):
         if not validar_rut.is_valid_rut(rut):
             raise ValidationError("El rut ingresado no es válido!")
         username = f"{rut.replace('.','').replace('-','')}@ACADEMICOS.uamericas.cl"
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists() and not self.instance:
             raise ValidationError("El rut ingresado ya existe!")
         return username
 
@@ -81,6 +82,6 @@ class UsuarioModelForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if '@edu.udla.cl' not in email:
+        if '@edu.udla.cl' not in email.lower():
             raise ValidationError("Debe ingresar el correo institucional!")
         return email

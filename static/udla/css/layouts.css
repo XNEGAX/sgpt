@@ -426,3 +426,8 @@
   z-index: 10000;
   position: fixed;
 }
+
+table{
+  font-size: 12px !important;
+  word-break: break-all !important
+}

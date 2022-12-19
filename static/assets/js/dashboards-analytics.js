@@ -18,13 +18,9 @@
     totalRevenueChartOptions = {
       series: [
         {
-          name: '2021',
+          name: '2022',
           data: [18, 7, 15, 29, 18, 12, 9]
         },
-        {
-          name: '2020',
-          data: [-13, -18, -9, -14, -5, -17, -15]
-        }
       ],
       chart: {
         height: 300,
@@ -78,7 +74,7 @@
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        categories: ['Jul','Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         labels: {
           style: {
             fontSize: '13px',
@@ -427,7 +423,7 @@
         width: 130,
         type: 'donut'
       },
-      labels: ['Electronic', 'Sports', 'Decor', 'Fashion'],
+      labels: ['ASPECTOS DE LA EMPRESA', 'SITUACIÓN ACTUAL DEL PROYECTO', 'PLANTEAMIENTO DE OBJETIVOS', 'ESTUDIO DE FACTIBILIDAD Y GESTIÓN DE RIESGOS'],
       series: [85, 15, 50, 50],
       colors: [config.colors.primary, config.colors.secondary, config.colors.info, config.colors.success],
       stroke: {
@@ -473,9 +469,9 @@
                 show: true,
                 fontSize: '0.8125rem',
                 color: axisColor,
-                label: 'Weekly',
+                label: 'Finalizado',
                 formatter: function (w) {
-                  return '38%';
+                  return '100%';
                 }
               }
             }

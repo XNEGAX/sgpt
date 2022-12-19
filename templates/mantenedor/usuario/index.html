@@ -4,41 +4,58 @@
 {% include "mantenedor/usuario/mdl_crud_usuario.html" %}
 {% endblock modal%}
 {% block content %}
-<div class="card overflow-hidden">
-  <h5 class="card-header">Lista de usuarios</h5>
-  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
-    <div class="card-body demo-vertical-spacing demo-only-element">
-      <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
-        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter"/>
-        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+<div class="card">
+  <div class="card-header">
+    <h4 class="card-title text-primary fw-bold">Lista de usuarios</h4>
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element"
+      id="form_filtro_orden">
+      <div class="card-body demo-vertical-spacing demo-only-element">
+        <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
+          <input type="text" class="form-control" aria-describedby="button-addon2" name="filtro" />
+          <input type="hidden" class="form-control" aria-describedby="button-addon2" name="orden" />
+          <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+        </div>
       </div>
-    </div>
-  </form>
-  <div class="card-body">
+    </form>
+  </div>
+  <div class="card-body overflow-hidden mt-4 ml-2 mr-2">
     <div class="table-responsive text-nowrap">
-      <table class="table table-bordered" id="lista_usuarios">
+      <table class="table table-bordered w-100" id="lista_usuarios">
         <thead>
           <tr>
-            <th>rut</th>
-            <th>nombre completo</th>
-            <th>correo</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
+            <th class="column_order">rut</th>
+            <th class="column_order">nombre completo</th>
+            <th class="column_order">correo</th>
+            <th class="text-center column_order">perfil</th>
+            <th class="text-center">Impersonar</th>
+            <th class="text-center">Editar</th>
+            <th class="text-center">habilitado</th>
           </tr>
         </thead>
         <tbody>
           {% for usuario in page_obj %}
           <tr>
             <td>
-              <strong>{{usuario.rut}}</strong>
+              <strong>{{usuario.rut | upper}}</strong>
             </td>
-            <td>{{usuario.nombre_completo}}</td>
-            <td>{{usuario.correo}}</td>
+            <td>{{usuario.nombre_completo| upper}}</td>
+            <td>{{usuario.correo| upper}}</td>
+            <td class="text-center fw-bold">{{usuario.perfil| upper}}</td>
+            <td class="text-center">
+              <form action="/usuario/impersonar/" method="POST">
+                <input type="hidden" name="usuario_id" value="{{usuario.id}}">
+                {% csrf_token %}
+                <i class='bx bx-accessibility text-warning clickeable btn_impersonar_usuario'></i>
+              </form>
+            </td>
             <td class="text-center">
               <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
             </td>
             <td class="text-center">
-              <i class='bx bx-x text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input btn_habilitar_usuario" value="{{usuario.id}}" 
+                type="checkbox" style="float: inherit !important;" {% if usuario.is_staff%}checked{%endif%}/>
+              </div>
             </td>
           </tr>
           {% endfor %}
@@ -56,5 +73,5 @@
 
 {% endblock content %}
 {% block script %}
-<script src="{% static 'udla/js/mantenedor/usuario/index.js' %}"></script>
+<script src="{% static 'udla/js/mantenedor/usuario/index.js' %}?q={{csrf_token}}"></script>
 {% endblock script %}

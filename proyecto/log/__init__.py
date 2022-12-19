@@ -6,13 +6,14 @@ from django.contrib.sites.models import Site
 from django.db.models.base import ModelState
 from django.dispatch import receiver
 from proyecto.models.log import Log
+from django.forms.models import model_to_dict
 
 def format(instance,**kwargs):
     metadata = {}
     modelo = ContentType.objects.filter(model=instance._meta.db_table.replace('_','')).last()
     if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
         metadata = instance.__dict__
-        metadata["detalle"] = str(instance)
+        metadata["detalle"] = str(model_to_dict(instance))
         if metadata.get('fecha'):
             metadata["fecha"] = metadata.get('fecha').strftime("%Y-%m-%d %H:%M:%S")
         if metadata.get('_state'):
