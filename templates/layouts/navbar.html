@@ -27,7 +27,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
           <li>
-            <a class="dropdown-item" href="#">
+            <a class="dropdown-item no-clickeable">
               <div class="d-flex">
                 <div class="flex-shrink-0 me-3">
                   <div class="avatar avatar-online">
@@ -44,7 +44,7 @@
           <li>
             <div class="dropdown-divider"></div>
           </li>
-          {% if request.session.cantidad_perfiles > 0%}
+          {% if request.session.cantidad_perfiles > 1%}
           <li>
             <a class="dropdown-item" id="btn_cambio_perfil">
               <i class="bx bx-user me-2"></i>

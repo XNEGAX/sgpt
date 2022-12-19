@@ -50,6 +50,13 @@ class PerfilUsuario(models.Model):
         db_table = 'perfil_usuario'
         unique_together = ('perfil_id','usuario_id',)
 
+    def __str__(self):
+        return f'{self.perfil.name} - {self.usuario.get_full_name()}'
+    
+    @property
+    def is_perfil_habilitado(self):
+        return PerfilUsuarioActivo.objects.filter(perfil=self.perfil,usuario=self.usuario).exists()
+
 class PerfilUsuarioActivo(models.Model):
     id = models.BigAutoField(primary_key=True)
     perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE,related_name='usuario_perfil_activo_perfil')

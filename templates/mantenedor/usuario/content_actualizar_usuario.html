@@ -1,24 +1,29 @@
 <div class="modal-header">
-    <h5 class="modal-title" id="exampleModalLabel4">Modal title</h5>
+    <h5 class="modal-title" id="exampleModalLabel4">Modificar usuario</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <div class="row">
-        <div class="col mb-3">
-            <label for="nameExLarge" class="form-label"> {{form.username.label}}</label>
-            {{form.username}}
+    <form method="post" id="form_modificar_usuario" action="/mantenedor/usuario/{{user.id}}/actualizar/">
+        {% csrf_token %}
+        <div class="row g-2">
+            {% for input in form %}
+            <div class="col-12 mb-0">
+                <label for="{{input.name}}" class="form-label"> {{input.label}}</label>
+                {% if input.name == 'username'%}
+                <input type="text" name="username" value="{{rut}}" class="form-control" id="username" tabindex="0" required="">
+                {% else %}
+                {{input}}
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
-    </div>
-    <div class="row g-2">
-        {% for input in form %}
-        <div class="col-12 mb-0">
-            <label for="{{input.name}}" class="form-label"> {{input.label}}</label>
-            {{input}}
+        <br>
+        {% for perfil in perfiles %}
+        <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" value="{{perfil.id}}" id="{{perfil.nombre|lower}}" name="perfiles[]" 
+            {% if perfil.asignado %}checked{%endif%}>
+            <label class="form-check-label" for="{{perfil.nombre|lower}}">{{perfil.nombre}}</label>
         </div>
         {% endfor %}
-        <div class="col mb-0">
-            <label for="dobExLarge" class="form-label">DOB</label>
-            <input type="text" id="dobExLarge" class="form-control" placeholder="DD / MM / YY" />
-        </div>
-    </div>
+    </form>
 </div>

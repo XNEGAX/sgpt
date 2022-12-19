@@ -13,10 +13,20 @@ class Command(MigrateCommand):
             --USUARIO BASE
             INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
             VALUES(0, 'pbkdf2_sha256$260000$ZtD3llWxk4uUtbl5ExkvMp$Kz1Z4ByRhrLhoJ1J//UVSrqq0B7ZtZVBvPkUTExUD5Y=', NULL, true, 'automatización', '', '', '', true, true, now());
-            --USUARIO DEMO
+            --USUARIO ADMINISTRADOR
             INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
             VALUES(1, '', now(), false, '173733321@ACADEMICOS.uamericas.cl', 'CARLOS', 'MARIN GONZALEZ', 'carlos.marin.gonzalez@edu.udla.cl', true, true, now());
-            SELECT setval('auth_user_id_seq',2, true);
+            --DOCENTE
+            INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
+            VALUES(2, '', now(), false, '121820897@ACADEMICOS.uamericas.cl', 'JUAN CARLOS', 'SABA SAMUR', 'JSABASAM@EDU.UDLA.CL', true, true, now());
+            --ALUMNOS
+            INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
+            VALUES(3, '', now(), false, '153702527@ACADEMICOS.uamericas.cl', 'JORGE ANDRES', 'BERRIOS PEREZ', 'Jorge.berrios@edu.udla.cl', true, true, now());
+            INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
+            VALUES(4, '', now(), false, '199026860@ACADEMICOS.uamericas.cl', 'CARLOS ANDRES', 'DIAZ RODRÍGUEZ', 'CARLOSANDRES.DIAZ@EDU.UDLA.CL', true, true, now());
+            INSERT INTO public.auth_user (id, "password", last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined)
+            VALUES(5, '', now(), false, '213649264@ACADEMICOS.uamericas.cl', 'MARCEL EDUARDO', 'MEDINA PEREZ', 'marcel.medina@edu.udla.cl', true, true, now());
+            SELECT setval('auth_user_id_seq',6, true);
             --PARAMETROS BASE PARA TIPO MODULO
             INSERT INTO public.parametro(nombre, metadatos)VALUES('auth_user_auto',cast('{"auth_user_id": "0"}' AS json));
             --MODULOS
@@ -28,7 +38,9 @@ class Command(MigrateCommand):
             values(3,'MANTENEDOR','','tf-icons bx bxs-brightness', 1, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(4,'USUARIO','proyecto:mantenedor_usuario','', 1, true, 3);
-            SELECT setval('modulo_id_seq',5, true);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            values(5,'Impersonar','proyecto:impersonar_usuario','', 0, false, null);
+            SELECT setval('modulo_id_seq',6, true);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -37,8 +49,14 @@ class Command(MigrateCommand):
             SELECT setval('perfil_id_seq',5, true);
             --PARAMETRO PERFIL INVITADO
             INSERT INTO public.parametro(nombre,metadatos)VALUES('perfil_invitado',cast('{"perfil_id": "4"}' AS json));
-            --PERFIL ACTIVO USUARIO DEMO
+            --PERFIL ACTIVO USUARIO ADMINISTRADOR
             INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1, 0, 1);
+            --PERFIL ACTIVO USUARIO DOCENTE
+            INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2, 0, 2);
+            --PERFIL ACTIVO USUARIOS ALUMNOS
+            INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3, 0, 3);
+            INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3, 0, 4);
+            INSERT INTO public.usuario_perfil_activo(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3, 0, 5);
             --PERMISOS POR PERFIL
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(1,1,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(2,1,2);
@@ -50,10 +68,14 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(8,3,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(9,3,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(10,4,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(11,5,1);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
-            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,1);
-            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,1);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,2);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,3);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,4);
+            INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),3,0,5);
             -- SP PERMISOS MODULO USUARIO
             CREATE OR REPLACE FUNCTION public.sp_web_get_permisos_modulo_usuario(p_usuario_id int4)
             RETURNS TABLE(perfil_activo text,cantidad_perfiles int4,modulos json)

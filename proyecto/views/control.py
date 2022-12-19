@@ -7,11 +7,12 @@ from django.views.generic import View
 from django.db.models import CharField, Value
 from django.db.models.functions import Concat
 from django.db.models.functions import Lower
+from django.contrib.auth import login
 # models
 from proyecto.models import Parametro
 from proyecto.models import PerfilUsuarioActivo
 from proyecto.models import PerfilUsuario
-
+from django.contrib.auth.models import User
 
 class Salir(LogoutView):
     def get(self, request, *args, **kwargs):
@@ -43,3 +44,11 @@ class CambioPerfil(RoyalGuard,View):
 class Error403(View):
     def get(self, request):
         return render(request, 'control/errores.html',context={'estado':403},status=403)
+
+
+class ImpersonarUsuario(RoyalGuard,View):
+    def post(self, request):
+        impersonate = User.objects.get(id=request.POST.get('usuario_id'))
+        login(request, impersonate)
+        set_aditional_paramas(impersonate,request)
+        return redirect('proyecto:home')
