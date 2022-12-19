@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% include "mantenedor/actividad/mdl_crud_actividad.html" %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden">
+  <h5 class="card-header">Lista de Actividades</h5>
+  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
+    <div class="card-body demo-vertical-spacing demo-only-element">
+      <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
+        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter"/>
+        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+      </div>
+    </div>
+  </form>
+  <div class="card-body">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered" id="lista_actividad">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for usuario in page_obj %}
+          <tr>
+            <td>
+              <strong>{{usuario.nombre}}</strong>
+            </td>
+            <td>{{usuario.descripcion}}</td>
+            <td class="text-center">
+              <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
+            </td>
+            <td class="text-center">
+              <i class='bx bx-x text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer">
+    {% include "layouts/paginate.html" %}
+    <div class="btn-footer-table">
+      <button class="btn btn-primary" id="btn_crear_usuario">Nuevo</button>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/mantenedor/usuario/index.js' %}"></script>
+{% endblock script %}

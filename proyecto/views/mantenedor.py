@@ -63,3 +63,6 @@ class ActualizarUsuario(JsonGenericView, UpdateView):
     model = User
     form_class = UsuarioModelForm
     template_name = 'mantenedor/usuario/content_actualizar_usuario.html'
+
+def mantenedor_actividades(request):
+    return render(request, "mantenedor/actividad/index.html")    

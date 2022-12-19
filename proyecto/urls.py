@@ -6,6 +6,7 @@ from proyecto.views import Error403
 from proyecto.views.mantenedor import MantenedorUsuario
 from proyecto.views.mantenedor import CrearUsuario
 from proyecto.views.mantenedor import ActualizarUsuario
+from proyecto.views.mantenedor import mantenedor_actividades
 
 app_name = 'proyecto'
 
@@ -16,5 +17,7 @@ urlpatterns = [
     path("perfil/cambio/", CambioPerfil.as_view(), name="cambio_perfil"),
     path("mantenedor/usuario/", MantenedorUsuario.as_view(), name="mantenedor_usuario"),
     path("mantenedor/usuario/crear/", CrearUsuario.as_view(), name="mantenedor_usuario_crear"),
-    path('mantenedor/usuario/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar")
+    path('mantenedor/usuario/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar"),
+    path('mantenedor/actividad/', mantenedor_actividades, name="mantenedor_actividades")
+
 ]
