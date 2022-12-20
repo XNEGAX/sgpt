@@ -341,3 +341,18 @@ class VersionDocumento(models.Model):
 
     def __str__(self):
         return f'''{self.documento.folio}-{self.documento.nombre}-(v{self.version})'''
+
+    
+class DocenteSeccion(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_docente_seccion')
+
+class AlumnoSeccion(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_alumno_seccion')

@@ -16,7 +16,7 @@
         {% if request.session.modulos%}
             {% for m1 in request.session.modulos %}
                 {% url m1.url as url_m1 %}
-                {% if m1.is_url %}
+                {% if m1.is_url%}
                 <li class="menu-item
                     {% if request.path == url_m1 and not m1.submodulos %}
                         active 

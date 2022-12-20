@@ -40,7 +40,20 @@ class Command(MigrateCommand):
             values(4,'USUARIO','proyecto:mantenedor_usuario','', 1, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(5,'Impersonar','proyecto:impersonar_usuario','', 0, false, null);
-            SELECT setval('modulo_id_seq',6, true);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(6,'Actividad', 'proyecto:mantenedor_actividades', 'tf-icons bx bxs-factory',1, true, 3);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(7,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',2, true, 3);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(8,'secciones', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',3, true, 3);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(9,'Fases', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',4, true, 3);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(10, 'Administrar proyecto', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, NULL);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(11,'Administrar seccion', 'proyecto:lista_secciones', 'tf-icons bx bxs-factory',3, true, null);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(12, 'Administrar alumnos', 'proyecto:lista_alumnos', 'tf-icons bx bxs-factory', 0, false, NULL);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -69,6 +82,13 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(9,3,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(10,4,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(11,5,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(12,6,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(13,7,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(14,8,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(15,9,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(16,10,3);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(17,11,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(18,12,2);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);

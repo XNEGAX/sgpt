@@ -21,8 +21,8 @@
           <tr>
             <th>Sección</th>
             <th>Asignatura</th>
-            <th>Semestre / Año</th>
-            <th>Detalle alumnos</th>
+            <th class="text-center">Semestre / Año</th>
+            <th class="text-center">Detalle alumnos</th>
           </tr>
         </thead>
         <tbody>
@@ -35,7 +35,9 @@
               2 / 2022
             </td>
             <td class="text-center">
-              <i class='bx bx-search text-success clickeable ' href="/lista/alumnos/"></i>
+              <a href="/lista/alumnos/">
+                <i class='bx bx-search text-success clickeable ' ></i>
+              </a>
             </td>
           </tr>
           <tr>
@@ -47,7 +49,9 @@
               2 / 2021
             </td>
             <td class="text-center">
-              <i class='bx bx-search text-success clickeable ' href="/lista/alumnos/"></i>
+              <a href="/lista/alumnos/">
+                <i class='bx bx-search text-success clickeable ' ></i>
+              </a>
             </td>
           </tr>
         </tbody>
@@ -56,9 +60,6 @@
   </div>
   <div class="card-footer">
     {% include "layouts/paginate.html" %}
-    <div class="btn-footer-table">
-      <button class="btn btn-primary" id="btn_crear_usuario">Nuevo</button>
-    </div>
   </div>
 </div>
 
