@@ -103,4 +103,22 @@ class ActualizarUsuario(JsonGenericView, UpdateView):
         return super(ActualizarUsuario, self).post(request, *args, **kwargs)
 
 def mantenedor_actividades(request):
-    return render(request, "mantenedor/actividad/index.html")        
+    return render(request, "mantenedor/actividad/index.html")  
+
+def mantenedor_configuracionBase(request):
+    return render(request, "mantenedor/configuracionBase/index.html")    
+
+def mantenedor_secciones(request):
+    return render(request, "mantenedor/secciones/index.html")        
+
+def mantenedor_fases(request):
+    return render(request, "mantenedor/fases/index.html")         
+
+def mantenedor_proyecto(request):
+    return render(request, "mantenedor/proyecto/index.html")      
+
+def lista_secciones(request):
+    return render(request, "seccion/lista_secciones.html")       
+
+def lista_alumnos(request):
+    return render(request, "seccion/lista_alumnos.html")           

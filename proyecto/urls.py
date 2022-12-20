@@ -8,6 +8,15 @@ from proyecto.views.mantenedor import MantenedorUsuario
 from proyecto.views.mantenedor import CrearUsuario
 from proyecto.views.mantenedor import ActualizarUsuario
 from proyecto.views.mantenedor import mantenedor_actividades
+from proyecto.views.mantenedor import mantenedor_configuracionBase
+from proyecto.views.mantenedor import mantenedor_secciones
+from proyecto.views.mantenedor import mantenedor_fases
+from proyecto.views.mantenedor import mantenedor_proyecto
+from proyecto.views.mantenedor import lista_secciones
+from proyecto.views.mantenedor import lista_alumnos
+
+
+
 
 app_name = 'proyecto'
 
@@ -21,5 +30,11 @@ urlpatterns = [
     path("mantenedor/usuario/crear/", CrearUsuario.as_view(), name="mantenedor_usuario_crear"),
     path('mantenedor/usuario/<pk>/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar"),
     path('mantenedor/usuario/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar"),
-    path('mantenedor/actividad/', mantenedor_actividades, name="mantenedor_actividades")
+    path('mantenedor/actividad/', mantenedor_actividades, name="mantenedor_actividades"),
+    path('mantenedor/configuracionBase/', mantenedor_configuracionBase, name="mantenedor_configuracionBase"),
+    path('mantenedor/secciones/', mantenedor_secciones, name="mantenedor_secciones"),
+    path('mantenedor/fases/', mantenedor_fases, name="mantenedor_fases"),
+    path('mantenedor/proyecto/', mantenedor_proyecto, name="mantenedor_proyecto"),
+    path('lista/secciones/', lista_secciones, name="lista_secciones"),
+    path('lista/alumnos/', lista_alumnos, name="lista_alumnos"),
 ]

@@ -1,0 +1,67 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% include "mantenedor/usuario/mdl_crud_usuario.html" %}
+{% endblock modal%}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h4 class="card-title text-primary fw-bold">Lista de alumnos</h4>
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element"
+      id="form_filtro_orden">
+      <div class="card-body demo-vertical-spacing demo-only-element">
+        <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
+          <input type="text" class="form-control" aria-describedby="button-addon2" name="filtro" />
+          <input type="hidden" class="form-control" aria-describedby="button-addon2" name="orden" />
+          <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="card-body overflow-hidden mt-4 ml-2 mr-2">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered w-100" id="lista_usuarios">
+        <thead>
+          <tr>
+            <th class="column_order">rut</th>
+            <th class="column_order">nombre completo</th>
+            <th class="column_order">correo</th>
+            <th class="text-center column_order">perfil</th>
+            <th class="text-center">detalle</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for usuario in page_obj %}
+          <tr>
+            <td>
+              <strong>{{usuario.rut | upper}}</strong>
+            </td>
+            <td>{{usuario.nombre_completo| upper}}</td>
+            <td>{{usuario.correo| upper}}</td>
+            <td class="text-center fw-bold">{{usuario.perfil| upper}}</td>
+            <td class="text-center">
+              <form action="/usuario/impersonar/" method="POST">
+                <input type="hidden" name="usuario_id" value="{{usuario.id}}">
+                {% csrf_token %}
+                <i class='bx bx-search text-success clickeable btn_impersonar_usuario'></i>
+              </form>
+            </td>
+         
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer">
+    {% include "layouts/paginate.html" %}
+    <div class="btn-footer-table">
+      <button class="btn btn-primary" id="btn_crear_usuario">Nuevo</button>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/mantenedor/usuario/index.js' %}?q={{csrf_token}}"></script>
+{% endblock script %}

@@ -1,11 +1,11 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% block modal %}
-{% include "mantenedor/configuracionBase/mdl_crud_configuracion_base.html" %}
+{% include "mantenedor/secciones/mdl_crud_secciones.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card overflow-hidden">
-  <h5 class="card-header">Lista de Configuraciones</h5>
+  <h5 class="card-header">Lista de secciones</h5>
   <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
     <div class="card-body demo-vertical-spacing demo-only-element">
       <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">

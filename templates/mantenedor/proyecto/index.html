@@ -1,11 +1,11 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% block modal %}
-{% include "mantenedor/configuracionBase/mdl_crud_configuracion_base.html" %}
+{% include "mantenedor/proyecto/mdl_crud_proyecto.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card overflow-hidden">
-  <h5 class="card-header">Lista de Configuraciones</h5>
+  <h5 class="card-header">Lista de proyecto</h5>
   <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
     <div class="card-body demo-vertical-spacing demo-only-element">
       <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
@@ -19,27 +19,25 @@
       <table class="table table-bordered" id="lista_actividad">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
+            <th>Sección</th>
+            <th>Asignatura</th>
+            <th>Semestre / Año</th>
+            <th>Modificar</th>
           </tr>
         </thead>
         <tbody>
-          {% for usuario in page_obj %}
           <tr>
             <td>
-              <strong>{{usuario.nombre}}</strong>
+              <strong>ACI594-480</strong>
             </td>
-            <td>{{usuario.descripcion}}</td>
+            <td>Proyecto de título</td>
             <td class="text-center">
-              <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
+              2 / 2022
             </td>
             <td class="text-center">
-              <i class='bx bx-x text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
+              <i class='bx bx-edit text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
             </td>
           </tr>
-          {% endfor %}
         </tbody>
       </table>
     </div>
