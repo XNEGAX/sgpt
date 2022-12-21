@@ -1,16 +1,16 @@
 $(document).ready(function () {
-    $(document).on('click', '#btn_crear_usuario', function (e) {
+    $(document).on('click', '#btn_crear_seccion', function (e) {
         e.preventDefault();
-        $('#mdl_crud_usuario').modal('show');
-        $('#mdl_crud_usuario #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_usuario #contenido').load("/mantenedor/usuario/crear/", function () {
-            $('#mdl_crud_usuario .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+        $('#mdl_crud_seccion').modal('show');
+        $('#mdl_crud_seccion #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_crud_seccion #contenido').load("/mantenedor/seccion/crear/", function () {
+            $('#mdl_crud_seccion .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
         });
     });
     $(document).on('click', '#btn_guardar', function (e) {
         e.preventDefault();
         Swal.fire({
-            title: '¿Está seguro de crear este usuario?',
+            title: '¿Está seguro de crear esta seccion?',
             icon: 'warning',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
@@ -19,19 +19,10 @@ $(document).ready(function () {
             showCancelButton: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                let formData = new FormData($('#form_crear_usuario').get(0));
-                perfiles = []
-                $("#mdl_crud_usuario .form-check").find('input[type="checkbox"]').each(function () {
-                    var elemento = this;
-                    if ($(elemento).is(':checked')) {
-                        perfiles.push(elemento.value)
-                    }
-                });
-                formData.delete('perfiles[]');
-                formData.append('perfiles[]', perfiles);
+                let formData = new FormData($('#form_crear_seccion').get(0));
                 $.ajax({
                     type: 'POST',
-                    url: "/mantenedor/usuario/crear/",
+                    url: "/mantenedor/seccion/crear/",
                     data: formData,
                     cache: false,
                     processData: false,
@@ -48,15 +39,16 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_usuario').modal('hide');
+                            $('#mdl_crud_seccion').modal('hide');
                             Swal.fire(
                                 'Creado!',
-                                'El usuario fue creado con exito!',
+                                'El seccion fue creado con exito!',
                                 'success'
                             )
                             setTimeout(function(){
                                 location.reload();
                             }, 2000);
+                            
                         }
                         else {
                             Swal.fire(
@@ -80,15 +72,15 @@ $(document).ready(function () {
         document.getElementById("form_filtro_orden").submit();
     });
 
-    $(".btn_habilitar_usuario").change(function () {
-        let usuario_id = $(this).val();
+    $(".btn_habilitar_seccion").change(function () {
+        let seccion_id = $(this).val();
         let estado = $(this).is(':checked')? 1:0
         $.ajax({
-            url: '/mantenedor/usuario/',
+            url: '/mantenedor/seccion/',
             type: 'POST',
             data: {
                 'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                'usuario_id': usuario_id,
+                'seccion_id': seccion_id,
                 'estado': estado,
             },
             beforeSend: function () {
@@ -113,10 +105,10 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('click', '.btn_impersonar_usuario', function (e) {
+    $(document).on('click', '.btn_impersonar_seccion', function (e) {
         e.preventDefault();
         Swal.fire({
-            title: '¿Está seguro de impersonar a este usuario?',
+            title: '¿Está seguro de impersonar a esta seccion?',
             icon: 'warning',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
@@ -130,20 +122,20 @@ $(document).ready(function () {
         })
     });
 
-    $(document).on('click', '.btn_actualizar_usuario', function (e) {
+    $(document).on('click', '.btn_actualizar_seccion', function (e) {
         e.preventDefault();
-        let usuario_id = $(this).attr('usuario');
-        $('#mdl_crud_usuario').modal('show');
-        $('#mdl_crud_usuario #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_usuario #contenido').load(`/mantenedor/usuario/${usuario_id}/actualizar/`, function () {
-            $('#mdl_crud_usuario .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
+        let seccion_id = $(this).attr('seccion');
+        $('#mdl_crud_seccion').modal('show');
+        $('#mdl_crud_seccion #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_crud_seccion #contenido').load(`/mantenedor/seccion/${seccion_id}/actualizar/`, function () {
+            $('#mdl_crud_seccion .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
         });
     });
 
     $(document).on('click', '#btn_actualizar', function (e) {
         e.preventDefault();
         Swal.fire({
-            title: '¿Está seguro de modificar este usuario?',
+            title: '¿Está seguro de modificar esta seccion?',
             icon: 'warning',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
@@ -152,17 +144,8 @@ $(document).ready(function () {
             showCancelButton: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                let url = $('#form_modificar_usuario').attr('action');
-                let formData = new FormData($('#form_modificar_usuario').get(0));
-                perfiles = []
-                $("#mdl_crud_usuario .form-check").find('input[type="checkbox"]').each(function () {
-                    var elemento = this;
-                    if ($(elemento).is(':checked')) {
-                        perfiles.push(elemento.value)
-                    }
-                });
-                formData.delete('perfiles[]');
-                formData.append('perfiles[]', perfiles);
+                let url = $('#form_modificar_seccion').attr('action');
+                let formData = new FormData($('#form_modificar_seccion').get(0));
                 $.ajax({
                     type: 'POST',
                     url: url,
@@ -182,10 +165,10 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_usuario').modal('hide');
+                            $('#mdl_crud_seccion').modal('hide');
                             Swal.fire(
                                 'Modificado!',
-                                'El usuario fue modificado con exito!',
+                                'El seccion fue modificado con exito!',
                                 'success'
                             )
                             setTimeout(function(){

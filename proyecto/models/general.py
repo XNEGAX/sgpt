@@ -132,16 +132,17 @@ class ReporteConfigurable(models.Model):
 
 class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    codigo = models.TextField(blank=False, null=False)
-    nombre = models.TextField(blank=False, null=False)
+    codigo = models.TextField(blank=False, null=False, unique=True)
+    semestre = models.IntegerField(blank=False, null=False)
+    agno = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_seccion')
 
     def __str__(self):
-        return self.nombre
+        return self.codigo
 
     def save(self, *args, **kwargs):
-        self.nombre = self.nombre.strip().upper()
+        self.codigo = self.codigo.strip().upper()
         super(Seccion, self).save(*args, **kwargs)
 
     class Meta:

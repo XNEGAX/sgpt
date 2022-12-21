@@ -10,10 +10,13 @@ from function import JsonGenericView
 from function import validar_rut
 # models
 from django.contrib.auth.models import User
-# forms
-from proyecto.content import UsuarioModelForm
 from proyecto.models import Perfil
 from proyecto.models import PerfilUsuario
+from proyecto.models import Seccion
+# forms
+from proyecto.content import UsuarioModelForm
+from proyecto.content import SeccionModelForm
+
 
 
 class MantenedorUsuario(RoyalGuard, ListView):
@@ -82,7 +85,6 @@ class CrearUsuario(JsonGenericView, CreateView):
 
 
 class ActualizarUsuario(JsonGenericView, UpdateView):
-    """ actualiza anexo """
     model = User
     form_class = UsuarioModelForm
     template_name = 'mantenedor/usuario/content_actualizar_usuario.html'
@@ -108,8 +110,31 @@ def mantenedor_actividades(request):
 def mantenedor_configuracionBase(request):
     return render(request, "mantenedor/configuracionBase/index.html")    
 
-def mantenedor_secciones(request):
-    return render(request, "mantenedor/secciones/index.html")        
+class MantenedorSeccion(RoyalGuard, ListView):
+    template_name = 'mantenedor/seccion/index.html'
+    paginate_by = 10
+    model = Seccion
+    ordering = ['-codigo']
+
+class CrearSeccion(JsonGenericView, CreateView):
+    model = Seccion
+    form_class = SeccionModelForm
+    template_name = 'mantenedor/seccion/content_crear_seccion.html'
+
+    def form_valid(self, form):
+        form.instance.responsable = self.request.user
+        return super(CrearSeccion, self).form_valid(form)
+
+class ActualizarSeccion(JsonGenericView, UpdateView):
+    model = Seccion
+    form_class = SeccionModelForm
+    template_name = 'mantenedor/seccion/content_actualizar_seccion.html'
+    
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+        request.POST['responsable'] = request.user
+        return super(ActualizarSeccion, self).post(request, *args, **kwargs)
 
 def mantenedor_fases(request):
     return render(request, "mantenedor/fases/index.html")         

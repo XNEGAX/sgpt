@@ -9,7 +9,7 @@ services:
     - POSTGRES_USER=nega
     - POSTGRES_PASSWORD=Nega6456519
     ports:
-    - '5432:5432'
+    - '5433:5433'
     container_name: db_postgres
 
   django_app:
@@ -28,7 +28,7 @@ services:
         python manage.py makemigrations
         python manage.py migrate
         python manage.py implementacion
-        python manage.py runserver 0.0.0.0:8001
+        python manage.py runserver 0.0.0.0:8081
   
   nginx:
     image: nginx:latest
