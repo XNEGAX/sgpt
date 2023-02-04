@@ -57,6 +57,13 @@ class PerfilUsuario(models.Model):
     def is_perfil_habilitado(self):
         return PerfilUsuarioActivo.objects.filter(perfil=self.perfil,usuario=self.usuario).exists()
 
+    def get_list_perfiles(self,usuario):
+        return PerfilUsuario.objects.filter(usuario=usuario).values_list('perfil__nombre',flat=True)
+    
+    @property
+    def perfiles(self):
+        return '/'.join(self.get_list_perfiles(self.usuario))
+
 class PerfilUsuarioActivo(models.Model):
     id = models.BigAutoField(primary_key=True)
     perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE,related_name='usuario_perfil_activo_perfil')
@@ -130,11 +137,18 @@ class ReporteConfigurable(models.Model):
         managed = True
         db_table = 'reporte_configurable'
 
+class Semestre(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    periodo = models.IntegerField(blank=False, null=False)
+    fecha_desde = models.DateTimeField(blank=False, null=False)
+    fecha_hasta = models.DateTimeField(blank=False, null=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_semestre')
+
 class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     codigo = models.TextField(blank=False, null=False, unique=True)
-    semestre = models.IntegerField(blank=False, null=False)
-    agno = models.IntegerField(blank=False, null=False)
+    semestre = models.ForeignKey(Semestre, models.CASCADE, blank=False, null=False,related_name='seccion_semestre')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_seccion')
 

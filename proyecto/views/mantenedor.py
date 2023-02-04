@@ -43,7 +43,7 @@ class MantenedorUsuario(RoyalGuard, ListView):
                     'rut': validar_rut.format_rut_without_dots(rut),
                     'nombre_completo': perfil_usuario.usuario.get_full_name(),
                     'correo': perfil_usuario.usuario.email,
-                    'perfil': perfil_usuario.perfil.nombre,
+                    'perfil': perfil_usuario.perfiles,
                     'id': perfil_usuario.usuario.id,
                     'is_staff': perfil_usuario.usuario.is_staff,
                 })
@@ -69,7 +69,7 @@ class MantenedorUsuario(RoyalGuard, ListView):
 class CrearUsuario(JsonGenericView, CreateView):
     model = User
     form_class = UsuarioModelForm
-    template_name = 'mantenedor/usuario/content_crear_usuario.html'
+    template_name = 'mantenedor/usuario/content_crear.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -87,7 +87,7 @@ class CrearUsuario(JsonGenericView, CreateView):
 class ActualizarUsuario(JsonGenericView, UpdateView):
     model = User
     form_class = UsuarioModelForm
-    template_name = 'mantenedor/usuario/content_actualizar_usuario.html'
+    template_name = 'mantenedor/usuario/content_actualizar.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,6 +103,13 @@ class ActualizarUsuario(JsonGenericView, UpdateView):
             request.POST._mutable = True
         request.POST['responsable'] = request.user
         return super(ActualizarUsuario, self).post(request, *args, **kwargs)
+
+
+class MantenedorSemestre(RoyalGuard, ListView):
+    template_name = 'mantenedor/semestre/index.html'
+    paginate_by = 10
+    model = Seccion
+    ordering = ['-periodo','fecha_desde__year']
 
 def mantenedor_actividades(request):
     return render(request, "mantenedor/actividad/index.html")  

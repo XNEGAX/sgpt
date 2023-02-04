@@ -1,10 +1,10 @@
 $(document).ready(function () {
     $(document).on('click', '#btn_crear_seccion', function (e) {
         e.preventDefault();
-        $('#mdl_crud_seccion').modal('show');
-        $('#mdl_crud_seccion #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_seccion #contenido').load("/mantenedor/seccion/crear/", function () {
-            $('#mdl_crud_seccion .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+        $('#mdl_modulo').modal('show');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').load("/mantenedor/seccion/crear/", function () {
+            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
         });
     });
     $(document).on('click', '#btn_guardar', function (e) {
@@ -39,7 +39,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_seccion').modal('hide');
+                            $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Creado!',
                                 'El seccion fue creado con exito!',
@@ -125,10 +125,10 @@ $(document).ready(function () {
     $(document).on('click', '.btn_actualizar_seccion', function (e) {
         e.preventDefault();
         let seccion_id = $(this).attr('seccion');
-        $('#mdl_crud_seccion').modal('show');
-        $('#mdl_crud_seccion #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_seccion #contenido').load(`/mantenedor/seccion/${seccion_id}/actualizar/`, function () {
-            $('#mdl_crud_seccion .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
+        $('#mdl_modulo').modal('show');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').load(`/mantenedor/seccion/${seccion_id}/actualizar/`, function () {
+            $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
         });
     });
 
@@ -165,7 +165,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_seccion').modal('hide');
+                            $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Modificado!',
                                 'El seccion fue modificado con exito!',

@@ -12,6 +12,12 @@ services:
     - '5433:5433'
     container_name: db_postgres
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   django_app:
     build: .
     volumes:

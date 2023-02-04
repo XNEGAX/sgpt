@@ -1,10 +1,10 @@
 $(document).ready(function () {
     $(document).on('click', '#btn_crear_usuario', function (e) {
         e.preventDefault();
-        $('#mdl_crud_usuario').modal('show');
-        $('#mdl_crud_usuario #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_usuario #contenido').load("/mantenedor/usuario/crear/", function () {
-            $('#mdl_crud_usuario .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+        $('#mdl_modulo').modal('show');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').load("/mantenedor/usuario/crear/", function () {
+            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
         });
     });
     $(document).on('click', '#btn_guardar', function (e) {
@@ -21,7 +21,7 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 let formData = new FormData($('#form_crear_usuario').get(0));
                 perfiles = []
-                $("#mdl_crud_usuario .form-check").find('input[type="checkbox"]').each(function () {
+                $("#mdl_modulo .form-check").find('input[type="checkbox"]').each(function () {
                     var elemento = this;
                     if ($(elemento).is(':checked')) {
                         perfiles.push(elemento.value)
@@ -48,7 +48,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_usuario').modal('hide');
+                            $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Creado!',
                                 'El usuario fue creado con exito!',
@@ -133,10 +133,10 @@ $(document).ready(function () {
     $(document).on('click', '.btn_actualizar_usuario', function (e) {
         e.preventDefault();
         let usuario_id = $(this).attr('usuario');
-        $('#mdl_crud_usuario').modal('show');
-        $('#mdl_crud_usuario #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_crud_usuario #contenido').load(`/mantenedor/usuario/${usuario_id}/actualizar/`, function () {
-            $('#mdl_crud_usuario .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
+        $('#mdl_modulo').modal('show');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').load(`/mantenedor/usuario/${usuario_id}/actualizar/`, function () {
+            $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
         });
     });
 
@@ -155,7 +155,7 @@ $(document).ready(function () {
                 let url = $('#form_modificar_usuario').attr('action');
                 let formData = new FormData($('#form_modificar_usuario').get(0));
                 perfiles = []
-                $("#mdl_crud_usuario .form-check").find('input[type="checkbox"]').each(function () {
+                $("#mdl_modulo .form-check").find('input[type="checkbox"]').each(function () {
                     var elemento = this;
                     if ($(elemento).is(':checked')) {
                         perfiles.push(elemento.value)
@@ -182,7 +182,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response['estado'] == 0) {
-                            $('#mdl_crud_usuario').modal('hide');
+                            $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Modificado!',
                                 'El usuario fue modificado con exito!',

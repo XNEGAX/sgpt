@@ -1,4 +1,4 @@
-Django==3.2.6
+Django==4.1.6
 psycopg2==2.9.3
 django_microsoft_auth
 gunicorn==20.1.0

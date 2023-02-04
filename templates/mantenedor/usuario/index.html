@@ -1,12 +1,12 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% block modal %}
-{% include "mantenedor/usuario/mdl_crud_usuario.html" %}
+{% include "mantenedor/usuario/mdl_modulo.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card">
   <div class="card-header">
-    <h4 class="card-title text-primary fw-bold">Lista de usuarios</h4>
+    <h5 class="card-title text-primary fw-bold content-header">Lista de usuarios</h5>
     <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element"
       id="form_filtro_orden">
       <div class="card-body demo-vertical-spacing demo-only-element">
@@ -54,7 +54,7 @@
             <td class="text-center">
               <div class="form-check form-switch mb-2">
                 <input class="form-check-input btn_habilitar_usuario" value="{{usuario.id}}" 
-                type="checkbox" style="float: inherit !important;" {% if usuario.is_staff%}checked{%endif%}/>
+                type="checkbox" style="float: inherit !important;" {% if usuario.is_staff%}checked{%endif%} {% if usuario.id == request.user.id %}disabled {% endif %}/>
               </div>
             </td>
           </tr>

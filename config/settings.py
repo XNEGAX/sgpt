@@ -155,20 +155,20 @@ LOGIN_URL = "/microsoft_authentication/login"
 LOGIN_REDIRECT_URL = "/admin"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-if DEBUG == True:
-    LOGGING = {
-        'version': 1,
-        'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': 'orm_to_query3.log',
-            }
-        },
-        'loggers': {
-            'django.db.backends': {
-                'level': 'DEBUG',
-                'handlers': ['console'],
-            }
-        }
-    }
+# if DEBUG == True:
+#     LOGGING = {
+#         'version': 1,
+#         'handlers': {
+#             'console': {
+#                 'level': 'DEBUG',
+#                 'class': 'logging.FileHandler',
+#                 'filename': 'orm_to_query3.log',
+#             }
+#         },
+#         'loggers': {
+#             'django.db.backends': {
+#                 'level': 'DEBUG',
+#                 'handlers': ['console'],
+#             }
+#         }
+#     }

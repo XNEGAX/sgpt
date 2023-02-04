@@ -431,3 +431,11 @@ table{
   font-size: 12px !important;
   word-break: break-all !important
 }
+
+td,th { font-size: 10px !important }
+
+.menu-link{font-size: 12px !important}
+
+.content-header{
+  margin-bottom: 0px !important;
+}

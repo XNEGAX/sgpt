@@ -43,9 +43,9 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(6,'Actividad', 'proyecto:mantenedor_actividades', 'tf-icons bx bxs-factory',1, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(7,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',2, true, 3);
+            VALUES(8,'secciones', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(8,'secciones', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',3, true, 3);
+            VALUES(7,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',6, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(9,'Fases', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',4, true, 3);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
