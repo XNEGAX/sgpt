@@ -43,7 +43,7 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(6,'Actividad', 'proyecto:mantenedor_actividades', 'tf-icons bx bxs-factory',1, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(8,'secciones', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
+            VALUES(8,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(7,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',6, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
@@ -54,6 +54,8 @@ class Command(MigrateCommand):
             VALUES(11,'Administrar seccion', 'proyecto:lista_secciones', 'tf-icons bx bxs-factory',3, true, null);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(12, 'Administrar alumnos', 'proyecto:lista_alumnos', 'tf-icons bx bxs-factory', 0, false, NULL);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(13'semestre', 'proyecto:mantenedor_semestre', 'tf-icons bx bxs-factory',2, true, 3);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);

@@ -9,14 +9,8 @@ services:
     - POSTGRES_USER=nega
     - POSTGRES_PASSWORD=Nega6456519
     ports:
-    - '5433:5433'
+    - '5433:5432'
     container_name: db_postgres
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
 
   django_app:
     build: .
