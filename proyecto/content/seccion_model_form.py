@@ -1,24 +1,29 @@
 
 from django import forms
+from django.utils import timezone
 from django.core.exceptions import ValidationError
-from proyecto.models import Seccion
-
+from proyecto.models import Seccion,Semestre
 
 class SeccionModelForm(forms.ModelForm):
     codigo = forms.CharField(required=True, error_messages={'required': 'Ingrese Código de la sección'},label='CÓDIGO',widget=forms.TextInput(attrs={'class':'form-control','id':'codigo','tabindex':'0'}))
-    semestre = forms.IntegerField(required=True, error_messages={'required': 'Ingrese Semestre de la sección'},label='SEMESTRE',widget=forms.NumberInput(attrs={'class':'form-control','id':'semestre','tabindex':'1'}))
-    agno = forms.IntegerField(required=True, error_messages={'required': 'Ingrese Año de la sección'},label='AÑO',widget=forms.NumberInput(attrs={'class':'form-control','id':'agno','tabindex':'2'}))
+    semestre = forms.ModelChoiceField(queryset=Semestre.objects.all().order_by('id'),required=True, error_messages={'required': 'seleccione el semestre'},label='SEMESTRE',widget=forms.Select(attrs={'class':'form-control','id':'semestre','tabindex':'1'}))
+    fecha_desde = forms.DateField(required=True,error_messages={'required': 'Ingrese fecha desde'}, label='DESDE',widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_desde','type':'date','tabindex':'3'}))
+    fecha_hasta = forms.DateField(required=True,error_messages={'required': 'Ingrese fecha hasta'}, label='HASTA',widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_hasta','type':'date','tabindex':'4'}))
 
     class Meta:
         model = Seccion
         fields = [
             'codigo',
             'semestre',
-            'agno',
+            'fecha_desde',
+            'fecha_hasta',
         ]
 
     def clean_codigo(self):
-        codigo = self.cleaned_data['codigo']
-        if codigo and Seccion.objects.filter(codigo=codigo).exists() and not self.instance:
-            raise ValidationError("El código de seccón ya existe!")
-        return codigo
+        return self.cleaned_data.get('codigo').strip().upper()
+
+    def clean(self):
+        data = self.cleaned_data
+        if data.get('fecha_desde') > data.get('fecha_hasta'):
+            self.add_error('fecha_desde', "Ingrese un rango correcto de fechas.")
+        return data

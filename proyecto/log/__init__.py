@@ -7,6 +7,7 @@ from django.db.models.base import ModelState
 from django.dispatch import receiver
 from proyecto.models.log import Log
 from django.forms.models import model_to_dict
+from datetime import date,datetime
 
 def format(instance,**kwargs):
     metadata = {}
@@ -14,8 +15,9 @@ def format(instance,**kwargs):
     if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
         metadata = instance.__dict__
         metadata["detalle"] = str(model_to_dict(instance))
-        if metadata.get('fecha'):
-            metadata["fecha"] = metadata.get('fecha').strftime("%Y-%m-%d %H:%M:%S")
+        for k,v in metadata.items():
+            if isinstance(v,(date,datetime)):
+                metadata[k] = metadata.get(k).strftime("%Y-%m-%d %H:%M:%S")
         if metadata.get('_state'):
             del metadata["_state"]
     return (modelo,metadata)

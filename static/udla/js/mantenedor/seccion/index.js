@@ -42,7 +42,7 @@ $(document).ready(function () {
                             $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Creado!',
-                                'El seccion fue creado con exito!',
+                                'El seccion fue creada con exito!',
                                 'success'
                             )
                             setTimeout(function(){
@@ -72,43 +72,12 @@ $(document).ready(function () {
         document.getElementById("form_filtro_orden").submit();
     });
 
-    $(".btn_habilitar_seccion").change(function () {
-        let seccion_id = $(this).val();
-        let estado = $(this).is(':checked')? 1:0
-        $.ajax({
-            url: '/mantenedor/seccion/',
-            type: 'POST',
-            data: {
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                'seccion_id': seccion_id,
-                'estado': estado,
-            },
-            beforeSend: function () {
-                Swal.fire({
-                    imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                });
-                $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
-                $('.swal2-popup').css('background', 'transparent');
-            },
-            success: function (response) {
-                Swal.fire(
-                    response['respuesta'],'',
-                    'success'
-                )
-            },
-            error: function () {
-                swal.close();
-            },
-        });
-    });
 
-    $(document).on('click', '.btn_impersonar_seccion', function (e) {
+    $(document).on('click', '.btn_eliminar_seccion', function (e) {
         e.preventDefault();
+        let seccion = $(this).attr('seccion');
         Swal.fire({
-            title: '¿Está seguro de impersonar a esta seccion?',
+            title: '¿Está seguro de eliminar esta seccion?',
             icon: 'warning',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
@@ -117,10 +86,39 @@ $(document).ready(function () {
             showCancelButton: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                $(this).parents('form').submit();
+                $.ajax({
+                    url: seccion,
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    beforeSend: function () {
+                        Swal.fire({
+                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                        });
+                        $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
+                        $('.swal2-popup').css('background', 'transparent');
+                    },
+                    success: function (response) {
+                        Swal.fire(
+                            response['respuesta'],'',
+                            'success'
+                        )
+                        setTimeout(function(){
+                            location.reload();
+                        }, 2000);
+                    },
+                    error: function () {
+                        swal.close();
+                    },
+                });
             }
-        })
+        });
     });
+
 
     $(document).on('click', '.btn_actualizar_seccion', function (e) {
         e.preventDefault();
@@ -168,7 +166,7 @@ $(document).ready(function () {
                             $('#mdl_modulo').modal('hide');
                             Swal.fire(
                                 'Modificado!',
-                                'El seccion fue modificado con exito!',
+                                'El seccion fue modificada con exito!',
                                 'success'
                             )
                             setTimeout(function(){

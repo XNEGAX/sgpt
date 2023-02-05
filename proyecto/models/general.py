@@ -3,6 +3,7 @@ import json
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
  
 class Modulo(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -138,26 +139,30 @@ class ReporteConfigurable(models.Model):
         db_table = 'reporte_configurable'
 
 class Semestre(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    periodo = models.IntegerField(blank=False, null=False)
-    fecha_desde = models.DateTimeField(blank=False, null=False)
-    fecha_hasta = models.DateTimeField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_semestre')
+    id = models.AutoField(primary_key=True, editable=False)
+    nombre = models.CharField(max_length=16, blank=False, null=False)
+
+    class Meta:
+        managed = True
+        db_table = 'semestre'
+
+    def __str__(self):
+        return f'{self.nombre}'
 
 class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     codigo = models.TextField(blank=False, null=False, unique=True)
     semestre = models.ForeignKey(Semestre, models.CASCADE, blank=False, null=False,related_name='seccion_semestre')
+    fecha_desde = models.DateTimeField(blank=False, null=False)
+    fecha_hasta = models.DateTimeField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_seccion')
 
     def __str__(self):
-        return self.codigo
+        return f'{self.codigo} - ({self.semestre} / {self.fecha_desde.year})'
 
-    def save(self, *args, **kwargs):
-        self.codigo = self.codigo.strip().upper()
-        super(Seccion, self).save(*args, **kwargs)
+    def get_semestre_nombre(self):
+        return f'{self.semestre} / {self.fecha_desde.year}'
 
     class Meta:
         managed = True
@@ -177,7 +182,7 @@ class Fase(models.Model):
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
         self.descripcion = self.descripcion.strip()
-        super(Seccion, self).save(*args, **kwargs)
+        super(Fase, self).save(*args, **kwargs)
 
     class Meta:
         managed = True

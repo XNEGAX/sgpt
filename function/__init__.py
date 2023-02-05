@@ -41,22 +41,34 @@ class ConsultaBD(object):
 class JsonGenericView(object):
     """ Se extiende de esta clase cuando se requiere obtener la respuesta de una vista generica en formato json """
     def form_invalid(self, form):
-        for elem in form:
-            for k, v in form.errors.items():
-                if k == elem.name:
-                    return JsonResponse({
-                        'estado': '1',
-                        'error': strip_tags(v)
-                    }, status=200,safe=False)
+        try:
+            for elem in form:
+                for k, v in form.errors.items():
+                    print(elem.name)
+                    if k == elem.name:
+                        return JsonResponse({
+                            'estado': '1',
+                            'error': strip_tags(v)
+                        }, status=200,safe=False)
+        except Exception as exc:
+            return JsonResponse({'estado': '1','error':formatear_error(exc)}, status=500,safe=False)
 
     def form_valid(self, form):
         try:
-            self.object = form.save()
+            self.object = form.save(commit=False)
+            if hasattr(self.object, 'responsable_id'):
+                self.object.responsable_id = self.request.user.id
+            if hasattr(self.object, 'fecha_desde'):
+                self.object.fecha_desde = self.object.fecha_desde.strftime("%Y-%m-%d")
+            if hasattr(self.object, 'fecha_hasta'):
+                self.object.fecha_hasta = self.object.fecha_hasta.strftime("%Y-%m-%d")
+            self.object.save()
+            
             context = {
                 'estado': '0',
                 'mensaje': 'Operación exitosa',
                 'id': self.object.pk,
             }
-            return JsonResponse(context)
+            return JsonResponse(context, status=200)
         except Exception as exc:
-            print(formatear_error(exc))
+            return JsonResponse({'estado': '1','error':formatear_error(exc)}, status=500,safe=False)

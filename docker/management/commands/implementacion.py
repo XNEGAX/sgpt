@@ -55,7 +55,7 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(12, 'Administrar alumnos', 'proyecto:lista_alumnos', 'tf-icons bx bxs-factory', 0, false, NULL);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(13'semestre', 'proyecto:mantenedor_semestre', 'tf-icons bx bxs-factory',2, true, 3);
+            VALUES(13,'semestre', 'proyecto:mantenedor_semestre', 'tf-icons bx bxs-factory',2, true, 3);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -133,6 +133,8 @@ class Command(MigrateCommand):
             where t1.usuario_id = p_usuario_id;
             END;$function$
             ;
+            INSERT INTO public.semestre (id,nombre) values (1,'PRIMER SEMESTRE');
+            INSERT INTO public.semestre (id,nombre) values (2,'SEGUNDO SEMESTRE');
             """).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))

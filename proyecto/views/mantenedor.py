@@ -5,6 +5,7 @@ from django.views.generic import View
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
+from django.views.generic import DeleteView
 from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from function import validar_rut
@@ -17,8 +18,7 @@ from proyecto.models import Seccion
 from proyecto.content import UsuarioModelForm
 from proyecto.content import SeccionModelForm
 
-
-
+""" inicio bloque usuario"""
 class MantenedorUsuario(RoyalGuard, ListView):
     template_name = 'mantenedor/usuario/index.html'
     paginate_by = 10
@@ -83,7 +83,6 @@ class CrearUsuario(JsonGenericView, CreateView):
         request.POST['responsable'] = request.user
         return super(CrearUsuario, self).post(request, *args, **kwargs)
 
-
 class ActualizarUsuario(JsonGenericView, UpdateView):
     model = User
     form_class = UsuarioModelForm
@@ -104,44 +103,40 @@ class ActualizarUsuario(JsonGenericView, UpdateView):
         request.POST['responsable'] = request.user
         return super(ActualizarUsuario, self).post(request, *args, **kwargs)
 
+""" fin bloque usuario"""
 
-class MantenedorSemestre(RoyalGuard, ListView):
-    template_name = 'mantenedor/semestre/index.html'
-    paginate_by = 10
-    model = Seccion
-    ordering = ['-periodo','fecha_desde__year']
-
-def mantenedor_actividades(request):
-    return render(request, "mantenedor/actividad/index.html")  
-
-def mantenedor_configuracionBase(request):
-    return render(request, "mantenedor/configuracionBase/index.html")    
-
+""" inicio bloque seccion"""
 class MantenedorSeccion(RoyalGuard, ListView):
     template_name = 'mantenedor/seccion/index.html'
     paginate_by = 10
     model = Seccion
-    ordering = ['-codigo']
+    ordering = ['-fecha_desde__year','semestre_id','codigo']
 
 class CrearSeccion(JsonGenericView, CreateView):
     model = Seccion
     form_class = SeccionModelForm
-    template_name = 'mantenedor/seccion/content_crear_seccion.html'
-
-    def form_valid(self, form):
-        form.instance.responsable = self.request.user
-        return super(CrearSeccion, self).form_valid(form)
+    template_name = 'mantenedor/seccion/content_crear.html'
 
 class ActualizarSeccion(JsonGenericView, UpdateView):
     model = Seccion
     form_class = SeccionModelForm
-    template_name = 'mantenedor/seccion/content_actualizar_seccion.html'
+    template_name = 'mantenedor/seccion/content_actualizar.html'
     
     def post(self, request, *args, **kwargs):
         if not request.POST._mutable:
             request.POST._mutable = True
         request.POST['responsable'] = request.user
         return super(ActualizarSeccion, self).post(request, *args, **kwargs)
+
+def eliminar_seccion(request,pk):
+    Seccion.objects.filter(pk=pk).delete()
+    return JsonResponse({
+        'estado': '0',
+        'respuesta': 'Sección enliminada con exito!'
+    }, status=200,safe=False)
+
+
+
 
 def mantenedor_fases(request):
     return render(request, "mantenedor/fases/index.html")         
@@ -153,4 +148,11 @@ def lista_secciones(request):
     return render(request, "seccion/lista_secciones.html")       
 
 def lista_alumnos(request):
-    return render(request, "seccion/lista_alumnos.html")           
+    return render(request, "seccion/lista_alumnos.html")    
+
+def mantenedor_actividades(request):
+    return render(request, "mantenedor/actividad/index.html")  
+
+def mantenedor_configuracionBase(request):
+
+    return render(request, "mantenedor/configuracionBase/index.html")         

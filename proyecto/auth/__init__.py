@@ -74,7 +74,7 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
         return user
 
 class RoyalGuard(LoginRequiredMixin):
-    login_url = '/admin/login/'
+    login_url = '/users/login/'
 
     def dispatch(self, request, *args, **kwargs):
         rediredct_login = f'/users/login/?next={request.path}'
