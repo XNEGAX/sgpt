@@ -1,0 +1,51 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden">
+  <h5 class="card-header content-header">Mis secciones</h5>
+  <div class="card-body">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered" id="lista_seccion">
+        <thead>
+          <tr>
+            <th>código</th>
+            <th class="text-center">semestre</th>
+            <th class="text-center">fecha_desde</th>
+            <th class="text-center">fecha_hasta</th>
+            <th class="text-center">administrar actividades</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for seccion in object_list %}
+          <tr>
+            <td>
+              <strong>{{seccion.codigo}}</strong>
+            </td>
+            <td class="text-center">{{seccion.semestre}}</td>
+            <td class="text-center">{{seccion.fecha_desde |date:"d-m-Y"}}</td>
+            <td class="text-center">{{seccion.fecha_hasta |date:"d-m-Y"}}</td>
+            <td class="text-center">
+              <a href="/docente/seccion/{{seccion.id}}/actividades/">
+                <i class='bx bxs-factory text-primary clickeable'></i>
+              </a>
+            </td>
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="4" class="text-center">
+              <strong>Sin información</strong>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/mantenedor/seccion/index.js' %}"></script>
+{% endblock script %}

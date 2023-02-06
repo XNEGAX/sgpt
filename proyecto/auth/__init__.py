@@ -66,6 +66,7 @@ class CustomAuthBackendMicrosoft(MicrosoftAuthenticationBackend):
         if code is not None:
             token = self.microsoft.fetch_token(code=code)
             if "access_token" in token and self.microsoft.valid_scopes(token["scope"]):
+                request.session['access_token']=token.get('access_token')
                 user = self._authenticate_user()
         if user is not None:
             self._call_hook(user)

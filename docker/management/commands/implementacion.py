@@ -35,23 +35,21 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(2,'Cambio Perfil','proyecto:cambio_perfil','', 0, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            values(3,'MANTENEDOR','','tf-icons bx bxs-brightness', 1, true, null);
+            values(3,'MANTENEDOR','','tf-icons bx bxs-brightness', 4, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(4,'USUARIO','proyecto:mantenedor_usuario','', 1, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(5,'Impersonar','proyecto:impersonar_usuario','', 0, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(6,'Actividad', 'proyecto:mantenedor_actividades', 'tf-icons bx bxs-factory',1, true, 3);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(8,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(7,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',6, true, 3);
+            VALUES(7,'Fase', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',1, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(9,'Fases', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',4, true, 3);
+            VALUES(9,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',6, true, 3);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(10, 'Administrar proyecto', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, NULL);
+            VALUES(10, 'Administrar proyecto título', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(11,'Administrar seccion', 'proyecto:lista_secciones', 'tf-icons bx bxs-factory',3, true, null);
+            VALUES(11,'Mis secciones', 'proyecto:docente_secciones', 'tf-icons bx bxs-factory',1, true, null);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(12, 'Administrar alumnos', 'proyecto:lista_alumnos', 'tf-icons bx bxs-factory', 0, false, NULL);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
@@ -84,8 +82,7 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(9,3,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(10,4,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(11,5,1);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(12,6,2);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(13,7,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(13,7,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(14,8,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(15,9,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(16,10,3);
@@ -133,8 +130,28 @@ class Command(MigrateCommand):
             where t1.usuario_id = p_usuario_id;
             END;$function$
             ;
+            --SEMESTRES
             INSERT INTO public.semestre (id,nombre) values (1,'PRIMER SEMESTRE');
             INSERT INTO public.semestre (id,nombre) values (2,'SEGUNDO SEMESTRE');
+            --SECCIONES
+            INSERT INTO public.seccion(id, codigo, fecha_desde, fecha_hasta, fecha, responsable_id, semestre_id) VALUES
+            (1, 'ACI594-480', '2023-02-28 21:00:00.000', '2023-07-30 20:00:00.000', '2023-02-05 17:32:13.234', 1, 1);
+            SELECT setval('seccion_id_seq',2, true);
+            --FASES
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES
+            (1, 'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.', '2023-02-05 17:34:31.558', 1);
+            SELECT setval('fase_id_seq',2, true);
+            --alumno seccion
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, '2023-02-05 22:26:37.831', 1, 1, 3);
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(2, '2023-02-05 22:26:53.673', 1, 1, 4);
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(3, '2023-02-05 22:48:30.002', 1, 1, 2);
+            SELECT setval('alumno_seccion_id_seq',4, true);
+            --docente seccion
+            INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, '2023-02-05 22:48:17.236', 1, 1, 2);
+            SELECT setval('docente_seccion_id_seq',2, true);
+
+
+
             """).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))

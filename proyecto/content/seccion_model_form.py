@@ -1,7 +1,5 @@
 
 from django import forms
-from django.utils import timezone
-from django.core.exceptions import ValidationError
 from proyecto.models import Seccion,Semestre
 
 class SeccionModelForm(forms.ModelForm):

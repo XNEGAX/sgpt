@@ -23,6 +23,7 @@
             <th class="text-center">semestre</th>
             <th class="text-center">fecha_desde</th>
             <th class="text-center">fecha_hasta</th>
+            <th class="text-center">administrar personas</th>
             <th class="text-center">Editar</th>
             <th class="text-center">Eliminar</th>
           </tr>
@@ -36,6 +37,9 @@
             <td class="text-center">{{seccion.get_semestre_nombre}}</td>
             <td class="text-center">{{seccion.fecha_desde |date:"d-m-Y"}}</td>
             <td class="text-center">{{seccion.fecha_hasta |date:"d-m-Y"}}</td>
+            <td class="text-center">
+              <i class='bx bxs-group text-primary clickeable btn_administrar_seccion' seccion='{{seccion.id}}'></i>
+            </td>
             <td class="text-center">
               <i class='bx bx-edit text-success clickeable btn_actualizar_seccion' seccion='{{seccion.id}}'></i>
             </td>

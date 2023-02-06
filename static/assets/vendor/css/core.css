@@ -2107,7 +2107,8 @@ progress {
 }
 
 .table-responsive {
-  overflow-x: auto;
+  /* overflow-x: auto; */
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -13534,6 +13535,10 @@ button.list-group-item-gray.active {
 
 .text-center {
   text-align: center !important;
+}
+
+.text-justify {
+  text-align: justify !important;
 }
 
 .rounded-end {

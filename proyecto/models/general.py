@@ -52,7 +52,7 @@ class PerfilUsuario(models.Model):
         unique_together = ('perfil_id','usuario_id',)
 
     def __str__(self):
-        return f'{self.perfil.name} - {self.usuario.get_full_name()}'
+        return f'{self.perfil.nombre} - {self.usuario.get_full_name()}'
     
     @property
     def is_perfil_habilitado(self):
@@ -168,121 +168,104 @@ class Seccion(models.Model):
         managed = True
         db_table = 'seccion'
 
+class DocenteSeccion(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_docente_seccion')
+
+    class Meta:
+        managed = True
+        db_table = 'docente_seccion'
+        unique_together = ('usuario','seccion',)
+
+class AlumnoSeccion(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_alumno_seccion')
+
+    class Meta:
+        managed = True
+        db_table = 'alumno_seccion'
+        unique_together = ('usuario','seccion',)
+
 class Fase(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    nombre = models.TextField(blank=False, null=False)
+    nombre = models.TextField(blank=False, null=False, unique=True)
     descripcion = models.TextField(blank=False, null=False)
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_fase')
     
     def __str__(self):
         return self.nombre
 
-    def save(self, *args, **kwargs):
-        self.nombre = self.nombre.strip().upper()
-        self.descripcion = self.descripcion.strip()
-        super(Fase, self).save(*args, **kwargs)
-
     class Meta:
         managed = True
         db_table = 'fase'
+
+class TipoEntrada(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    nombre = models.TextField(blank=False, null=False)
+    ind_archivo = models.BooleanField(default=False)
+    formato = models.TextField(blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_tipo_entrada')
+    
+    def __str__(self):
+        formato = f'({self.formato})' if self.formato and self.formato != '' else ''
+        return f'{self.nombre} {formato}'
+
+    class Meta:
+        managed = True
+        db_table = 'tipo_entrada'
 
 class Actividad(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
     descripcion = models.TextField(blank=False, null=False)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    fase = models.ForeignKey(Fase, on_delete=models.CASCADE,blank=True, null=True)
+    tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE)
+    orden = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_actividad')
 
     def __str__(self):
         return self.nombre
 
-    def save(self, *args, **kwargs):
-        self.nombre = self.nombre.strip().upper()
-        self.descripcion = self.descripcion.strip()
-        super(Actividad, self).save(*args, **kwargs)
-
     class Meta:
         managed = True
         db_table = 'actividad'
 
-class TipoEntrada(models.Model):
+class ActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    tipo = models.TextField(blank=False, null=False)
-    ind_archivo = models.BooleanField(default=True)
-    formato = models.TextField(blank=True, null=True)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_tipo_entrada')
-    
-    def __str__(self):
-        return self.nombre
-
-    def save(self, *args, **kwargs):
-        self.tipo = self.tipo.strip().lower()
-        self.formato = self.descripcion.strip()
-        super(Actividad, self).save(*args, **kwargs)
-
-    class Meta:
-        managed = True
-        db_table = 'tipo_entrada'
-
-class FaseActividadTipoEntrada(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    fase = models.ForeignKey(Fase, on_delete=models.CASCADE)
-    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
-    tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE)
-    orden = models.IntegerField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_face_actividad_tipo_entrada')
-
-    class Meta:
-        managed = True
-        db_table = 'fase_actividad_tipo_entrada'
-    
-class FaseActividadRespuestaEntrada(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    fase_actividad_tipo_entrada = models.ForeignKey(FaseActividadTipoEntrada, on_delete=models.CASCADE)
-    respuesta = models.TextField(blank=False, null=False)
-    orden = models.IntegerField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_face_actividad_respuesta_entrada')
-
-    def get_respuesta(self):
-        return json.loads(self.respuesta)
-
-    class Meta:
-        managed = True
-        db_table = 'fase_actividad_respuesta_entrada'
-
-class FaseActividadRespuestaUsuario(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    fase_actividad_tipo_entrada = models.ForeignKey(FaseActividadTipoEntrada, on_delete=models.CASCADE)
-    respuesta = models.TextField(blank=False, null=False)
+    seccion_configuracion = models.ForeignKey(Actividad, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    respuesta = models.TextField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_face_actividad_respuesta_usuario')
-
-    def get_respuesta(self):
-        return json.loads(self.respuesta)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_actividad_respuesta_usuario')
     
     class Meta:
         managed = True
-        db_table = 'fase_actividad_respuesta_persona'
+        db_table = 'actividad_respuesta_usuario'
+        unique_together = ('seccion_configuracion','usuario','respuesta',)
 
-class BitacoraFaseActividadRespuestaUsuario(models.Model):
+class BitacoraActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     bitacora_padre = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True)
-    fase_actividad_respuesta_persona = models.ForeignKey(FaseActividadRespuestaUsuario, on_delete=models.CASCADE)
+    actividad_respuesta_usuario = models.ForeignKey(ActividadRespuestaUsuario, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     comentario = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_bitacora_face_actividad_respuesta_usuario')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_bitacora_actividad_respuesta_usuario')
 
     class Meta:
         managed = True
-        db_table = 'bitacora_fase_actividad_respuesta_persona'
+        db_table = 'bitacora_actividad_respuesta_usuario'
 
 
 class TipoDocumento(models.Model):
@@ -363,16 +346,3 @@ class VersionDocumento(models.Model):
         return f'''{self.documento.folio}-{self.documento.nombre}-(v{self.version})'''
 
     
-class DocenteSeccion(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_docente_seccion')
-
-class AlumnoSeccion(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_alumno_seccion')

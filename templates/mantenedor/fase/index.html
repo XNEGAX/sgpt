@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% block modal %}
-{% include "mantenedor/fases/mdl_modulo.html" %}
+{% include "mantenedor/fase/mdl_modulo.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card overflow-hidden">
@@ -16,27 +16,33 @@
   </form>
   <div class="card-body">
     <div class="table-responsive text-nowrap">
-      <table class="table table-bordered" id="lista_actividad">
+      <table class="table table-bordered" id="lista_fase">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
+            <th>NOMBRE</th>
+            <th class="text-center">DESCRIPCIÓN</th>
+            <th class="text-center">Editar</th>
+            <th class="text-center">Eliminar</th>
           </tr>
         </thead>
         <tbody>
-          {% for usuario in page_obj %}
+          {% for fase in object_list %}
           <tr>
             <td>
-              <strong>{{usuario.nombre}}</strong>
+              <strong>{{fase.nombre}}</strong>
             </td>
-            <td>{{usuario.descripcion}}</td>
+            <td class="text-justify text-wrap">{{fase.descripcion}}</td>
             <td class="text-center">
-              <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
+              <i class='bx bx-edit text-success clickeable btn_actualizar_fase' fase='{{fase.id}}'></i>
             </td>
             <td class="text-center">
-              <i class='bx bx-x text-danger clickeable btn_eliminar_usuario' usuario='{{usuario.id}}'></i>
+              <i class='bx bx-x text-danger clickeable btn_eliminar_fase' fase='/mantenedor/fase/{{fase.id}}/eliminar/'></i>
+            </td>
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="6" class="text-center">
+              <strong>Sin información</strong>
             </td>
           </tr>
           {% endfor %}
@@ -47,12 +53,12 @@
   <div class="card-footer">
     {% include "layouts/paginate.html" %}
     <div class="btn-footer-table">
-      <button class="btn btn-primary" id="btn_crear_usuario">Nuevo</button>
+      <button class="btn btn-primary" id="btn_crear_fase">Nuevo</button>
     </div>
   </div>
 </div>
 
 {% endblock content %}
 {% block script %}
-<script src="{% static 'udla/js/mantenedor/usuario/index.js' %}"></script>
+<script src="{% static 'udla/js/mantenedor/fase/index.js' %}"></script>
 {% endblock script %}
