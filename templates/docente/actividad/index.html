@@ -20,8 +20,11 @@
       <table class="table table-bordered" id="lista_actividad">
         <thead>
           <tr>
+            <th class="text-center">N°</th>
             <th>NOMBRE</th>
             <th class="text-center">DESCRIPCIÓN</th>
+            <th class="text-center">FASE</th>
+            <th class="text-center">TIPO RESPUESTA</th>
             <th class="text-center">Editar</th>
             <th class="text-center">Eliminar</th>
           </tr>
@@ -29,10 +32,13 @@
         <tbody>
           {% for actividad in object_list %}
           <tr>
+            <td class="text-justify text-wrap">{{actividad.orden}}</td>
             <td>
               <strong>{{actividad.nombre}}</strong>
             </td>
             <td class="text-justify text-wrap">{{actividad.descripcion}}</td>
+            <td class="text-center text-wrap">{{actividad.fase |default_if_none:"-"}}</td>
+            <td class="text-center text-wrap">{{actividad.tipo_entrada}}</td>
             <td class="text-center">
               <i class='bx bx-edit text-success clickeable btn_actualizar_actividad' actividad='{{actividad.id}}'></i>
             </td>
@@ -42,7 +48,7 @@
           </tr>
           {%empty%}
           <tr>
-            <td colspan="6" class="text-center">
+            <td colspan="7" class="text-center">
               <strong>Sin información</strong>
             </td>
           </tr>

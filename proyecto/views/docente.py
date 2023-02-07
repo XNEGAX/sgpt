@@ -50,6 +50,22 @@ class CrearActividad(JsonGenericView, CreateView):
     form_class = ActividadModelForm
     template_name = 'docente/actividad/content_crear.html'
 
+    def get_initial(self):
+        return {
+            'seccion_id':self.kwargs['seccion_id'],
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super(CrearActividad, self).get_context_data(**kwargs)
+        context['seccion'] = self.kwargs['seccion_id']
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.POST._mutable:
+            request.POST._mutable = True
+        request.POST['seccion'] = request.POST.get('seccion')
+        return super(CrearActividad, self).post(request, *args, **kwargs)
+
 class ActualizarActividad(JsonGenericView, UpdateView):
     model = Actividad
     form_class = ActividadModelForm

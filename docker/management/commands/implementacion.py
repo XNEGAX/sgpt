@@ -149,9 +149,9 @@ class Command(MigrateCommand):
             --docente seccion
             INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, '2023-02-05 22:48:17.236', 1, 1, 2);
             SELECT setval('docente_seccion_id_seq',2, true);
-
-
-
+            --tipos dato
+            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, formato, fecha, responsable_id)VALUES(1, 'text', false, NULL, '2023-02-07 19:24:16.112', 0);
+            SELECT setval('tipo_entrada_id_seq',2, true);
             """).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))

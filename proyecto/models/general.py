@@ -13,6 +13,7 @@ class Modulo(models.Model):
     icono = models.TextField(blank=True, null=True)
     orden = models.IntegerField(blank=False, null=False)
     ind_url = models.BooleanField(default=True)
+    
     class Meta:
         managed = True
         db_table = 'modulo'
@@ -86,44 +87,10 @@ class Parametro(models.Model):
         managed = True
         db_table = 'parametro'
 
-class ConfiguracionBase(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    modelo = models.ForeignKey(ContentType,models.SET_NULL,blank=True,null=True)
-    metadatos=models.JSONField()
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_configuracionbase')
-
-    def get_fields(self):
-        campos = []
-        exec(f'campos = list({self.modelo}._meta.get_fields())')
-        return campos
-
-    class Meta:
-        managed = True
-        db_table = 'configuracion_base'
-
-class TipoSalidaReporte(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    nombre = models.TextField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_tipo_salida_reporte')
-
-    def __str__(self):
-        return self.nombre
-
-    def save(self, *args, **kwargs):
-        self.nombre = self.nombre.strip().upper()
-        super(TipoSalidaReporte, self).save(*args, **kwargs)
-
-    class Meta:
-        managed = True
-        db_table = 'tipo_salida_reporte'
-
 class ReporteConfigurable(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
     codigo_fuente = models.TextField(blank=False, null=False)
-    tipo_salida_reporte = models.ForeignKey(TipoSalidaReporte, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_reporte_configurable')
 
@@ -132,7 +99,7 @@ class ReporteConfigurable(models.Model):
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
-        super(TipoSalidaReporte, self).save(*args, **kwargs)
+        super(ReporteConfigurable, self).save(*args, **kwargs)
 
     class Meta:
         managed = True
@@ -267,7 +234,6 @@ class BitacoraActividadRespuestaUsuario(models.Model):
         managed = True
         db_table = 'bitacora_actividad_respuesta_usuario'
 
-
 class TipoDocumento(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.TextField(blank=False, null=False)
@@ -326,14 +292,12 @@ class Documento(models.Model):
         self.doc_nombre = f'{folio}.pdf'
         return super(Documento, self).save(*args, **kwargs)
     
-
 class VersionDocumento(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     version = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now=True)
     metadatos=models.JSONField()
     documento = models.ForeignKey(Documento, on_delete=models.CASCADE)
-    estado_documento = models.ForeignKey(EstadoDocumento, on_delete=models.CASCADE)
     ruta = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_version_documento')
