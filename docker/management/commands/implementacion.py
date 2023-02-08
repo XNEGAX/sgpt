@@ -44,8 +44,6 @@ class Command(MigrateCommand):
             VALUES(8,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(7,'Fase', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',1, true, 3);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(9,'configuracion base', 'proyecto:mantenedor_configuracionBase', 'tf-icons bx bxs-factory',6, true, 3);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(10, 'Administrar proyecto título', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
@@ -54,6 +52,14 @@ class Command(MigrateCommand):
             VALUES(12, 'Administrar alumnos', 'proyecto:lista_alumnos', 'tf-icons bx bxs-factory', 0, false, NULL);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(13,'semestre', 'proyecto:mantenedor_semestre', 'tf-icons bx bxs-factory',2, true, 3);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(14,'Docente actividades sección', 'proyecto:docente_seccion_actividades', 'tf-icons bx bxs-factory',2, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(15,'Crear actividad', 'proyecto:docente_seccion_actividad_crear', 'tf-icons bx bxs-factory',3, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(16,'Actualizar actividad', 'proyecto:docente_seccion_actividad_actualizar', 'tf-icons bx bxs-factory',4, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(17,'Eliminar actividad', 'proyecto:docente_seccion_actividad_eliminar', 'tf-icons bx bxs-factory',5, false, null);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -84,10 +90,13 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(11,5,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(13,7,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(14,8,1);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(15,9,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(16,10,3);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(17,11,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(18,12,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(19,14,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(20,15,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(21,16,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(22,17,2);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);
@@ -137,21 +146,43 @@ class Command(MigrateCommand):
             INSERT INTO public.seccion(id, codigo, fecha_desde, fecha_hasta, fecha, responsable_id, semestre_id) VALUES
             (1, 'ACI594-480', '2023-02-28 21:00:00.000', '2023-07-30 20:00:00.000', '2023-02-05 17:32:13.234', 1, 1);
             SELECT setval('seccion_id_seq',2, true);
-            --FASES
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES
-            (1, 'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.', '2023-02-05 17:34:31.558', 1);
-            SELECT setval('fase_id_seq',2, true);
             --alumno seccion
-            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, '2023-02-05 22:26:37.831', 1, 1, 3);
-            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(2, '2023-02-05 22:26:53.673', 1, 1, 4);
-            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(3, '2023-02-05 22:48:30.002', 1, 1, 2);
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, now(), 1, 1, 3);
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(2, now(), 1, 1, 4);
+            INSERT INTO public.alumno_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(3, now(), 1, 1, 2);
             SELECT setval('alumno_seccion_id_seq',4, true);
             --docente seccion
-            INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, '2023-02-05 22:48:17.236', 1, 1, 2);
+            INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, now(), 1, 1, 2);
             SELECT setval('docente_seccion_id_seq',2, true);
+            --FASES
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(1, 'ASPECTOS DE LA EMPRESA', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(2, 'SITUACIÓN ACTUAL DEL PROYECTO', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(3, 'PLANTEAMIENTO DE OBJETIVOS', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(4, 'ESTUDIO DE FACTIBILIDAD Y GESTIÓN DE RIESGOS', '', 'now()', 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(5, 'PLANTEAMIENTO DE LA SOLUCION', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(6, 'DISEÑO DEL SISTEMA', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(7, 'CONSTRUCCIÓN DE PROTOTIPO FUNCIONAL ', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(8, 'DISEÑOS DE PRUEBAS DEL SOFTWARE', '', now(), 1);
+            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(9, 'CONCLUSIONES DEL PROYECTO', '', now(), 1);
+            SELECT setval('fase_id_seq',10, true);
             --tipos dato
-            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, formato, fecha, responsable_id)VALUES(1, 'text', false, NULL, '2023-02-07 19:24:16.112', 0);
-            SELECT setval('tipo_entrada_id_seq',2, true);
+            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'text', false, false, NULL, now(), 0);
+            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(2, 'file', false, false,'jpeg', now(), 0);
+            SELECT setval('tipo_entrada_id_seq',3, true);
+            --actividades
+            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
+            VALUES(1, null ,'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.',
+            1, now(), NULL, 2, 1, 1);
+            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
+            VALUES(2, null, 'ANTECEDENTES DE LA EMPRESA.', '-', 
+            2, now(), 1, 2, 1, 1);
+            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
+            VALUES(3, null, 'ORGANIGRAMA', '-', 
+            3, now(), 1, 2, 1, 2);
+            INSERT INTO public.actividad(id, nombre, descripcion, orden, fecha, actividad_padre_id, fase_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(5, 'ÁREA FUNCIONAL', '-', 
+            4, now(), NULL, 1, 2, 1, 1);
+            SELECT setval('actividad_id_seq',5, true);
+
             """).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))

@@ -92,6 +92,7 @@ class RoyalGuard(LoginRequiredMixin):
             else:
                 request.session['breadcrumb'] =''
                 ruta = str(request.path).split('/')
+                print(request.path)
                 while("" in ruta):
                     ruta.remove("")
                 if len(ruta)==2:

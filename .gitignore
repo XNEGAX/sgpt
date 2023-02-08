@@ -1,6 +1,7 @@
 ### Django ###
 .vscode
 *.pyc
+docker/management/commands/__pycache__/
 *.log
 *.json
 __pycache__/

@@ -14,7 +14,7 @@ from proyecto.content import ActividadModelForm
 
 """ inicio bloque seccion docente"""
 
-class MantenedorSeccionesDocente(ListView):
+class MantenedorSeccionesDocente(RoyalGuard,ListView):
     template_name = 'docente/seccion/index.html'
     paginate_by = 10
     model = DocenteSeccion
@@ -32,7 +32,7 @@ class MantenedorSeccionesDocente(ListView):
             })
         return data
 
-class MantenedorActividad(ListView):
+class MantenedorActividad(RoyalGuard,ListView):
     template_name = 'docente/actividad/index.html'
     paginate_by = 10
     model = Actividad
@@ -45,7 +45,7 @@ class MantenedorActividad(ListView):
         context['seccion'] = self.kwargs['seccion_id']
         return context
 
-class CrearActividad(JsonGenericView, CreateView):
+class CrearActividad(RoyalGuard,JsonGenericView, CreateView):
     model = Actividad
     form_class = ActividadModelForm
     template_name = 'docente/actividad/content_crear.html'
@@ -59,12 +59,6 @@ class CrearActividad(JsonGenericView, CreateView):
         context = super(CrearActividad, self).get_context_data(**kwargs)
         context['seccion'] = self.kwargs['seccion_id']
         return context
-
-    def post(self, request, *args, **kwargs):
-        if not request.POST._mutable:
-            request.POST._mutable = True
-        request.POST['seccion'] = request.POST.get('seccion')
-        return super(CrearActividad, self).post(request, *args, **kwargs)
 
 class ActualizarActividad(JsonGenericView, UpdateView):
     model = Actividad

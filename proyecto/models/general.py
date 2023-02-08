@@ -177,6 +177,7 @@ class TipoEntrada(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
     ind_archivo = models.BooleanField(default=False)
+    ind_multiple = models.BooleanField(default=False)
     formato = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_tipo_entrada')
@@ -191,17 +192,18 @@ class TipoEntrada(models.Model):
 
 class Actividad(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
+    actividad_padre = models.ForeignKey('self',on_delete=models.CASCADE, related_name='relacion_actividad_padre',blank=True, null=True)
     nombre = models.TextField(blank=False, null=False)
-    descripcion = models.TextField(blank=False, null=False)
+    descripcion = models.TextField(blank=False, null=False,default='-')
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
     fase = models.ForeignKey(Fase, on_delete=models.CASCADE,blank=True, null=True)
     tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE)
-    orden = models.IntegerField(blank=False, null=False)
+    orden = models.FloatField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_actividad')
 
     def __str__(self):
-        return self.nombre
+        return f'{self.orden}. {self.nombre}'
 
     class Meta:
         managed = True
@@ -209,7 +211,7 @@ class Actividad(models.Model):
 
 class ActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    seccion_configuracion = models.ForeignKey(Actividad, on_delete=models.CASCADE)
+    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='relacion_actividad_respuesta_usuario')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     respuesta = models.TextField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=True)
@@ -219,7 +221,7 @@ class ActividadRespuestaUsuario(models.Model):
     class Meta:
         managed = True
         db_table = 'actividad_respuesta_usuario'
-        unique_together = ('seccion_configuracion','usuario','respuesta',)
+        unique_together = ('actividad','usuario','respuesta',)
 
 class BitacoraActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
