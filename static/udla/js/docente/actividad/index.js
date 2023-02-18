@@ -2,16 +2,16 @@ $(document).ready(function () {
     $(document).on('click', '#btn_crear_actividad', function (e) {
         e.preventDefault();
         url = `/docente/seccion/${$('#seccion').val()}/actividad/crear/`;
-        console.log(url)
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load(url, function () {
             $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+            $('#mdl_modulo #contenido form').attr('action', url);
         });
     });
     $(document).on('click', '#btn_guardar', function (e) {
         e.preventDefault();
-        url = `/docente/seccion/${$('#seccion').val()}/actividad/crear/`;
+        url = $('#form_crear_actividad').attr('action');
         Swal.fire({
             title: '¿Está seguro de crear esta actividad?',
             icon: 'warning',
@@ -32,7 +32,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -74,8 +74,6 @@ $(document).ready(function () {
         $("input[name='orden']").val(campo);
         document.getElementById("form_filtro_orden").submit();
     });
-
-
     $(document).on('click', '.btn_eliminar_actividad', function (e) {
         e.preventDefault();
         let actividad = $(this).attr('actividad');
@@ -97,7 +95,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -121,18 +119,16 @@ $(document).ready(function () {
             }
         });
     });
-
-
     $(document).on('click', '.btn_actualizar_actividad', function (e) {
         e.preventDefault();
-        let actividad_id = $(this).attr('actividad');
+        let url = $(this).attr('actividad');
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
-        $('#mdl_modulo #contenido').load(`/docente/actividad/${actividad_id}/actualizar/`, function () {
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
+        $('#mdl_modulo #contenido').load(url, function () {
             $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
+            $('#mdl_modulo #contenido form').attr('action', url);
         });
     });
-
     $(document).on('click', '#btn_actualizar', function (e) {
         e.preventDefault();
         Swal.fire({
@@ -156,7 +152,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -190,5 +186,15 @@ $(document).ready(function () {
                 });
             }
         })
+    });
+    $(document).on('change', '#mdl_modulo form', function (e) {
+        let button = $('#mdl_modulo .modal-footer .btn_accion').html()
+        let action = $(this).attr('action')
+        let params = $(this).serialize()
+        let fullpath = decodeURI(action+'?'+params)
+        $('#mdl_modulo #contenido').load(fullpath, function () {
+            $('#mdl_modulo .modal-footer .btn_accion').html(button)
+            $('#mdl_modulo #contenido form').attr('action', action);
+        });
     });
 });

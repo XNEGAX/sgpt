@@ -176,6 +176,7 @@ class Fase(models.Model):
 class TipoEntrada(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
+    tipo = models.TextField(blank=False, null=False)
     ind_archivo = models.BooleanField(default=False)
     ind_multiple = models.BooleanField(default=False)
     formato = models.TextField(blank=True, null=True)
@@ -208,6 +209,11 @@ class Actividad(models.Model):
     class Meta:
         managed = True
         db_table = 'actividad'
+
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.strip().upper()
+        self.descripcion = self.descripcion.strip().upper()
+        super(Actividad, self).save(*args, **kwargs)
 
 class ActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

@@ -3,14 +3,19 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" id="form_modificar_actividad" action="/mantenedor/actividad/{{actividad.id}}/actualizar/">
+    <form method="post" id="form_modificar_actividad" autocomplete="off">
         {% csrf_token %}
         <div class="row g-2">
-            {% for input in form %}
+            {% for input in form.visible_fields %}
             <div class="col-12 mb-0">
-                <label for="{{input.name}}" class="form-label"> {{input.label}}</label>
+                <label for="{{input.name}}" class="form-label"> {{input.label}} 
+                    {% if input.field.required and input.field.widget.attrs.style != 'display:none'%}<span class="required">*</span>{% endif%}
+                </label>
                 {{input}}
             </div>
+            {% endfor %}
+            {% for input in form.hidden_fields %}
+                {{ input }}
             {% endfor %}
         </div>
     </form>

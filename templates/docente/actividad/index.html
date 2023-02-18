@@ -10,7 +10,7 @@
   <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
     <div class="card-body demo-vertical-spacing demo-only-element">
       <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
-        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter"/>
+        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}" id="filter" autofocus onload="SetCaretAtEnd()"/>
         <button class="btn btn-outline-primary" type="submit">Filtrar</button>
       </div>
     </div>
@@ -40,7 +40,7 @@
             <td class="text-center text-wrap">{{actividad.fase |default_if_none:"-"}}</td>
             <td class="text-center text-wrap">{{actividad.tipo_entrada}}</td>
             <td class="text-center">
-              <i class='bx bx-edit text-success clickeable btn_actualizar_actividad' actividad='{{actividad.id}}'></i>
+              <i class='bx bx-edit text-success clickeable btn_actualizar_actividad' actividad='/seccion/{{actividad.seccion.id}}/actividad/{{actividad.id}}/actualizar/'></i>
             </td>
             <td class="text-center">
               <i class='bx bx-x text-danger clickeable btn_eliminar_actividad' actividad='/docente/actividad/{{actividad.id}}/eliminar/'></i>

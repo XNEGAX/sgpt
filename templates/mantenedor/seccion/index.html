@@ -6,11 +6,20 @@
 {% block content %}
 <div class="card overflow-hidden">
   <h5 class="card-header content-header">Lista de seccion</h5>
-  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
-    <div class="card-body demo-vertical-spacing demo-only-element">
-      <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
-        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter"/>
-        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element form-inline">
+    <div class="form-row">
+      <div class="form-group col-md-4">
+        <select id="year" name="year" class="form-control" style="max-width: 120px !important;appearance: auto !important">
+          {% for year in years%}
+            <option value="{{year}}" {%if year_selected == year %}selected{%endif%}>{{year}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
+          <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter}}"/>
+          <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+        </div>
       </div>
     </div>
   </form>

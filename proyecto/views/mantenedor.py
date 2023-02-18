@@ -8,6 +8,7 @@ from django.views.generic import UpdateView
 from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from function import validar_rut
+from django.utils import timezone
 # models
 from django.contrib.auth.models import User
 from proyecto.models import Perfil
@@ -134,6 +135,27 @@ class MantenedorSeccion(RoyalGuard, ListView):
     paginate_by = 10
     model = Seccion
     ordering = ['-fecha_desde__year','semestre_id','codigo']
+
+    def get_queryset(self):
+        year_selected = int(self.request.GET.get('year')) if self.request.GET.get('year') else timezone.now().year
+        lista_secciones = Seccion.objects.filter(fecha_desde__year=year_selected)
+        filter = self.request.GET.get('filter')
+        if filter:
+            lista_secciones = lista_secciones.filter(
+               Q(codigo__icontains=filter)|Q(semestre__nombre__icontains=filter)
+            )
+        return lista_secciones
+
+    def get_context_data(self, **kwargs):
+        context = super(MantenedorSeccion, self).get_context_data(**kwargs)
+        lista_agnos = (list(Seccion.objects.all().values_list('fecha_desde__year',flat=True)) or [])
+        agno_siguiente = timezone.now().year+1
+        if agno_siguiente not in lista_agnos:
+            lista_agnos.append(agno_siguiente)
+        context['years'] = lista_agnos
+        context['filter'] = self.request.GET.get('filter')
+        context['year_selected'] = int(self.request.GET.get('year')) if self.request.GET.get('year') else None
+        return context
 
 class CrearSeccion(JsonGenericView, CreateView):
     model = Seccion

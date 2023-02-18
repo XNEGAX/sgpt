@@ -166,8 +166,8 @@ class Command(MigrateCommand):
             INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(9, 'CONCLUSIONES DEL PROYECTO', '', now(), 1);
             SELECT setval('fase_id_seq',10, true);
             --tipos dato
-            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'text', false, false, NULL, now(), 0);
-            INSERT INTO public.tipo_entrada(id, nombre, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(2, 'file', false, false,'jpeg', now(), 0);
+            INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'TEXTO','text', false, false, NULL, now(), 0);
+            INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(2, 'IMAGEN','file', false, false,'jpeg', now(), 0);
             SELECT setval('tipo_entrada_id_seq',3, true);
             --actividades
             INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)

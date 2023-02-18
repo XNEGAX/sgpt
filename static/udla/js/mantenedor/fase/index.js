@@ -2,7 +2,7 @@ $(document).ready(function () {
     $(document).on('click', '#btn_crear_fase', function (e) {
         e.preventDefault();
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load("/mantenedor/fase/crear/", function () {
             $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
         });
@@ -29,7 +29,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -94,7 +94,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -124,7 +124,7 @@ $(document).ready(function () {
         e.preventDefault();
         let fase_id = $(this).attr('fase');
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load(`/mantenedor/fase/${fase_id}/actualizar/`, function () {
             $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
         });
@@ -153,7 +153,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,

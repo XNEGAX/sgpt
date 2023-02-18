@@ -67,8 +67,8 @@ urlpatterns = [
     path('docente/secciones/', MantenedorSeccionesDocente.as_view(), name="docente_secciones"),
     path('docente/seccion/<seccion_id>/actividades/', MantenedorActividad.as_view(), name="docente_seccion_actividades"),
     path('docente/seccion/<seccion_id>/actividad/crear/', CrearActividad.as_view(), name="docente_seccion_actividad_crear"),
-    path('docente/seccion/<seccion_id>/actividad/actualizar/', ActualizarActividad.as_view(), name="docente_seccion_actividad_actualizar"),
-    path('docente/seccion/<seccion_id>/actividad/eliminar/', eliminar_actividad, name="docente_seccion_actividad_eliminar"),
+    path('seccion/<seccion_id>/actividad/<pk>/actualizar/', ActualizarActividad.as_view(), name="docente_seccion_actividad_actualizar"),
+    path('seccion/actividad/<pk>/eliminar/', eliminar_actividad, name="docente_seccion_actividad_eliminar"),
     
     path('mantenedor/proyecto/', mantenedor_proyecto, name="mantenedor_proyecto"),
     path('lista/secciones/', lista_secciones, name="lista_secciones"),

@@ -3,9 +3,10 @@ $(document).ready(function () {
         e.preventDefault();
         $('#mdl_modulo .modal-lg').removeClass("modal-lg").addClass("modal-sm");
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load("/mantenedor/seccion/crear/", function () {
-            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar').css("display","block")
+            $('#mdl_modulo .modal-footer button[data-bs-dismiss=modal]').text('cancelar');
         });
     });
     $(document).on('click', '#btn_guardar', function (e) {
@@ -30,7 +31,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -82,7 +83,7 @@ $(document).ready(function () {
             icon: 'warning',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
-            cancelButtonText: '<span class="pull-left"></span><span class="bold">Cancelar</span>',
+            cancelButtonText: '<span class="pull-left"></span><span class="bolond">Cancelar</span>',
             allowOutsideClick: false,
             showCancelButton: true,
         }).then((result) => {
@@ -95,7 +96,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -126,9 +127,10 @@ $(document).ready(function () {
         $('#mdl_modulo .modal-lg').removeClass("modal-lg").addClass("modal-sm");
         let seccion_id = $(this).attr('seccion');
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load(`/mantenedor/seccion/${seccion_id}/actualizar/`, function () {
-            $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar');
+            $('#mdl_modulo .modal-footer .btn_accion').text('Modificar').attr('id', 'btn_actualizar').css("display","block")
+            $('#mdl_modulo .modal-footer button[data-bs-dismiss=modal]').text('cancelar');
         });
     });
 
@@ -155,7 +157,7 @@ $(document).ready(function () {
                     contentType: false,
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -195,9 +197,10 @@ $(document).ready(function () {
         $('#mdl_modulo .modal-sm').removeClass("modal-sm").addClass("modal-lg");
         let seccion_id = $(this).attr('seccion');
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="loadding-spinner"></div>');
+        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
         $('#mdl_modulo #contenido').load(`/mantenedor/seccion/${seccion_id}/administrar/`, function () {
-            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_administrar');
+            $('#mdl_modulo .modal-footer .btn_accion').css("display","none");
+            $('#mdl_modulo .modal-footer button[data-bs-dismiss=modal]').text('cerrar');
             recargar_tabla('profesor',seccion_id)
             recargar_tabla('alumno',seccion_id)
             $("#cmb_profesor").select2({
@@ -234,7 +237,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -288,7 +291,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -332,7 +335,7 @@ $(document).ready(function () {
                     },
                     beforeSend: function () {
                         Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="loadding-spinner"></div>',
+                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: false,
@@ -353,6 +356,10 @@ $(document).ready(function () {
                 });
             }
         });
+    });
+
+    $(document).on('change', '#year', function (e) {
+        $('[type="submit"]').click();
     });
 
 });

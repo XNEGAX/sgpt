@@ -38,6 +38,7 @@ BASE_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'microsoft_auth',
+    'django.contrib.postgres',
 ]
 CREATED_APPS = [
     'proyecto',
