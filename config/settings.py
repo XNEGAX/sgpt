@@ -148,6 +148,13 @@ AUTHENTICATION_BACKENDS = [
     'proyecto.auth.CustomAuthBackendMicrosoft',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.authentication.BasicAuthentication',
+    ]
+}
+
 MICROSOFT_AUTH_CLIENT_ID = 'f62e6859-a5f4-47e3-9af5-0ec70e2ec10f'
 MICROSOFT_AUTH_CLIENT_SECRET = '4248Q~1oCtwVLUOhy5Sw~4OEVgl7r8HrYR0ZLcXv'
 MICROSOFT_AUTH_LOGIN_TYPE = 'ma'

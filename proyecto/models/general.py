@@ -137,8 +137,8 @@ class Seccion(models.Model):
 
 class DocenteSeccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='usuario_docente_seccion')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='seccion_docente_seccion')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_docente_seccion')
 
@@ -149,8 +149,8 @@ class DocenteSeccion(models.Model):
 
 class AlumnoSeccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='usuario_alumno_seccion')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='seccion_alumno_seccion')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_alumno_seccion')
 
@@ -162,7 +162,7 @@ class AlumnoSeccion(models.Model):
 class Fase(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False, unique=True)
-    descripcion = models.TextField(blank=False, null=False)
+    descripcion = models.TextField(blank=True, null=True,default='-')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_fase')
     
@@ -199,7 +199,7 @@ class Actividad(models.Model):
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)
     fase = models.ForeignKey(Fase, on_delete=models.CASCADE,blank=True, null=True)
     tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE)
-    orden = models.FloatField(blank=False, null=False)
+    orden = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='responsable_crud_actividad')
 

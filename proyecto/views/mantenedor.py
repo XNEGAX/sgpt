@@ -5,6 +5,8 @@ from django.views.generic import View,TemplateView
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
+from rest_framework.generics import DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from function import validar_rut
@@ -19,6 +21,7 @@ from proyecto.models import Fase
 from proyecto.content import UsuarioModelForm
 from proyecto.content import SeccionModelForm
 from proyecto.content import FaseModelForm
+
 
 """ inicio bloque usuario"""
 class MantenedorUsuario(RoyalGuard, ListView):
@@ -160,19 +163,25 @@ class CrearSeccion(JsonGenericView, CreateView):
     form_class = SeccionModelForm
     template_name = 'mantenedor/seccion/content_crear.html'
 
-class ActualizarSeccion(JsonGenericView, UpdateView):
+class ActualizarSeccion(RoyalGuard, JsonGenericView, UpdateView):
     model = Seccion
     form_class = SeccionModelForm
     template_name = 'mantenedor/seccion/content_actualizar.html'
 
-def eliminar_seccion(request,pk):
-    Seccion.objects.filter(pk=pk).delete()
-    return JsonResponse({
-        'estado': '0',
-        'respuesta': 'Sección eliminada con exito!'
-    }, status=200,safe=False)
+class EliminarSeccion(RoyalGuard,DestroyAPIView):
+    permission_classes = [IsAuthenticated]
 
-class AdministrarSeccion(TemplateView):
+    def get_queryset(self):
+        queryset = Seccion.objects.filter(id=self.kwargs['pk'])
+        return queryset
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        return JsonResponse({
+            'estado': '0',
+            'respuesta': 'Sección eliminada con exito!'
+        }, status=200,safe=False)
+
+class AdministrarSeccion(RoyalGuard,TemplateView):
     template_name='mantenedor/seccion/content_administrar.html'
 
     def post(self,request,pk,metodo,perfil,usuario=None):
@@ -258,43 +267,46 @@ class MantenedorFase(RoyalGuard, ListView):
     model = Fase
     ordering = ['nombre']
 
-class CrearFase(JsonGenericView, CreateView):
+    def get_queryset(self):
+        lista_fases = Fase.objects.filter()
+        filter = self.request.GET.get('filter')
+        if filter:
+            lista_fases = lista_fases.filter(
+               Q(nombre__icontains=filter)|Q(descripcion__icontains=filter)
+            )
+        return lista_fases
+
+    def get_context_data(self, **kwargs):
+        context = super(MantenedorFase, self).get_context_data(**kwargs)
+        context['filter'] = self.request.GET.get('filter')
+        return context
+
+class CrearFase(RoyalGuard,JsonGenericView, CreateView):
     model = Fase
     form_class = FaseModelForm
     template_name = 'mantenedor/fase/content_crear.html'
 
-class ActualizarFase(JsonGenericView, UpdateView):
+class ActualizarFase(RoyalGuard,JsonGenericView, UpdateView):
     model = Fase
     form_class = FaseModelForm
     template_name = 'mantenedor/fase/content_actualizar.html'
 
-def eliminar_fase(request,pk):
-    Fase.objects.filter(pk=pk).delete()
-    return JsonResponse({
-        'estado': '0',
-        'respuesta': 'Fase eliminada con exito!'
-    }, status=200,safe=False)
+class EliminarFase(RoyalGuard,DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Fase.objects.filter(id=self.kwargs['pk'])
+        return queryset
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        return JsonResponse({
+            'estado': '0',
+            'respuesta': 'Fase eliminada con exito!'
+        }, status=200,safe=False)
 
 """ fin bloque fase"""
 
-
-
-
-def mantenedor_fases(request):
-    return render(request, "mantenedor/fases/index.html")         
+   
 
 def mantenedor_proyecto(request):
-    return render(request, "mantenedor/proyecto/index.html")      
-
-def lista_secciones(request):
-    return render(request, "seccion/lista_secciones.html")       
-
-def lista_alumnos(request):
-    return render(request, "seccion/lista_alumnos.html")    
-
-def mantenedor_actividades(request):
-    return render(request, "mantenedor/actividad/index.html")  
-
-def mantenedor_configuracionBase(request):
-
-    return render(request, "mantenedor/configuracionBase/index.html")         
+    return render(request, "mantenedor/proyecto/index.html")

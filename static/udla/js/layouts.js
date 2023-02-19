@@ -1,3 +1,5 @@
+'use strict';
+
 function SetCaretAtEnd(elem) {
     var elemLen = elem.value.length;
     if (document.selection) {
@@ -14,6 +16,117 @@ function SetCaretAtEnd(elem) {
         elem.focus();
     }
 }
+
+function openLoader() {
+    Swal.fire({
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading()
+        },
+    });
+    $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
+    $('.swal2-popup').css('background', 'transparent');
+}
+
+function closeLoader() {
+    swal.close();
+}
+
+class Microservicio {
+    constructor(url) {
+        this.url = url;
+        this.params = {};
+        this.params['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val()
+    }
+    post(params) {
+        $.ajax({
+            url: this.url,
+            type: 'POST',
+            data: params,
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                Swal.fire(
+                    response['respuesta'], '',
+                    'success'
+                )
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
+    }
+    get() {
+        $.ajax({
+            url: this.url,
+            type: 'GET',
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                console.log(response)
+            },
+            complete: function () {
+                closeLoader()
+            },
+            error: function (error) {
+                console.log(error)
+                closeLoader()
+            },
+        });
+    }
+    getModalForm(modal, accion, id) {
+        openLoader()
+        $(modal).load(this.url, function (responseText, textStatus, req) {
+            console.log(responseText, textStatus, req)
+            $(modal + ' .modal-footer .btn_accion').text(accion).attr('id', id);
+            closeLoader()
+        });
+    }
+    getModalFormOnlyClose(modal) {
+        try {
+            openLoader()
+            const cuerpo = modal + ' #contenido'
+            $(cuerpo).load(this.url, function (responseText, textStatus, req) {
+                $(modal + ' .modal-footer .btn_accion').css("display", "none");
+                $(modal + ' .modal-footer button[data-bs-dismiss=modal]').text('cerrar');
+                closeLoader()
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+    datatable(id, args) {
+        $(id).DataTable({
+            "bFilter": true,
+            "bLengthChange": false,
+            "destroy": true,
+            "searching": false,
+            "bInfo": false,
+            "responsive": false,
+            "autoWidth": false,
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ ",
+                "sInfo": "<b>_START_ a _END_</b> de _TOTAL_ Registros"
+            },
+            "ajax": {
+                url: this.url,
+                type: 'POST',
+                data: params
+            },
+            "columns": args['columns'],
+            "columnDefs": args['columnDefs'],
+        });
+    }
+}
+
 $(document).ready(function () {
     $(document).on('click', '#btn_cambio_perfil', function (e) {
         e.preventDefault();
@@ -60,72 +173,17 @@ $(document).ready(function () {
                     $('#mdl_modulo').modal('hide');
                 }
             })
-            
+
         }
     });
 
-    class Microservicio {
-        constructor(url) {
-            this.url = url;
-            this.params = {};
-            this.params['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val()
+    $(document).ajaxError(function (event, request, settings) {
+        alert("Oops!!");
+    });
+    $.ajaxSetup({
+        timeout: 5000,
+        error: function (event, request, settings) {
+            alert("Oops!");
         }
-        post(params) {
-            $.ajax({
-                url: this.url,
-                type: 'POST',
-                data: params,
-                beforeSend: function () {
-                    Swal.fire({
-                        imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        allowOutsideClick: false,
-                    });
-                    $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
-                    $('.swal2-popup').css('background', 'transparent');
-                },
-                success: function (response) {
-                    Swal.fire(
-                        response['respuesta'], '',
-                        'success'
-                    )
-                    setTimeout(function () {
-                        location.reload();
-                    }, 2000);
-                },
-                error: function () {
-                    swal.close();
-                },
-            });
-        }
-        getModalForm(modal, accion, id) {
-            $(modal).html('<br><div class="text-center"><img class="js-loader"></div>');
-            $(modal).load(this.url, function () {
-                $(modal + ' .modal-footer .btn_accion').text(accion).attr('id', id);
-            });
-        }
-        datatable(id, args) {
-            $(id).DataTable({
-                "bFilter": true,
-                "bLengthChange": false,
-                "destroy": true,
-                "searching": false,
-                "bInfo": false,
-                "responsive": false,
-                "autoWidth": false,
-                "oLanguage": {
-                    "sLengthMenu": "_MENU_ ",
-                    "sInfo": "<b>_START_ a _END_</b> de _TOTAL_ Registros"
-                },
-                "ajax": {
-                    url: this.url,
-                    type: 'POST',
-                    data: params
-                },
-                "columns": args['columns'],
-                "columnDefs": args['columnDefs'],
-            });
-        }
-    }
+    });
 });

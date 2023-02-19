@@ -89,10 +89,8 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     url: actividad,
-                    type: 'POST',
-                    data: {
-                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                    },
+                    type: 'DELETE',
+                    headers:{"X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val()},
                     beforeSend: function () {
                         Swal.fire({
                             imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',

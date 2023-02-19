@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel4">Participantes</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    {% csrf_token %}
+    <div class="row ">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered mt-4" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 10%;">RUT</th>
+                            <th class="text-left">NOMBRE</th>
+                            <th>CORREO</th>
+                            <th style="width: 10%;" class="text-center">detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alumno_seccion in object_list %}
+                        <tr>
+                            <td class="text-center" style="width: 10%;">
+                                <strong>{{alumno_seccion.rut}}</strong>
+                            </td>
+                            <td class="text-left">{{alumno_seccion.nombre_completo}}</td>
+                            <td class="text-left">{{alumno_seccion.correo}}</td>
+                            <td class="text-center" style="width: 10%;">
+                                <a href="/docente/seccion/alumno/{{alumno_seccion.id}}/actividades/" target="_blank">
+                                    <i class='bx bxs-detail text-primary clickeable'></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {%empty%}
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <strong>Sin información</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -25,6 +25,7 @@ services:
       - /bin/bash
       - -c
       - |
+        python -m pip freeze > librerias.txt
         python manage.py makemigrations
         python manage.py migrate
         python manage.py implementacion
