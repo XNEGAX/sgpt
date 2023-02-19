@@ -6,15 +6,19 @@
 {% block content %}
 <input type="hidden" id="seccion" value="{{seccion}}">
 <div class="card overflow-hidden">
-  <h5 class="card-header content-header">Lista de actividads</h5>
-  <form method="get" action="{{ request.path }}" class="card-body demo-vertical-spacing demo-only-element">
-    <div class="card-body demo-vertical-spacing demo-only-element">
-      <div class="input-group" style="position: absolute;right: 56px !important;max-width: 300px !important;">
-        <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}" id="filter" autofocus onload="SetCaretAtEnd()"/>
-        <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+  <div class="card-header">
+    <h5 class="card-title text-primary fw-bold text-uppercase">Lista de actividads</h5>
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline">
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <div class="input-group" style="position: absolute;right: 56px !important;max-width: 300px !important;">
+            <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}"/>
+            <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
   <div class="card-body">
     <div class="table-responsive text-nowrap">
       <table class="table table-bordered" id="lista_actividad">

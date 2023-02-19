@@ -65,14 +65,6 @@ $(document).ready(function () {
             }
         })
     });
-    $(document).on('click', '.column_order', function (e) {
-        e.preventDefault();
-        let campo = $(this).text().trim().replace(" ", "_")
-        $("input[name='orden']").val(campo);
-        document.getElementById("form_filtro_orden").submit();
-    });
-
-
     $(document).on('click', '.btn_eliminar_fase', function (e) {
         e.preventDefault();
         let fase = $(this).attr('fase');

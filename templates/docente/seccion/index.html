@@ -34,7 +34,7 @@
             <th class="text-center">semestre</th>
             <th class="text-center">fecha_desde</th>
             <th class="text-center">fecha_hasta</th>
-            <th class="text-center">participantes</th>
+            <th class="text-center">alumnos</th>
             <th class="text-center">administrar actividades</th>
           </tr>
         </thead>
@@ -48,7 +48,11 @@
             <td class="text-center">{{seccion.fecha_desde |date:"d-m-Y"}}</td>
             <td class="text-center">{{seccion.fecha_hasta |date:"d-m-Y"}}</td>
             <td class="text-center">
+              {% if seccion.con_alumnos%}
               <i class='bx bxs-user text-info clickeable btn_participantes' url="/docente/seccion/{{seccion.id}}/participantes/"></i>
+              {% else %}
+              <i class='bx bxs-user text-gray no-clickeable' title="No tiene alumnos asignados"></i>
+              {% endif %}
             </td>
             <td class="text-center">
               <a href="/docente/seccion/{{seccion.id}}/actividades/">

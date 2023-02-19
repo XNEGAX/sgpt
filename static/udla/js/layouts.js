@@ -1,22 +1,5 @@
 'use strict';
 
-function SetCaretAtEnd(elem) {
-    var elemLen = elem.value.length;
-    if (document.selection) {
-        elem.focus();
-        var oSel = document.selection.createRange();
-        oSel.moveStart('character', -elemLen);
-        oSel.moveStart('character', elemLen);
-        oSel.moveEnd('character', 0);
-        oSel.select();
-    }
-    else if (elem.selectionStart || elem.selectionStart == '0') {
-        elem.selectionStart = elemLen;
-        elem.selectionEnd = elemLen;
-        elem.focus();
-    }
-}
-
 function openLoader() {
     Swal.fire({
         showCancelButton: false,

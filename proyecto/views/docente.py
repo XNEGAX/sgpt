@@ -43,6 +43,7 @@ class MantenedorSeccionesDocente(RoyalGuard,ListView):
                 'semestre': seccion_docente.seccion.get_semestre_nombre(),
                 'fecha_desde': seccion_docente.seccion.fecha_desde,
                 'fecha_hasta': seccion_docente.seccion.fecha_hasta,
+                'con_alumnos': True if len(AlumnoSeccion.objects.filter(seccion=seccion_docente.seccion))>0 else False
             })
         return data
 
@@ -71,7 +72,8 @@ class ListarParticipantes(ListView):
         for alumno_seccion in lista_alumnos_seccion:
             rut = alumno_seccion.usuario.username.split('@')[0]
             data.append({
-                'rut': validar_rut.format_rut_without_dots(rut),
+                'rut': validar_rut.format_rut_without_dots(rut
+                ),
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
