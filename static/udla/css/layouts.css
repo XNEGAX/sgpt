@@ -499,10 +499,6 @@ th {
   padding-left: 5px;
 }
 
-.table-responsive {
-  padding: 30px !important;
-}
-
 .modal table>thead>tr>th {
   width: 20%;
   background-color: #E94D00;
@@ -512,13 +508,35 @@ th {
 
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    color: white !important;
-    border: 1px solid #EB6923;
-    background-color: #E94D00;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #E94D00), color-stop(100%, #EB6923));
-     background: -webkit-linear-gradient(top, #E94D00 0%, #EB6923 100%);
-    background: -moz-linear-gradient(top, #E94D00 0%, #EB6923 100%);
-    background: -ms-linear-gradient(top, #E94D00 0%, #EB6923 100%);
-    background: -o-linear-gradient(top, #E94D00 0%, #EB6923 100%);
-    background: linear-gradient(to bottom, #E94D00 0%, #EB6923 100%);
+  color: white !important;
+  border: 1px solid #EB6923;
+  background-color: #E94D00;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #E94D00), color-stop(100%, #EB6923));
+  background: -webkit-linear-gradient(top, #E94D00 0%, #EB6923 100%);
+  background: -moz-linear-gradient(top, #E94D00 0%, #EB6923 100%);
+  background: -ms-linear-gradient(top, #E94D00 0%, #EB6923 100%);
+  background: -o-linear-gradient(top, #E94D00 0%, #EB6923 100%);
+  background: linear-gradient(to bottom, #E94D00 0%, #EB6923 100%);
+}
+
+.card form {
+  margin-top: 50px !important;
+}
+
+.card td form {
+  margin-top: 0em !important;
+}
+
+.card form select {
+  margin-top: 5px !important;
+}
+
+.card-header,
+.card-footer {
+  padding: 60px !important;
+}
+
+.table-responsive {
+  padding-left: 30px !important;
+  padding-right: 30px !important;
 }

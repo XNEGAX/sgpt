@@ -27,16 +27,16 @@ class MantenedorUsuario(RoyalGuard, ListView):
     model = User
 
     def get_queryset(self):
-        filtro = '@edu.udla.cl'
-        if self.request.GET.get('filtro') is not None and self.request.GET.get('filtro') !='':
-            filtro = self.request.GET.get('filtro')
-        campo = 'nombre_completo'
-        if self.request.GET.get('orden') is not None and self.request.GET.get('orden') !='':
-            campo = self.request.GET.get('orden')
+        filter = self.request.GET.get('filter')
+        campo = self.request.GET.get('orden')
         lista_perfil_usuarios = PerfilUsuario.objects.filter(
-            Q(usuario__first_name__icontains=filtro) | Q(usuario__last_name__icontains=filtro) | Q(
-                usuario__username__icontains=filtro) | Q(usuario__email__icontains=filtro),
+            usuario__email__icontains='@edu.udla.cl',
         ).exclude(usuario__is_superuser=True)
+        if filter:
+            lista_perfil_usuarios =lista_perfil_usuarios.filter(
+                Q(usuario__first_name__icontains=filter) | Q(usuario__last_name__icontains=filter) | 
+                Q(usuario__username__icontains=filter) | Q(usuario__email__icontains=filter),
+            )
         data = []
         for perfil_usuario in lista_perfil_usuarios:
             if perfil_usuario.is_perfil_habilitado:
@@ -49,13 +49,11 @@ class MantenedorUsuario(RoyalGuard, ListView):
                     'id': perfil_usuario.usuario.id,
                     'is_staff': perfil_usuario.usuario.is_staff,
                 })
-        return sorted(data, key=lambda d: d[campo])
+        return sorted(data, key=lambda d: d[campo]) if campo else data
 
     def get_context_data(self, **kwargs):
         context = super(MantenedorUsuario, self).get_context_data(**kwargs)
-        context['filtro'] = '@edu.udla.cl'
-        if self.request.GET.get('filtro') is not None and self.request.GET.get('filtro') !='':
-            context['filtro'] = self.request.GET.get('filtro')
+        context['filter'] = self.request.GET.get('filter')
         return context
 
     def post(self,request):

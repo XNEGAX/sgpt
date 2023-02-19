@@ -6,14 +6,15 @@
 {% block content %}
 <div class="card">
   <div class="card-header">
-    <h5 class="card-title text-primary fw-bold content-header">Lista de usuarios</h5>
-    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element"
-      id="form_filtro_orden">
-      <div class="card-body demo-vertical-spacing demo-only-element">
-        <div class="input-group" style="position: absolute;right: 20px !important;max-width: 300px !important;">
-          <input type="text" class="form-control" aria-describedby="button-addon2" name="filtro" />
-          <input type="hidden" class="form-control" aria-describedby="button-addon2" name="orden" />
-          <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+    <h5 class="card-title text-primary fw-bold text-uppercase">Lista de usuarios</h5>
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element" id="form_filtro_orden">
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <div class="input-group" style="position: absolute;right: 56px !important;max-width: 300px !important;">
+            <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}"/>
+            <input type="hidden" class="form-control" aria-describedby="button-addon2" name="orden" />
+            <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+          </div>
         </div>
       </div>
     </form>
@@ -23,10 +24,10 @@
       <table class="table table-bordered w-100" id="lista_usuarios">
         <thead>
           <tr>
-            <th class="column_order">rut</th>
-            <th class="column_order">nombre completo</th>
-            <th class="column_order">correo</th>
-            <th class="text-center column_order">perfil</th>
+            <th class="column_order clickeable">rut</th>
+            <th class="column_order clickeable">nombre completo</th>
+            <th class="column_order clickeable">correo</th>
+            <th class="text-center column_order clickeable">perfil</th>
             <th class="text-center">Impersonar</th>
             <th class="text-center">Editar</th>
             <th class="text-center">habilitado</th>
@@ -56,7 +57,7 @@
               <i class='bx bx-edit text-success clickeable btn_actualizar_usuario' usuario='{{usuario.id}}'></i>
             </td>
             <td class="text-center">
-              <div class="form-check form-switch mb-2">
+              <div class="form-check form-switch mt-2">
                 <input class="form-check-input btn_habilitar_usuario" value="{{usuario.id}}" 
                 type="checkbox" style="float: inherit !important;" {% if usuario.is_staff%}checked{%endif%} {% if usuario.id == request.user.id %}disabled {% endif %}/>
               </div>
