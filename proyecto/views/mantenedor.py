@@ -66,7 +66,7 @@ class MantenedorUsuario(RoyalGuard, ListView):
         }  
         return JsonResponse(response)
 
-class CrearUsuario(JsonGenericView, CreateView):
+class CrearUsuario(RoyalGuard,JsonGenericView, CreateView):
     model = User
     form_class = UsuarioModelForm
     template_name = 'mantenedor/usuario/content_crear.html'
@@ -83,7 +83,7 @@ class CrearUsuario(JsonGenericView, CreateView):
         request.POST['responsable'] = request.user
         return super(CrearUsuario, self).post(request, *args, **kwargs)
 
-class ActualizarUsuario(JsonGenericView, UpdateView):
+class ActualizarUsuario(RoyalGuard,JsonGenericView, UpdateView):
     model = User
     form_class = UsuarioModelForm
     template_name = 'mantenedor/usuario/content_actualizar.html'
@@ -103,7 +103,7 @@ class ActualizarUsuario(JsonGenericView, UpdateView):
         request.POST['responsable'] = request.user
         return super(ActualizarUsuario, self).post(request, *args, **kwargs)
 
-class BuscadorUsuario(View):
+class BuscadorUsuario(RoyalGuard,View):
     def post(self,request):
         list_personas = []
         if request.POST.get('parametro') == 'rut':
@@ -207,9 +207,9 @@ class AdministrarSeccion(TemplateView):
                         }, status=200,safe=False)
                     else:
                         return JsonResponse({
-                            'estado': '0',
+                            'estado': '2',
                             'respuesta': 'Alumno ya existe!'
-                        }, status=400,safe=False)
+                        }, status=200,safe=False)
             else:
                 return JsonResponse({
                     'estado': '0',

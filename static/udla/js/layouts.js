@@ -48,6 +48,22 @@ $(document).ready(function () {
         keyboard: false
     })
 
+    $(document).ajaxComplete(function (event, xhr, settings) {
+        if (xhr.status == 403) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error 403',
+                text: 'Necesita permisos para realizar esta acción',
+                position: 'top',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#mdl_modulo').modal('hide');
+                }
+            })
+            
+        }
+    });
+
     class Microservicio {
         constructor(url) {
             this.url = url;
@@ -83,10 +99,10 @@ $(document).ready(function () {
                 },
             });
         }
-        getModalForm(modal,accion,id) {
+        getModalForm(modal, accion, id) {
             $(modal).html('<br><div class="text-center"><img class="js-loader"></div>');
             $(modal).load(this.url, function () {
-                $(modal+' .modal-footer .btn_accion').text(accion).attr('id', id);
+                $(modal + ' .modal-footer .btn_accion').text(accion).attr('id', id);
             });
         }
         datatable(id, args) {
@@ -108,7 +124,7 @@ $(document).ready(function () {
                     data: params
                 },
                 "columns": args['columns'],
-                "columnDefs":args['columnDefs'],
+                "columnDefs": args['columnDefs'],
             });
         }
     }

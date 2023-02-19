@@ -48,7 +48,6 @@ urlpatterns = [
     path("mantenedor/usuario/", MantenedorUsuario.as_view(), name="mantenedor_usuario"),
     path("mantenedor/usuario/crear/", CrearUsuario.as_view(), name="mantenedor_usuario_crear"),
     path('mantenedor/usuario/<pk>/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar"),
-    path('mantenedor/usuario/actualizar/', ActualizarUsuario.as_view(), name="mantenedor_usuario_actualizar"),
     path('mantenedor/usuario/buscar/', BuscadorUsuario.as_view(), name="mantenedor_usuario_buscar"),
 
     path('mantenedor/secciones/', MantenedorSeccion.as_view(), name="mantenedor_secciones"),

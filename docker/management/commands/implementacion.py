@@ -60,6 +60,12 @@ class Command(MigrateCommand):
             VALUES(16,'Actualizar actividad', 'proyecto:docente_seccion_actividad_actualizar', 'tf-icons bx bxs-factory',4, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(17,'Eliminar actividad', 'proyecto:docente_seccion_actividad_eliminar', 'tf-icons bx bxs-factory',5, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(18,'Crear usuario', 'proyecto:mantenedor_usuario_crear', 'tf-icons bx bxs-factory',6, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(19,'Actualizar usuario', 'proyecto:mantenedor_usuario_actualizar', 'tf-icons bx bxs-factory',7, false, null);
+            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(20,'Buscador de usuarios', 'proyecto:mantenedor_usuario_buscar', 'tf-icons bx bxs-factory',8, false, null);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -97,6 +103,9 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(20,15,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(21,16,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(22,17,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(23,18,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(24,19,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(25,20,1);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);

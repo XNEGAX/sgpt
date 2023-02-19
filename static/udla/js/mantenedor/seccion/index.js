@@ -300,9 +300,16 @@ $(document).ready(function () {
                         $('.swal2-popup').css('background', 'transparent');
                     },
                     success: function (response) {
+                        estado = 'success'
+                        if (response['estado'] === '1') {
+                            estado = 'error'
+                        }
+                        else if (response['estado'] === '2') {
+                            estado = 'warning'
+                        }
                         Swal.fire(
                             response['respuesta'],'',
-                            'success'
+                            estado
                         )
                         recargar_tabla('alumno',seccion_id)
                     },
