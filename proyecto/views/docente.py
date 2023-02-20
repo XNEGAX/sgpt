@@ -10,6 +10,7 @@ from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from django.utils import timezone
 from function import validar_rut
+import base64
 # models
 from proyecto.models import DocenteSeccion
 from proyecto.models import AlumnoSeccion
@@ -72,13 +73,17 @@ class ListarParticipantes(ListView):
         for alumno_seccion in lista_alumnos_seccion:
             rut = alumno_seccion.usuario.username.split('@')[0]
             data.append({
-                'rut': validar_rut.format_rut_without_dots(rut
-                ),
+                'rut': validar_rut.format_rut_without_dots(rut),
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
             })
         return data
+
+    def get_context_data(self, **kwargs):
+        context = super(ListarParticipantes, self).get_context_data(**kwargs)
+        context['con_actividades'] = True if len(Actividad.objects.filter(seccion_id=self.kwargs['seccion_id']))>0 else False
+        return context
 
 class MantenedorActividad(RoyalGuard,ListView):
     template_name = 'docente/actividad/index.html'
@@ -117,16 +122,17 @@ class CrearActividad(RoyalGuard,JsonGenericView, CreateView):
         context['seccion'] = self.kwargs['seccion_id']
         return context
 
+
 class ActualizarActividad(RoyalGuard,JsonGenericView, UpdateView):
     model = Actividad
     form_class = ActividadModelForm
     template_name = 'docente/actividad/content_actualizar.html'
 
     def get_initial(self):
-        return {
-            'seccion_id':self.kwargs['seccion_id'],
-        }
-
+        initial = self.request.GET.dict()
+        initial['seccion_id'] = self.kwargs['seccion_id']
+        return initial
+        
 class EliminarActividad(RoyalGuard,DestroyAPIView):
     permission_classes = [IsAuthenticated]
 

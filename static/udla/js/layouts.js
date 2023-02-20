@@ -23,28 +23,6 @@ class Microservicio {
         this.params = {};
         this.params['csrfmiddlewaretoken'] = $('input[name=csrfmiddlewaretoken]').val()
     }
-    post(params) {
-        $.ajax({
-            url: this.url,
-            type: 'POST',
-            data: params,
-            beforeSend: function () {
-                openLoader()
-            },
-            success: function (response) {
-                Swal.fire(
-                    response['respuesta'], '',
-                    'success'
-                )
-                setTimeout(function () {
-                    location.reload();
-                }, 2000);
-            },
-            error: function () {
-                closeLoader()
-            },
-        });
-    }
     get() {
         $.ajax({
             url: this.url,
@@ -76,7 +54,7 @@ class Microservicio {
         try {
             openLoader()
             const cuerpo = modal + ' #contenido'
-            $(cuerpo).load(this.url, function (responseText, textStatus, req) {
+            $(cuerpo).load(this.url, function () {
                 $(modal + ' .modal-footer .btn_accion').css("display", "none");
                 $(modal + ' .modal-footer button[data-bs-dismiss=modal]').text('cerrar');
                 closeLoader()
@@ -85,6 +63,80 @@ class Microservicio {
             console.error(error);
         }
 
+    }
+    getModalFormGetCreateView(modal) {
+        try {
+            openLoader()
+            const cuerpo = modal + ' #contenido'
+            const url = this.url
+            $(cuerpo).load(url, function () {
+                $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+                console.log(url)
+                $(modal + ' .modal-body form').attr('action', url);
+                closeLoader()
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+    post(params) {
+        $.ajax({
+            url: this.url,
+            type: 'POST',
+            data: params,
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                Swal.fire(
+                    response['respuesta'], '',
+                    'success'
+                )
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
+    }
+    postFormData(formData,modal) {
+        const url = this.url
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                if (response['estado'] == 0) {
+                    $(modal).modal('hide');
+                    Swal.fire(
+                        response['mensaje'], '',
+                        'success'
+                    )
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                }
+                else {
+                    Swal.fire(
+                        'Alerta!',
+                        response['error'],
+                        'warning'
+                    )
+                }
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
     }
     datatable(id, args) {
         $(id).DataTable({
@@ -159,14 +211,22 @@ $(document).ready(function () {
 
         }
     });
-
-    $(document).ajaxError(function (event, request, settings) {
-        alert("Oops!!");
-    });
-    $.ajaxSetup({
-        timeout: 5000,
-        error: function (event, request, settings) {
-            alert("Oops!");
+    $(document).on('click', '.btn_info', function (e) {
+        const titulo = $(this).attr('titulo');
+        const info = $(this).attr('info');
+        console.log(titulo)
+        console.log(info)
+        if (![null, '', undefined].includes(titulo) && ![null, '', undefined].includes(info)) {
+            Swal.fire({
+                title: '<h5 class="card-title text-primary fw-bold text-uppercase">' + titulo + '</h5>',
+                html: '<p class="text-justify">'+info+'</p>',
+                focusConfirm: false,
+                confirmButtonText:
+                    '<i class="fa fa-thumbs-up"></i> Cerrar',
+            })
+        }
+        else{
+            alert('sdasdas')
         }
     });
 });

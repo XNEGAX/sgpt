@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from datetime import datetime
 from django.utils.html import strip_tags
 
-
 def formatear_error(error):
     return f'Error en la linea {format(sys.exc_info()[-1].tb_lineno)} {type(error).__name__} {error}'
 
@@ -44,7 +43,6 @@ class JsonGenericView(object):
         try:
             for elem in form:
                 for k, v in form.errors.items():
-                    print(elem.name)
                     if k == elem.name:
                         return JsonResponse({
                             'estado': '1',

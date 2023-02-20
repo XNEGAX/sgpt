@@ -444,13 +444,13 @@
   position: fixed;
 }
 
-table {
+table.table {
   font-size: 12px !important;
   word-break: break-all !important
 }
 
-td,
-th {
+table.table td,
+table.table th {
   font-size: 10px !important
 }
 
@@ -539,4 +539,24 @@ th {
 .table-responsive {
   padding-left: 30px !important;
   padding-right: 30px !important;
+}
+
+@media screen and (max-width: 900px) {
+  .table-responsive {
+    overflow: auto;
+    overflow-x: scroll;
+  }
+  .table-responsive::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+  }
+  
+  .table-responsive::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #EB6923;
+  }
 }

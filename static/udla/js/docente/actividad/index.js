@@ -1,17 +1,14 @@
 $(document).ready(function () {
     $(document).on('click', '#btn_crear_actividad', function (e) {
         e.preventDefault();
-        url = `/docente/seccion/${$('#seccion').val()}/actividad/crear/`;
         $('#mdl_modulo').modal('show');
-        $('#mdl_modulo #contenido').html('<br><div class="text-center"><img class="js-loader"></div>');
-        $('#mdl_modulo #contenido').load(url, function () {
-            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
-            $('#mdl_modulo #contenido form').attr('action', url);
-        });
+        const url = `/docente/seccion/${$('#seccion').val()}/actividad/crear/`;
+        const cargarModal = new Microservicio(url)
+        cargarModal.getModalFormGetCreateView('#mdl_modulo')
     });
     $(document).on('click', '#btn_guardar', function (e) {
         e.preventDefault();
-        url = $('#form_crear_actividad').attr('action');
+        const url = $('#form_crear_actividad').attr('action');
         Swal.fire({
             title: '¿Está seguro de crear esta actividad?',
             icon: 'warning',
@@ -23,48 +20,50 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 let formData = new FormData($('#form_crear_actividad').get(0));
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: formData,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    beforeSend: function () {
-                        Swal.fire({
-                            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                        });
-                        $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
-                        $('.swal2-popup').css('background', 'transparent');
-                    },
-                    success: function (response) {
-                        if (response['estado'] == 0) {
-                            $('#mdl_modulo').modal('hide');
-                            Swal.fire(
-                                'Creado!',
-                                'El actividad fue creada con exito!',
-                                'success'
-                            )
-                            setTimeout(function(){
-                                location.reload();
-                            }, 2000);
-                            
-                        }
-                        else {
-                            Swal.fire(
-                                'Alerta!',
-                                response['error'],
-                                'warning'
-                            )
-                        }
-                    },
-                    error: function () {
-                        swal.close();
-                    },
-                });
+                const cargarModal = new Microservicio(url)
+                cargarModal.postFormData(formData, '#mdl_modulo')
+                // $.ajax({
+                //     type: 'POST',
+                //     url: url,
+                //     data: formData,
+                //     cache: false,
+                //     processData: false,
+                //     contentType: false,
+                //     beforeSend: function () {
+                //         Swal.fire({
+                //             imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
+                //             showCancelButton: false,
+                //             showConfirmButton: false,
+                //             allowOutsideClick: false,
+                //         });
+                //         $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
+                //         $('.swal2-popup').css('background', 'transparent');
+                //     },
+                //     success: function (response) {
+                //         if (response['estado'] == 0) {
+                //             $('#mdl_modulo').modal('hide');
+                //             Swal.fire(
+                //                 'Creado!',
+                //                 'El actividad fue creada con exito!',
+                //                 'success'
+                //             )
+                //             setTimeout(function(){
+                //                 location.reload();
+                //             }, 2000);
+
+                //         }
+                //         else {
+                //             Swal.fire(
+                //                 'Alerta!',
+                //                 response['error'],
+                //                 'warning'
+                //             )
+                //         }
+                //     },
+                //     error: function () {
+                //         swal.close();
+                //     },
+                // });
             }
         })
     });
@@ -84,7 +83,7 @@ $(document).ready(function () {
                 $.ajax({
                     url: actividad,
                     type: 'DELETE',
-                    headers:{"X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val()},
+                    headers: { "X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val() },
                     beforeSend: function () {
                         Swal.fire({
                             imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
@@ -97,10 +96,10 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         Swal.fire(
-                            response['respuesta'],'',
+                            response['respuesta'], '',
                             'success'
                         )
-                        setTimeout(function(){
+                        setTimeout(function () {
                             location.reload();
                         }, 2000);
                     },
@@ -160,7 +159,7 @@ $(document).ready(function () {
                                 'El actividad fue modificada con exito!',
                                 'success'
                             )
-                            setTimeout(function(){
+                            setTimeout(function () {
                                 location.reload();
                             }, 2000);
                         }
@@ -179,11 +178,11 @@ $(document).ready(function () {
             }
         })
     });
-    $(document).on('change', '#mdl_modulo form', function (e) {
+    $(document).on('change', '#mdl_modulo form input[type=radio]', function (e) {
         let button = $('#mdl_modulo .modal-footer .btn_accion').html()
-        let action = $(this).attr('action')
-        let params = $(this).serialize()
-        let fullpath = decodeURI(action+'?'+params)
+        let action = $('#mdl_modulo form').attr('action')
+        let params = $('#mdl_modulo form').serialize()
+        let fullpath = action + '?' + params
         $('#mdl_modulo #contenido').load(fullpath, function () {
             $('#mdl_modulo .modal-footer .btn_accion').html(button)
             $('#mdl_modulo #contenido form').attr('action', action);

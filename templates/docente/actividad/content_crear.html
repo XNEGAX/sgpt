@@ -1,21 +1,40 @@
 <div class="modal-header">
-    <h5 class="modal-title" id="exampleModalLabel4">Crear actividad</h5>
+    <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Crear actividad</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
     <form method="post" id="form_crear_actividad" autocomplete="off">
         {% csrf_token %}
-        <div class="row g-2">
+        <div class="row g-2 mt-2">
             {% for input in form.visible_fields %}
-            <div class="col-12 mb-0">
-                <label for="{{input.name}}" class="form-label"> {{input.label}} 
-                    {% if input.field.required and input.field.widget.attrs.style != 'display:none'%}<span class="required">*</span>{% endif%}
-                </label>
-                {{input}}
-            </div>
+                {% if input.field.widget.input_type == 'radio' %}
+                    <div class="row">
+                        <div class="col-12 mb-0">
+                            <label class="form-label">Depende de </label>
+                            <table class="w-100">
+                                <tr>
+                                    {% for radio in input %}
+                                    <td>{{radio}}</td>
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                <div class="col-12 mb-0" 
+                {% if input.field.required and input.field.widget.attrs.style == 'display:none' %}
+                style="display:none"
+                {% endif%}>
+                    <label for="{{input.name}}" class="form-label"> {{input.label}}
+                        {% if input.field.required and input.field.widget.attrs.style != 'display:none'%}<span
+                            class="required">*</span>{% endif%}
+                    </label>
+                    {{input}}
+                </div>
+                {% endif %}
             {% endfor %}
             {% for input in form.hidden_fields %}
-                {{ input }}
+            {{ input }}
             {% endfor %}
         </div>
     </form>

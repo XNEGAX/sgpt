@@ -7,7 +7,7 @@
 <input type="hidden" id="seccion" value="{{seccion}}">
 <div class="card overflow-hidden">
   <div class="card-header">
-    <h5 class="card-title text-primary fw-bold text-uppercase">Lista de actividads</h5>
+    <h5 class="card-title text-primary fw-bold text-uppercase">Actividades de la sección</h5>
     <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline">
       <div class="form-row">
         <div class="form-group col-md-2">
@@ -26,7 +26,6 @@
           <tr>
             <th width="5%" class="text-center">N°</th>
             <th>NOMBRE</th>
-            <th class="text-center">DESCRIPCIÓN</th>
             <th class="text-center">FASE</th>
             <th class="text-center">TIPO RESPUESTA</th>
             <th class="text-center">Editar</th>
@@ -36,11 +35,15 @@
         <tbody>
           {% for actividad in object_list %}
           <tr>
-            <td class="text-justify text-wrap">{{actividad.orden}}</td>
+            <td class="text-justify text-wrap">
+              {{actividad.orden}}</td>
             <td>
-              <strong>{{actividad.nombre}}</strong>
+              <strong 
+              {% if actividad.descripcion != '-' and actividad.descripcion != '' and actividad.descripcion is not None%}
+              class="btn_info clickeable" titulo="Descripción" info="{{actividad.descripcion |lower|capfirst  }}" title="Incluye descripción"
+              {% endif %}
+              >{{actividad.nombre}}</strong>
             </td>
-            <td class="text-justify text-wrap">{{actividad.descripcion}}</td>
             <td class="text-center text-wrap">{{actividad.fase |default_if_none:"-"}}</td>
             <td class="text-center text-wrap">{{actividad.tipo_entrada}}</td>
             <td class="text-center">
@@ -52,7 +55,7 @@
           </tr>
           {%empty%}
           <tr>
-            <td colspan="7" class="text-center">
+            <td colspan="6" class="text-center">
               <strong>Sin información</strong>
             </td>
           </tr>

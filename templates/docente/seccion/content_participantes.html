@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h5 class="modal-title" id="exampleModalLabel4">Alumnos</h5>
+    <h5 class="modal-title p-l-25 text-primary fw-bold text-uppercase" id="exampleModalLabel4">Alumnos de la sección</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
@@ -7,13 +7,13 @@
     <div class="row ">
         <div class="col-12">
             <div class="table-responsive">
-                <table class="table table-bordered mt-4" style="width: 100%;">
+                <table class="table table-bordered" style="width: 100%;">
                     <thead>
                         <tr>
                             <th class="text-center" style="width: 10%;">RUT</th>
                             <th class="text-left">NOMBRE</th>
                             <th>CORREO</th>
-                            <th style="width: 10%;" class="text-center">detalle</th>
+                            <th style="width: 10%;" class="text-center">Proyecto</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -25,9 +25,13 @@
                             <td class="text-left">{{alumno_seccion.nombre_completo}}</td>
                             <td class="text-left">{{alumno_seccion.correo}}</td>
                             <td class="text-center" style="width: 10%;">
+                                {% if con_actividades %}
                                 <a href="/docente/seccion/alumno/{{alumno_seccion.id}}/actividades/" target="_blank">
                                     <i class='bx bxs-detail text-primary clickeable'></i>
                                 </a>
+                                {% else %}
+                                <i class='bx bxs-detail text-gray no-clickeable' title="El docente no ha configurado actividades"></i>
+                                {% endif %}
                             </td>
                         </tr>
                         {%empty%}
