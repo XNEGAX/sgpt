@@ -51,7 +51,7 @@ class ActividadModelForm(forms.ModelForm):
             fields_keyOrder = ['tipo_actividad','actividad_padre','fase','nombre','descripcion','tipo_entrada','orden']
             if tipo_actividad== 3:
                 self.fields['actividad_padre'] = forms.ModelChoiceField(
-                    queryset=Actividad.objects.filter(seccion_id=seccion_id,actividad_padre_id__isnull=True,relacion_actividad_padre__isnull=True,).order_by('orden'),
+                    queryset=Actividad.objects.filter(seccion_id=seccion_id,actividad_padre_id__isnull=True,fk_relacion_actividad_padre__isnull=True,).order_by('orden'),
                     label='ACTIVIDAD PADRE',required=True,empty_label=None,
                     widget=forms.Select(attrs={'class':'form-control','id':'tipo_entrada','tabindex':'0'})
                 )

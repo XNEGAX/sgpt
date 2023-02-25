@@ -113,9 +113,9 @@ class BuscadorUsuario(RoyalGuard,View):
             rut =request.POST.get('rut','').replace('.','').replace('-','')
             usuarios = User.objects.filter(username__icontains=rut).exclude(is_superuser=True)
         if request.POST.get('perfil')  == 'profesor':
-            usuarios = usuarios.filter(perfil_usuario_usuario__perfil__nombre='PROFESOR')
+            usuarios = usuarios.filter(fk_perfil_usuario_usuario__perfil__nombre='PROFESOR')
         if  request.POST.get('perfil') == 'alumno':
-            usuarios = usuarios.filter(perfil_usuario_usuario__perfil__nombre='ALUMNO')
+            usuarios = usuarios.filter(fk_perfil_usuario_usuario__perfil__nombre='ALUMNO')
         for usuario in usuarios:
             text = f"{validar_rut.format_rut_without_dots(usuario.username.split('@')[0])} - {usuario.get_full_name()}"
             list_personas.append({

@@ -3,6 +3,7 @@ from django.db import connections
 from django.http import JsonResponse
 from datetime import datetime
 from django.utils.html import strip_tags
+from dateutil.parser import parse
 
 def formatear_error(error):
     return f'Error en la linea {format(sys.exc_info()[-1].tb_lineno)} {type(error).__name__} {error}'
@@ -70,3 +71,12 @@ class JsonGenericView(object):
             return JsonResponse(context, status=200)
         except Exception as exc:
             return JsonResponse({'estado': '1','error':formatear_error(exc)}, status=500,safe=False)
+        
+
+
+def is_date(string, fuzzy=False):
+    try: 
+        parse(string, fuzzy=fuzzy)
+        return True
+    except ValueError:
+        return False

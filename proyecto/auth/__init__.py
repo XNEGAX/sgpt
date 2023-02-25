@@ -81,8 +81,8 @@ class RoyalGuard(LoginRequiredMixin):
         rediredct_login = f'/users/login/?next={request.path}'
         if request.user and request.user.is_authenticated:
             url_permitida = PerfilUsuario.objects.filter(
-                perfil__usuario_perfil_activo_perfil__usuario_id=request.user.id,
-                perfil__perfil_modulo_perfil__modulo__url=resolve(request.path).app_name+':'+resolve(request.path).url_name,
+                perfil__fk_perfil_perfil_usaurio_activo__usuario_id=request.user.id,
+                perfil__fk_perfil_modulo_perfil__modulo__url=resolve(request.path).app_name+':'+resolve(request.path).url_name,
                 usuario_id=request.user.id,
             ).exists()
             if not url_permitida:

@@ -11,7 +11,16 @@ class Home(RoyalGuard,View):
     def get(self, request):
         context = {}
         if request.session.get('perfil_activo').upper() =='ADMINISTRADOR':
-            context['transacciones'] = Log.objects.filter(metadatos__icontains='nombre').order_by('-fecha')[:10]
+            log_data = []
+            logs = Log.objects.all().order_by('-fecha')[:10]
+            for log in logs:
+                log_data.append({
+                    'modelo_name':log.modelo.name.title(),
+                    'accion_nombre':log.accion_nombre,
+                    'fecha':log.fecha,
+                    'instance':log.instancia_recuperada
+                })
+            context['transacciones'] = log_data
         elif request.session.get('perfil_activo').upper() =='PROFESOR':
             lista_perfil_usuarios = PerfilUsuario.objects.filter(
                 perfil__nombre='ALUMNO',usuario__is_staff=True
