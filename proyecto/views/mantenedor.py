@@ -16,11 +16,9 @@ from django.contrib.auth.models import User
 from proyecto.models import Perfil
 from proyecto.models import PerfilUsuario
 from proyecto.models import Seccion,DocenteSeccion,AlumnoSeccion
-from proyecto.models import Fase
 # forms
 from proyecto.content import UsuarioModelForm
 from proyecto.content import SeccionModelForm
-from proyecto.content import FaseModelForm
 
 
 """ inicio bloque usuario"""
@@ -258,55 +256,6 @@ class AdministrarSeccion(RoyalGuard,TemplateView):
             return JsonResponse(response)
 
 """ fin bloque seccion"""
-
-""" inicio bloque fase"""
-
-class MantenedorFase(RoyalGuard, ListView):
-    template_name = 'mantenedor/fase/index.html'
-    paginate_by = 10
-    model = Fase
-    ordering = ['nombre']
-
-    def get_queryset(self):
-        lista_fases = Fase.objects.filter()
-        filter = self.request.GET.get('filter')
-        if filter:
-            lista_fases = lista_fases.filter(
-               Q(nombre__icontains=filter)|Q(descripcion__icontains=filter)
-            )
-        return lista_fases
-
-    def get_context_data(self, **kwargs):
-        context = super(MantenedorFase, self).get_context_data(**kwargs)
-        context['filter'] = self.request.GET.get('filter')
-        return context
-
-class CrearFase(RoyalGuard,JsonGenericView, CreateView):
-    model = Fase
-    form_class = FaseModelForm
-    template_name = 'mantenedor/fase/content_crear.html'
-
-class ActualizarFase(RoyalGuard,JsonGenericView, UpdateView):
-    model = Fase
-    form_class = FaseModelForm
-    template_name = 'mantenedor/fase/content_actualizar.html'
-
-class EliminarFase(RoyalGuard,DestroyAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        queryset = Fase.objects.filter(id=self.kwargs['pk'])
-        return queryset
-    
-    def finalize_response(self, request, response, *args, **kwargs):
-        return JsonResponse({
-            'estado': '0',
-            'respuesta': 'Fase eliminada con exito!'
-        }, status=200,safe=False)
-
-""" fin bloque fase"""
-
-   
 
 def mantenedor_proyecto(request):
     return render(request, "mantenedor/proyecto/index.html")

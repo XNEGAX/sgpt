@@ -71,7 +71,6 @@ class Microservicio {
             const url = this.url
             $(cuerpo).load(url, function () {
                 $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
-                console.log(url)
                 $(modal + ' .modal-body form').attr('action', url);
                 closeLoader()
             });
@@ -94,7 +93,7 @@ class Microservicio {
                     'success'
                 )
                 setTimeout(function () {
-                    location.reload();
+                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
                 }, 2000);
             },
             error: function () {
@@ -122,7 +121,7 @@ class Microservicio {
                         'success'
                     )
                     setTimeout(function () {
-                        location.reload();
+                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
                     }, 2000);
                 }
                 else {
@@ -211,6 +210,7 @@ $(document).ready(function () {
 
         }
     });
+
     $(document).on('click', '.btn_info', function (e) {
         const titulo = $(this).attr('titulo');
         const info = $(this).attr('info');

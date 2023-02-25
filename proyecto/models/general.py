@@ -9,7 +9,7 @@ class Modulo(models.Model):
     id = models.BigAutoField(primary_key=True)
     nombre = models.TextField(blank=False, null=False)
     url = models.TextField(blank=False, null=False)
-    modulo_padre = models.ForeignKey('self',on_delete=models.PROTECT, related_name='fk_relacion_modulo_padre',blank=True, null=True,db_column='modulo_padre_id')
+    modulo_padre = models.ForeignKey('self',on_delete=models.CASCADE, related_name='fk_relacion_modulo_padre',blank=True, null=True,db_column='modulo_padre_id')
     icono = models.TextField(blank=True, null=True)
     orden = models.IntegerField(blank=False, null=False)
     ind_url = models.BooleanField(default=True)
@@ -32,8 +32,8 @@ class Perfil(models.Model):
 
 class PerfilModulo(models.Model):
     id = models.BigAutoField(primary_key=True)
-    perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT,related_name='fk_perfil_modulo_perfil')
-    modulo = models.ForeignKey(Modulo, on_delete=models.PROTECT,related_name='fk_perfil_modulo_modulo')
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE,related_name='fk_perfil_modulo_perfil',db_column='perfil_id')
+    modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE,related_name='fk_perfil_modulo_modulo',db_column='modulo_id')
 
     class Meta:
         managed = True
@@ -42,10 +42,10 @@ class PerfilModulo(models.Model):
 
 class PerfilUsuario(models.Model):
     id = models.BigAutoField(primary_key=True)
-    perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT,related_name='fk_perfil_usuario_perfil')
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_perfil_usuario_usuario')
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE,related_name='fk_perfil_usuario_perfil',db_column='perfil_id')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_perfil_usuario_usuario',db_column='usuario_id')
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_perfil_usuario')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_perfil_usuario',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -68,10 +68,10 @@ class PerfilUsuario(models.Model):
 
 class PerfilUsuarioActivo(models.Model):
     id = models.BigAutoField(primary_key=True)
-    perfil = models.ForeignKey(Perfil, on_delete=models.PROTECT,related_name='fk_perfil_perfil_usaurio_activo')
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_usuario_perfil_usaurio_activo')
+    perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE,related_name='fk_perfil_perfil_usaurio_activo',db_column='perfil_id')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_perfil_usaurio_activo',db_column='usuario_id')
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_usuario_perfil_actibo')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_usuario_perfil_actibo',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -92,7 +92,7 @@ class ReporteConfigurable(models.Model):
     nombre = models.TextField(blank=False, null=False)
     codigo_fuente = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_reporte_configurable')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_reporte_configurable',db_column='responsable_id')
 
     def __str__(self):
         return f'{self.nombre} {self.tipo_salida_reporte.nombre}'
@@ -119,11 +119,11 @@ class Semestre(models.Model):
 class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     codigo = models.TextField(blank=False, null=False, unique=True)
-    semestre = models.ForeignKey(Semestre, models.PROTECT, blank=False, null=False,related_name='fk_seccion_semestre',db_column='semestre_id')
+    semestre = models.ForeignKey(Semestre, models.CASCADE, blank=False, null=False,related_name='fk_seccion_semestre',db_column='semestre_id')
     fecha_desde = models.DateTimeField(blank=False, null=False)
     fecha_hasta = models.DateTimeField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_seccion',db_column='responsable_id')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_seccion',db_column='responsable_id')
 
     def __str__(self):
         return f'{self.codigo} - ({self.semestre} / {self.fecha_desde.year})'
@@ -137,10 +137,10 @@ class Seccion(models.Model):
 
 class DocenteSeccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_usuario_docente_seccion')
-    seccion = models.ForeignKey(Seccion, on_delete=models.PROTECT,related_name='fk_seccion_docente_seccion')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_docente_seccion',db_column='usuario_id')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_docente_seccion',db_column='seccion_id')
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_docente_seccion')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_docente_seccion',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -149,29 +149,15 @@ class DocenteSeccion(models.Model):
 
 class AlumnoSeccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_usuario_alumno_seccion')
-    seccion = models.ForeignKey(Seccion, on_delete=models.PROTECT,related_name='fk_seccion_alumno_seccion')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_alumno_seccion',db_column='usuario_id')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_alumno_seccion',db_column='seccion_id')
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_alumno_seccion')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_alumno_seccion',db_column='responsable_id')
 
     class Meta:
         managed = True
         db_table = 'alumno_seccion'
         unique_together = ('usuario','seccion',)
-
-class Fase(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    nombre = models.TextField(blank=False, null=False, unique=True)
-    descripcion = models.TextField(blank=True, null=True,default='-')
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_fase')
-    
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        managed = True
-        db_table = 'fase'
 
 class TipoEntrada(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
@@ -181,7 +167,7 @@ class TipoEntrada(models.Model):
     ind_multiple = models.BooleanField(default=False)
     formato = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_tipo_entrada')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_tipo_entrada',db_column='responsable_id')
     
     def __str__(self):
         formato = f'({self.formato})' if self.formato and self.formato != '' else ''
@@ -193,18 +179,63 @@ class TipoEntrada(models.Model):
 
 class Actividad(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    actividad_padre = models.ForeignKey('self',on_delete=models.PROTECT, related_name='fk_actividad_padre_actividad',blank=True, null=True)
+    actividad_padre = models.ForeignKey('self',on_delete=models.CASCADE, related_name='fk_actividad_padre_actividad',blank=True, null=True,db_column='actividad_padre_id')
     nombre = models.TextField(blank=False, null=False)
-    descripcion = models.TextField(blank=False, null=False,default='-')
-    seccion = models.ForeignKey(Seccion, on_delete=models.PROTECT,related_name='fk_seccion_actividad')
-    fase = models.ForeignKey(Fase, on_delete=models.PROTECT,blank=True, null=True,related_name='fk_fase_actividad')
-    tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.PROTECT,related_name='fk_tipo_entrada_actividad')
+    descripcion = models.TextField(blank=True, null=True)
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_actividad',db_column='seccion_id')
+    tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE,blank=True, null=True,related_name='fk_tipo_entrada_actividad',db_column='tipo_entrada_id')
     orden = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_actividad')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad',db_column='responsable_id')
 
     def __str__(self):
-        return f'{self.orden}. {self.nombre}'
+        return f"{self.orden_formateado} {self.nombre}"
+    
+    @property
+    def depende_de(self):
+        if self.is_nieto:
+            return f"{self.actividad_padre.actividad_padre.orden}.{self.actividad_padre.orden}. {self.actividad_padre.nombre}"
+        elif self.is_hijo:
+            return f"{self.actividad_padre.orden}. {self.actividad_padre.nombre}"
+        else:
+            return "-"
+    
+    @property
+    def is_nieto(self):
+        if self.actividad_padre and self.actividad_padre.actividad_padre:
+            return True
+        return False
+    
+    @property
+    def is_hijo(self):
+        if self.actividad_padre:
+            return True
+        return False
+        
+    @property
+    def is_padre(self):
+        if self.fk_actividad_padre_actividad.all().count()>0:
+            return True
+        return False
+    
+    @property
+    def is_abuelo(self):
+        if self.is_padre and self.fk_actividad_padre_actividad.last().is_padre:
+            if self.fk_actividad_padre_actividad.all().count()>0:
+                return True
+        return False
+
+    @property
+    def orden_formateado(self):
+        if self.is_nieto:
+            abuelo = self.actividad_padre.actividad_padre.orden
+            padre = self.actividad_padre.orden
+            return f"{abuelo}.{padre}.{self.orden}."
+        elif self.is_hijo:
+            padre = self.actividad_padre.orden
+            return f"{padre}.{self.orden}."
+        else:
+            return f"{self.orden}."
 
     class Meta:
         managed = True
@@ -217,12 +248,12 @@ class Actividad(models.Model):
 
 class ActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    actividad = models.ForeignKey(Actividad, on_delete=models.PROTECT,related_name='fk_actividad_actividad_respuesta_usuario')
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_usuario_actividad_respuesta_usuario')
+    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='fk_actividad_actividad_respuesta_usuario',db_column='actividad_id')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_actividad_respuesta_usuario',db_column='usuario_id')
     respuesta = models.TextField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_actividad_respuesta_usuario')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad_respuesta_usuario',db_column='responsable_id')
     
     class Meta:
         managed = True
@@ -231,12 +262,12 @@ class ActividadRespuestaUsuario(models.Model):
 
 class BitacoraActividadRespuestaUsuario(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    bitacora_padre = models.ForeignKey('self',on_delete=models.PROTECT,blank=True, null=True,related_name='fk_bitacora_padre_bitacora_actividad_respuesta_usuario')
-    actividad_respuesta_usuario = models.ForeignKey(ActividadRespuestaUsuario, on_delete=models.PROTECT,related_name='fk_actividad_respuesta_usuario_bitacora_actividad_respuesta_usuario')
-    usuario = models.ForeignKey(User, on_delete=models.PROTECT,related_name='fk_usuario_bitacora_actividad_respuesta_usuario')
+    bitacora_padre = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True,related_name='fk_bitacora_padre_bitacora_actividad_respuesta_usuario',db_column='bitacora_padre_id')
+    actividad_respuesta_usuario = models.ForeignKey(ActividadRespuestaUsuario, on_delete=models.CASCADE,related_name='fk_actividad_respuesta_usuario_bitacora_actividad_respuesta_usuario',db_column='actividad_respuesta_usuario_id')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_bitacora_actividad_respuesta_usuario',db_column='usuario_id')
     comentario = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_bitacora_actividad_respuesta_usuario')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_bitacora_actividad_respuesta_usuario',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -249,7 +280,7 @@ class TipoDocumento(models.Model):
     folio_correlativo = models.IntegerField(blank=False, null=False)
     ruta = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_tipo_documento')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_tipo_documento',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -262,7 +293,7 @@ class EstadoDocumento(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_estado_documento')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_estado_documento',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -275,9 +306,9 @@ class Documento(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     folio = models.TextField(blank=False, null=False)
     nombre = models.TextField(blank=False, null=False)
-    tipo_documento = models.ForeignKey(TipoDocumento, on_delete=models.PROTECT,related_name='fk_tipo_documento_documento')
+    tipo_documento = models.ForeignKey(TipoDocumento, on_delete=models.CASCADE,related_name='fk_tipo_documento_documento',db_column='tipo_documento_id')
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_documento')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_documento',db_column='responsable_id')
 
     class Meta:
         managed = True
@@ -305,10 +336,10 @@ class VersionDocumento(models.Model):
     version = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now=True)
     metadatos=models.JSONField()
-    documento = models.ForeignKey(Documento, on_delete=models.PROTECT,related_name='fk_documento_version_documento')
+    documento = models.ForeignKey(Documento, on_delete=models.CASCADE,related_name='fk_documento_version_documento',db_column='documento_id')
     ruta = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.PROTECT, blank=False, null=False,related_name='fk_responsable_crud_version_documento')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_version_documento',db_column='responsable_id')
 
     class Meta:
         managed = True

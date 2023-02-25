@@ -2,13 +2,12 @@
 from django import forms
 from collections import OrderedDict
 from django.db.models import Q
-from django.db.models import Max
-from proyecto.models import Actividad,Fase,TipoEntrada,Seccion
+from django.db.models import Max,Min
+from proyecto.models import Actividad,TipoEntrada,Seccion
 
 TIPO_ACTIVIDAD = [
     (1, 'Ninguno'),
-    (2, 'Fase'),
-    (3, 'Otra actividad'),
+    (2, 'Otra actividad'),
 ]
 
 class ActividadModelForm(forms.ModelForm):
@@ -19,7 +18,6 @@ class ActividadModelForm(forms.ModelForm):
         fields = [
             'seccion',
             'actividad_padre',
-            'fase',
             'nombre',
             'descripcion',
             'tipo_entrada',
@@ -40,30 +38,25 @@ class ActividadModelForm(forms.ModelForm):
                 tipo_actividad = self.data.get('tipo_actividad')
             if self.instance and self.instance.pk and not initial.get('tipo_actividad') and (not self.data and not self.data.get('tipo_actividad')):
                 if self.instance.actividad_padre:
-                    tipo_actividad = 3
-                elif self.instance.fase:
                     tipo_actividad = 2
                 else:
                     tipo_actividad = 1
             self.fields['tipo_actividad'].initial = tipo_actividad
             """se toman desiciones en base a los radio"""
 
-            fields_keyOrder = ['tipo_actividad','actividad_padre','fase','nombre','descripcion','tipo_entrada','orden']
-            if tipo_actividad== 3:
-                self.fields['actividad_padre'] = forms.ModelChoiceField(
-                    queryset=Actividad.objects.filter(seccion_id=seccion_id,actividad_padre_id__isnull=True,fk_relacion_actividad_padre__isnull=True,).order_by('orden'),
-                    label='ACTIVIDAD PADRE',required=True,empty_label=None,
+            fields_keyOrder = ['tipo_actividad','actividad_padre','nombre','descripcion','tipo_entrada','orden']
+            if tipo_actividad== 2:
+                actividades =[]
+                for actividad in Actividad.objects.filter(seccion_id=seccion_id,actividad_padre__actividad_padre_id__isnull=True,).order_by('orden'):
+                    actividades.append((actividad.id,f"{actividad.orden_formateado} {actividad.nombre}"))
+
+                self.fields['actividad_padre'] = forms.ChoiceField(
+                    choices=tuple(sorted(actividades, key=lambda x: x[1])),
+                    label='ACTIVIDAD PADRE',required=True,
                     widget=forms.Select(attrs={'class':'form-control','id':'tipo_entrada','tabindex':'0'})
                 )
                 fields_keyOrder  = ['tipo_actividad','actividad_padre','nombre','descripcion','tipo_entrada','orden']
-                
-            elif tipo_actividad== 2:
-                self.fields['fase'] = forms.ModelChoiceField(
-                    queryset=Fase.objects.all().order_by('nombre'),
-                    label='FASE',required=True,empty_label=None,
-                    widget=forms.Select(attrs={'class':'form-control','id':'fase','tabindex':'3'}))
-                fields_keyOrder = ['tipo_actividad','fase','nombre','descripcion','tipo_entrada','orden']
-
+            
             else:
                 if not self.is_bound:
                     fields_keyOrder = ['tipo_actividad','nombre','descripcion','tipo_entrada','orden']
@@ -77,7 +70,7 @@ class ActividadModelForm(forms.ModelForm):
             )
             self.fields['nombre'] = forms.CharField(required=True, error_messages={'required': 'Ingrese nombre para la actividad'},label='NONBRE',widget=forms.TextInput(attrs={'class':'form-control','id':'nombre','tabindex':'1','required':''}))
             self.fields['descripcion'] = forms.CharField(required=False, error_messages={'required': 'Ingrese la descripción de la actividad'},label='DESCRIPCIÓN',widget=forms.Textarea(attrs={'class':'form-control','id':'descripcion','tabindex':'2','rows':'5'}))
-            self.fields['tipo_entrada'] = forms.ModelChoiceField(queryset=TipoEntrada.objects.all().order_by('nombre'),required=True, error_messages={'required': 'Ingrese el tipo de dato para la respuesta'},label='TIPO DE DATO ESPERADO',widget=forms.Select(attrs={'class':'form-control','id':'tipo_entrada','tabindex':'4'}))
+            self.fields['tipo_entrada'] = forms.ModelChoiceField(queryset=TipoEntrada.objects.all().order_by('nombre'),required=False, error_messages={'required': 'Ingrese el tipo de dato para la respuesta'},label='TIPO DE DATO ESPERADO',widget=forms.Select(attrs={'class':'form-control','id':'tipo_entrada','tabindex':'4'}))
             self.fields['orden'] = forms.FloatField(required=True, error_messages={'required': 'Ingrese la posición de la actividad'},label='POSICIÓN',widget=forms.NumberInput(attrs={'class':'form-control','id':'orden','tabindex':'5','min':0}))
 
 
@@ -89,8 +82,22 @@ class ActividadModelForm(forms.ModelForm):
 
     def clean(self):
         data = self.cleaned_data
-        previus_order_fase = Actividad.objects.filter(seccion=data.get('seccion'),orden=data.get('orden'),actividad_padre=data.get('actividad_padre')).last()
-        if previus_order_fase:           
-            previus_order_fase.orden = Actividad.objects.filter(seccion=data.get('seccion')).aggregate(Max('orden')).get('orden__max')+1
-            previus_order_fase.save()
+        previus_order_actividad = Actividad.objects.filter(seccion=data.get('seccion'),orden=data.get('orden'),actividad_padre=data.get('actividad_padre')).last()
+        if previus_order_actividad:
+            actividades = Actividad.objects.filter(seccion=data.get('seccion'),actividad_padre=data.get('actividad_padre'))
+            now_min = actividades.aggregate(Min('orden')).get('orden__min')
+            now_max = actividades.aggregate(Max('orden')).get('orden__max')+1
+            for now in range(now_min,now_max):
+                if not actividades.filter(orden=now).exists():
+                    previus_order_actividad.orden = now
+                    previus_order_actividad.save()
+                    return data
+                elif now == self.instance.orden:
+                    previus_order_actividad.orden = now
+                    previus_order_actividad.save()
+                    return data
+
+            previus_order_actividad.orden = now_max
+            previus_order_actividad.save()
         return data
+            

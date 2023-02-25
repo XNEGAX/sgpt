@@ -41,9 +41,7 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             values(5,'Impersonar','proyecto:impersonar_usuario','', 0, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(8,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(7,'Fase', 'proyecto:mantenedor_fases', 'tf-icons bx bxs-factory',1, true, 3);
+            VALUES(6,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(10, 'Administrar proyecto título', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
@@ -72,12 +70,6 @@ class Command(MigrateCommand):
             VALUES(22,'Actualizar Seccion', 'proyecto:mantenedor_seccion_actualizar', 'tf-icons bx bxs-factory',11, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(23,'Administrar Seccion', 'proyecto:mantenedor_seccion_administar', 'tf-icons bx bxs-factory',12, false, null);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(24,'Crear Fase', 'proyecto:mantenedor_fase_crear', 'tf-icons bx bxs-factory',13, false, null);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(25,'Actualizar Fase', 'proyecto:mantenedor_fase_actualizar', 'tf-icons bx bxs-factory',14, false, null);
-            INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(26,'Eliminar Fase', 'proyecto:mantenedor_fase_eliminar', 'tf-icons bx bxs-factory',15, false, null);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -103,11 +95,9 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(6,2,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(7,2,3);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(8,3,1);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(9,3,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(10,4,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(11,5,1);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(13,7,2);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(14,8,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(14,6,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(16,10,3);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(17,11,2);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(18,12,2);
@@ -121,9 +111,6 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(26,21,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(27,22,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(28,23,1);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(29,24,2);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(30,25,2);
-            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(31,26,2);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);
@@ -181,34 +168,15 @@ class Command(MigrateCommand):
             --docente seccion
             INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, now(), 1, 1, 2);
             SELECT setval('docente_seccion_id_seq',2, true);
-            --FASES
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(1, 'ASPECTOS DE LA EMPRESA', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(2, 'SITUACIÓN ACTUAL DEL PROYECTO', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(3, 'PLANTEAMIENTO DE OBJETIVOS', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(4, 'ESTUDIO DE FACTIBILIDAD Y GESTIÓN DE RIESGOS', '', 'now()', 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(5, 'PLANTEAMIENTO DE LA SOLUCION', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(6, 'DISEÑO DEL SISTEMA', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(7, 'CONSTRUCCIÓN DE PROTOTIPO FUNCIONAL ', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(8, 'DISEÑOS DE PRUEBAS DEL SOFTWARE', '', now(), 1);
-            INSERT INTO public.fase(id, nombre, descripcion, fecha, responsable_id)VALUES(9, 'CONCLUSIONES DEL PROYECTO', '', now(), 1);
-            SELECT setval('fase_id_seq',10, true);
             --tipos dato
             INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'TEXTO','text', false, false, NULL, now(), 0);
             INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(2, 'IMAGEN','file', false, false,'jpeg', now(), 0);
             SELECT setval('tipo_entrada_id_seq',3, true);
             --actividades
-            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
+            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, responsable_id, seccion_id, tipo_entrada_id)
             VALUES(1, null ,'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.',
-            1, now(), NULL, 2, 1, 1);
-            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
-            VALUES(2, null, 'ANTECEDENTES DE LA EMPRESA.', '-', 
-            2, now(), 1, 2, 1, 1);
-            INSERT INTO public.actividad(id, actividad_padre_id, nombre, descripcion, orden, fecha, fase_id, responsable_id, seccion_id, tipo_entrada_id)
-            VALUES(3, null, 'ORGANIGRAMA', '-', 
-            3, now(), 1, 2, 1, 2);
-            INSERT INTO public.actividad(id, nombre, descripcion, orden, fecha, actividad_padre_id, fase_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(5, 'ÁREA FUNCIONAL', '-', 
-            4, now(), NULL, 1, 2, 1, 1);
-            SELECT setval('actividad_id_seq',5, true);
+            1, now(), 2, 1, 1);
+            SELECT setval('actividad_id_seq',2, true);
 
             """).execute_lines()
         except Exception as exc:

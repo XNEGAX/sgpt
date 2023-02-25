@@ -16,11 +16,6 @@ from proyecto.views.mantenedor import ActualizarSeccion
 from proyecto.views.mantenedor import EliminarSeccion
 from proyecto.views.mantenedor import AdministrarSeccion
 
-from proyecto.views.mantenedor import MantenedorFase
-from proyecto.views.mantenedor import CrearFase
-from proyecto.views.mantenedor import ActualizarFase
-from proyecto.views.mantenedor import EliminarFase
-
 from proyecto.views.docente import MantenedorSeccionesDocente
 from proyecto.views.docente import ListarParticipantes
 from proyecto.views.docente import MantenedorActividad
@@ -53,11 +48,6 @@ urlpatterns = [
     path('mantenedor/seccion/<pk>/administrar/', AdministrarSeccion.as_view(), name="mantenedor_seccion_administar"),
     path('mantenedor/seccion/<pk>/<metodo>/<perfil>/', AdministrarSeccion.as_view(), name="mantenedor_seccion_administar"),
     path('mantenedor/seccion/<pk>/<metodo>/<perfil>/<usuario>/', AdministrarSeccion.as_view(), name="mantenedor_seccion_administar"),
-
-    path('mantenedor/fases/', MantenedorFase.as_view(), name="mantenedor_fases"),
-    path('mantenedor/fase/crear/', CrearFase.as_view(), name="mantenedor_fase_crear"),
-    path('mantenedor/fase/<pk>/actualizar/', ActualizarFase.as_view(), name="mantenedor_fase_actualizar"),
-    path('mantenedor/fase/<pk>/eliminar/', EliminarFase.as_view(), name="mantenedor_fase_eliminar"),
 
     path('docente/secciones/', MantenedorSeccionesDocente.as_view(), name="docente_secciones"),
     path('docente/seccion/<seccion_id>/participantes/', ListarParticipantes.as_view(), name="docente_seccion_participantes"),

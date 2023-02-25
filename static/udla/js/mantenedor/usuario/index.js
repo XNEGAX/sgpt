@@ -55,7 +55,7 @@ $(document).ready(function () {
                                 'success'
                             )
                             setTimeout(function(){
-                                location.reload();
+                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
                             }, 2000);
                         }
                         else {
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     'success'
                 )
                 setTimeout(function(){
-                    location.reload();
+                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
                 }, 2000);
             },
             error: function () {
@@ -192,7 +192,7 @@ $(document).ready(function () {
                                 'success'
                             )
                             setTimeout(function(){
-                                location.reload();
+                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
                             }, 2000);
                         }
                         else {

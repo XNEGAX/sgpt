@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models.deletion import ProtectedError
 from django.db.models import Q
-from django.views.generic import ListView
+from django.views.generic import ListView,TemplateView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from rest_framework.generics import DestroyAPIView
@@ -85,9 +86,9 @@ class ListarParticipantes(ListView):
         context['con_actividades'] = True if len(Actividad.objects.filter(seccion_id=self.kwargs['seccion_id']))>0 else False
         return context
 
-class MantenedorActividad(RoyalGuard,ListView):
+class MantenedorActividad(RoyalGuard,TemplateView):
     template_name = 'docente/actividad/index.html'
-    paginate_by = 10
+    # paginate_by = 10
     model = Actividad
 
     def get_queryset(self):
@@ -97,7 +98,7 @@ class MantenedorActividad(RoyalGuard,ListView):
             lista_actividades = lista_actividades.filter(
                 Q(nombre__icontains=filtro)|Q(descripcion__icontains=filtro)|
                 Q(seccion__codigo__icontains=filtro)|Q(seccion__semestre__nombre__icontains=filtro)|
-                Q(fase__nombre__icontains=filtro)|Q(tipo_entrada__nombre__icontains=filtro)
+                Q(tipo_entrada__nombre__icontains=filtro)
             )
         return lista_actividades
 
@@ -105,6 +106,18 @@ class MantenedorActividad(RoyalGuard,ListView):
         context = super(MantenedorActividad, self).get_context_data(**kwargs)
         context['seccion'] = self.kwargs['seccion_id']
         context['filter'] = self.request.GET.get('filter')
+        actividades =[]
+        for actividad in self.get_queryset():
+            actividades.append({
+                'orden_formateado':actividad.orden_formateado,
+                'nombre':actividad.nombre,
+                'descripcion':actividad.descripcion,
+                'depende_de':actividad.depende_de,
+                'tipo_entrada':actividad.tipo_entrada,
+                'seccion':actividad.seccion,
+                'id':actividad.id,
+            })
+        context['object_list'] = sorted(actividades, key=lambda d: d['orden_formateado'])
         return context
 
 class CrearActividad(RoyalGuard,JsonGenericView, CreateView):
@@ -137,13 +150,24 @@ class EliminarActividad(RoyalGuard,DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Actividad.objects.filter(id=self.kwargs['pk'])
+        queryset = Actividad.objects.filter(
+            Q(actividad_padre_id=self.kwargs['pk'])|
+            Q(actividad_padre__actividad_padre_id=self.kwargs['pk'])|
+            Q(id=self.kwargs['pk'])
+        ).order_by('-id')
         return queryset
     
-    def finalize_response(self, request, response, *args, **kwargs):
-        return JsonResponse({
-            'estado': '0',
-            'respuesta': 'Actividad eliminada con exito!'
-        }, status=200,safe=False)
+    def destroy(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        try:
+            for obj in queryset:
+                self.perform_destroy(obj)
+            return JsonResponse({
+                'estado': '0',
+                'respuesta': 'Actividad eliminada con exito!'
+            }, status=200,safe=False)
+
+        except ProtectedError as e:
+            return JsonResponse(status=423, data={'detail':str(e)})
 
 """ fin bloque seccion docente"""
