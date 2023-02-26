@@ -25,12 +25,14 @@
                             <td class="text-left">{{alumno_seccion.nombre_completo}}</td>
                             <td class="text-left">{{alumno_seccion.correo}}</td>
                             <td class="text-center" style="width: 10%;">
-                                {% if con_actividades %}
+                                {% if con_actividades and con_respuesta %}
                                 <a href="/docente/seccion/alumno/{{alumno_seccion.id}}/actividades/" target="_blank">
                                     <i class='bx bxs-detail text-primary clickeable'></i>
                                 </a>
-                                {% else %}
+                                {% elif not con_actividades %}
                                 <i class='bx bxs-detail text-gray no-clickeable' title="El docente no ha configurado actividades"></i>
+                                {% elif not con_respuesta %}
+                                <i class='bx bxs-detail text-gray no-clickeable' title="El alumno no ha iniciado su proyecto"></i>
                                 {% endif %}
                             </td>
                         </tr>

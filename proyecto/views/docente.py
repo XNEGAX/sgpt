@@ -16,6 +16,7 @@ import base64
 from proyecto.models import DocenteSeccion
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Actividad
+from proyecto.models import ActividadRespuestaUsuario
 # forms
 from proyecto.content import ActividadModelForm
 
@@ -45,7 +46,7 @@ class MantenedorSeccionesDocente(RoyalGuard,ListView):
                 'semestre': seccion_docente.seccion.get_semestre_nombre(),
                 'fecha_desde': seccion_docente.seccion.fecha_desde,
                 'fecha_hasta': seccion_docente.seccion.fecha_hasta,
-                'con_alumnos': True if len(AlumnoSeccion.objects.filter(seccion=seccion_docente.seccion))>0 else False
+                'con_alumnos': True if len(AlumnoSeccion.objects.filter(seccion=seccion_docente.seccion))>0 else False,
             })
         return data
 
@@ -78,6 +79,7 @@ class ListarParticipantes(ListView):
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
+                'con_respuesta':True if len(ActividadRespuestaUsuario.objects.filter(actividad__seccion_id=self.kwargs['seccion_id'],usuario=alumno_seccion.usuario))>0 else False
             })
         return data
 
