@@ -1,0 +1,35 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden">
+    <div class="card-header">
+        <h5 class="card-title text-primary fw-bold text-uppercase">Definición del proyecto</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" id="form_crear_proyecto">
+            {% csrf_token %}
+            <div class="row g-2">
+                {% for input in form %}
+                <div class="col-12 mb-0">
+                    <label for="{{input.name}}" class="form-label"> {{input.label}}</label>
+                    {{input}}
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+            {% for perfil in perfiles %}
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="checkbox" value="{{perfil.id}}" id="{{perfil.nombre|lower}}"
+                    name="perfiles[]">
+                <label class="form-check-label" for="{{perfil.nombre|lower}}">{{perfil.nombre}}</label>
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/alumno/proyecto/index.js' %}"></script>
+{% endblock script %}

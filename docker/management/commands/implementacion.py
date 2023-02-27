@@ -43,7 +43,7 @@ class Command(MigrateCommand):
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(6,'sección', 'proyecto:mantenedor_secciones', 'tf-icons bx bxs-factory',2, true, 3);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
-            VALUES(10, 'Administrar proyecto título', 'proyecto:mantenedor_proyecto', 'tf-icons bx bxs-factory', 5, true, null);
+            VALUES(10, 'Mis secciones', 'proyecto:alumno_secciones', 'tf-icons bx bxs-factory', 5, true, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(11,'Mis secciones', 'proyecto:docente_secciones', 'tf-icons bx bxs-factory',1, true, null);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
@@ -70,6 +70,9 @@ class Command(MigrateCommand):
             VALUES(22,'Actualizar Seccion', 'proyecto:mantenedor_seccion_actualizar', 'tf-icons bx bxs-factory',11, false, null);
             INSERT INTO public.modulo(id,nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(23,'Administrar Seccion', 'proyecto:mantenedor_seccion_administar', 'tf-icons bx bxs-factory',12, false, null);
+            INSERT INTO public.modulo
+            (id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(24, 'Docente participantes sección', 'proyecto:docente_seccion_participantes', 'tf-icons bx bxs-factory', 13, false, NULL);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -111,6 +114,7 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(26,21,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(27,22,1);
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(28,23,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(29,24,2);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);

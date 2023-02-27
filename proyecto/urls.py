@@ -23,7 +23,10 @@ from proyecto.views.docente import CrearActividad
 from proyecto.views.docente import ActualizarActividad
 from proyecto.views.docente import EliminarActividad
 
-from proyecto.views.mantenedor import mantenedor_proyecto
+from proyecto.views.alumno import ListarSeccionesAlumno
+from proyecto.views.alumno import CrearProyectoTitulo
+from proyecto.views.alumno import ActualizarProyectoTitulo
+from proyecto.views.alumno import ResponderActvidades
 
 
 
@@ -56,5 +59,9 @@ urlpatterns = [
     path('seccion/<seccion_id>/actividad/<pk>/actualizar/', ActualizarActividad.as_view(), name="docente_seccion_actividad_actualizar"),
     path('seccion/actividad/<pk>/eliminar/', EliminarActividad.as_view(), name="docente_seccion_actividad_eliminar"),
     
-    path('mantenedor/proyecto/', mantenedor_proyecto, name="mantenedor_proyecto"),
+    path('alumno/secciones/', ListarSeccionesAlumno.as_view(), name="alumno_secciones"),
+    path('alumno/seccion/<alumno_seccion_id>/proyecto/crear/', CrearProyectoTitulo.as_view(), name="alumno_seccion_proyecto_crear"),
+    path('alumno/seccion/proyecto/<pk>/actualizar/', ActualizarProyectoTitulo.as_view(), name="alumno_seccion_proyecto_actualizar"),
+    path('alumno/seccion/proyecto/<proyecto_id>/actividades/', ResponderActvidades.as_view(), name="alumno_seccion_actividades"),
+    
 ]

@@ -147,18 +147,9 @@ class DocenteSeccion(models.Model):
         db_table = 'docente_seccion'
         unique_together = ('usuario','seccion',)
 
-class AlumnoSeccion(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_alumno_seccion',db_column='usuario_id')
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_alumno_seccion',db_column='seccion_id')
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_alumno_seccion',db_column='responsable_id')
-
-    class Meta:
-        managed = True
-        db_table = 'alumno_seccion'
-        unique_together = ('usuario','seccion',)
-
+    def __str__(self):
+        return f'{self.seccion} - prof. {self.usuario.get_full_name()} '
+     
 class TipoEntrada(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
@@ -246,10 +237,40 @@ class Actividad(models.Model):
         self.descripcion = self.descripcion.strip().upper()
         super(Actividad, self).save(*args, **kwargs)
 
-class ActividadRespuestaUsuario(models.Model):
+class AlumnoSeccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_alumno_seccion',db_column='usuario_id')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_alumno_seccion',db_column='seccion_id')
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_alumno_seccion',db_column='responsable_id')
+
+    class Meta:
+        managed = True
+        db_table = 'alumno_seccion'
+
+    def __str__(self):
+        return f"{self.usuario.get_full_name()} - {self.seccion}"
+        
+
+class Proyecto(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    nombre = models.TextField(blank=False, null=False)
+    descripcion = models.TextField(blank=False, null=False)
+    ind_aprobado = models.BooleanField(blank=True, null=True)
+    alumno_seccion = models.OneToOneField(AlumnoSeccion, on_delete=models.CASCADE,related_name='fk_alumno_seccion_proyecto',db_column='alumno_seccion_id')
+    fecha_desde =  models.DateTimeField()
+    fecha_hasta =  models.DateTimeField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_proyecto',db_column='responsable_id')
+
+    class Meta:
+        managed = True
+        db_table = 'proyecto'
+
+class ActividadRespuestaProyecto(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_actividad_respuesta_proyecto',db_column='proyecto_id')
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='fk_actividad_actividad_respuesta_usuario',db_column='actividad_id')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_actividad_respuesta_usuario',db_column='usuario_id')
     respuesta = models.TextField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=True)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -257,21 +278,35 @@ class ActividadRespuestaUsuario(models.Model):
     
     class Meta:
         managed = True
-        db_table = 'actividad_respuesta_usuario'
-        unique_together = ('actividad','usuario','respuesta',)
+        db_table = 'actividad_respuesta_proyecto'
+        unique_together = ('proyecto','actividad','respuesta',)
 
-class BitacoraActividadRespuestaUsuario(models.Model):
+class BitacoraActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    bitacora_padre = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True,related_name='fk_bitacora_padre_bitacora_actividad_respuesta_usuario',db_column='bitacora_padre_id')
-    actividad_respuesta_usuario = models.ForeignKey(ActividadRespuestaUsuario, on_delete=models.CASCADE,related_name='fk_actividad_respuesta_usuario_bitacora_actividad_respuesta_usuario',db_column='actividad_respuesta_usuario_id')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_bitacora_actividad_respuesta_usuario',db_column='usuario_id')
+    bitacora_padre = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True,related_name='fk_bitacora_padre_bitacora_actividad_respuesta_proyecto',db_column='bitacora_padre_id')
+    actividad_respuesta_proyecto = models.ForeignKey(ActividadRespuestaProyecto, on_delete=models.CASCADE,related_name='fk_actividad_respuesta_proyecto_bitacora_actividad_respuesta_proyecto',db_column='actividad_respuesta_proyecto_id')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE,related_name='fk_usuario_bitacora_actividad_respuesta_proyecto',db_column='usuario_id')
     comentario = models.TextField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_bitacora_actividad_respuesta_usuario',db_column='responsable_id')
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_bitacora_actividad_respuesta_proyecto',db_column='responsable_id')
 
     class Meta:
         managed = True
-        db_table = 'bitacora_actividad_respuesta_usuario'
+        db_table = 'bitacora_actividad_respuesta_proyecto'
+
+class Gantt(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_gantt',db_column='proyecto_id')
+    nombre = models.TextField(blank=False, null=False)
+    fecha_inicio =  models.DateTimeField()
+    fecha_termino =  models.DateTimeField()
+    duration = models.IntegerField(blank=False, null=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_gantt',db_column='responsable_id')
+
+    class Meta:
+        managed = True
+        db_table = 'gantt'
 
 class TipoDocumento(models.Model):
     id = models.AutoField(primary_key=True)

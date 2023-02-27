@@ -1,0 +1,60 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% include "alumno/seccion/mdl_modulo.html" %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden p-b-20">
+  <div class="card-header" style="padding-bottom: 30px !important;">
+    <h5 class="card-title text-primary fw-bold text-uppercase">Mis secciones</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>sección</th>
+            <th class="text-center">fecha desde</th>
+            <th class="text-center">fecha hasta</th>
+            <th>Profesor</th>
+            <th class="text-center">estado</th>
+            <th class="text-center">proyecto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alumno_seccion in object_list %}
+          <tr>
+            <td>
+              <strong>{{alumno_seccion.seccion}}</strong>
+            </td>
+            <td class="text-center">{{alumno_seccion.fecha_desde |date:"d-m-Y"}}</td>
+            <td class="text-center">{{alumno_seccion.fecha_hasta |date:"d-m-Y"}}</td>
+            <td >{{alumno_seccion.profesor}}</td>
+            <td class="text-center">{{alumno_seccion.estado}}</td>
+            <td class="text-center">
+              {% if alumno_seccion.con_preguntas %}
+              <a href="{{alumno_seccion.url}}" accion="{{alumno_seccion.accion}}" class="btn_traer_modal">
+                <i class='bx bxs-detail text-primary clickeable'></i>
+              </a>
+              {% else %}
+              <i class='bx bxs-detail text-gray no-clickeable' title="El docente no ha configurado actividades"></i>
+              {% endif %}
+            </td>
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="6" class="text-center">
+              <strong>Sin información</strong>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/alumno/seccion/index.js' %}"></script>
+{% endblock script %}

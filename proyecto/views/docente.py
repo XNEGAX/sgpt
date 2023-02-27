@@ -16,7 +16,8 @@ import base64
 from proyecto.models import DocenteSeccion
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Actividad
-from proyecto.models import ActividadRespuestaUsuario
+from proyecto.models import ActividadRespuestaProyecto
+from proyecto.models import Proyecto
 # forms
 from proyecto.content import ActividadModelForm
 
@@ -61,8 +62,8 @@ class MantenedorSeccionesDocente(RoyalGuard,ListView):
         context['year_selected'] = int(self.request.GET.get('year')) if self.request.GET.get('year') else None
         return context
 
-class ListarParticipantes(ListView):
-    template_name = 'docente/seccion/content_participantes.html'
+class ListarParticipantes(RoyalGuard,ListView):
+    template_name = 'docente/participantes/index.html'
     paginate_by = 10
     model = AlumnoSeccion
 
@@ -79,7 +80,11 @@ class ListarParticipantes(ListView):
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
-                'con_respuesta':True if len(ActividadRespuestaUsuario.objects.filter(actividad__seccion_id=self.kwargs['seccion_id'],usuario=alumno_seccion.usuario))>0 else False
+                'con_proyecto': not Proyecto.objects.filter(alumno_seccion=alumno_seccion).last(),
+                'con_proyecto_pendiente':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado__isnull=True).exists(),
+                'con_proyecto_aprobado':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=True).exists(),
+                'con_proyecto_rechazado':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=False).exists(),
+                'con_respuesta':len(ActividadRespuestaProyecto.objects.filter(proyecto__alumno_seccion=alumno_seccion))
             })
         return data
 
@@ -152,11 +157,12 @@ class EliminarActividad(RoyalGuard,DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        from django.db.models import F
         queryset = Actividad.objects.filter(
             Q(actividad_padre_id=self.kwargs['pk'])|
             Q(actividad_padre__actividad_padre_id=self.kwargs['pk'])|
             Q(id=self.kwargs['pk'])
-        ).order_by('-id')
+        ).order_by(F('actividad_padre_id').desc(nulls_last=True),'id','orden')
         return queryset
     
     def destroy(self, request, *args, **kwargs):

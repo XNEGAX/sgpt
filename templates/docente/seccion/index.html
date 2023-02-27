@@ -1,7 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% block modal %}
-{% include "docente/seccion/mdl_modulo.html" %}
 {% endblock modal%}
 {% block content %}
 <div class="card overflow-hidden">
@@ -35,7 +34,7 @@
             <th class="text-center">fecha_desde</th>
             <th class="text-center">fecha_hasta</th>
             <th class="text-center">alumnos</th>
-            <th class="text-center">administrar actividades</th>
+            <th class="text-center">actividades</th>
           </tr>
         </thead>
         <tbody>
@@ -49,7 +48,9 @@
             <td class="text-center">{{seccion.fecha_hasta |date:"d-m-Y"}}</td>
             <td class="text-center">
               {% if seccion.con_alumnos%}
-              <i class='bx bxs-user text-info clickeable btn_participantes' url="/docente/seccion/{{seccion.id}}/participantes/"></i>
+              <a href="/docente/seccion/{{seccion.id}}/participantes/">
+                <i class='bx bxs-user text-info clickeable'></i>
+              </a>
               {% else %}
               <i class='bx bxs-user text-gray no-clickeable' title="No tiene alumnos asignados"></i>
               {% endif %}

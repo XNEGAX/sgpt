@@ -256,6 +256,3 @@ class AdministrarSeccion(RoyalGuard,TemplateView):
             return JsonResponse(response)
 
 """ fin bloque seccion"""
-
-def mantenedor_proyecto(request):
-    return render(request, "mantenedor/proyecto/index.html")

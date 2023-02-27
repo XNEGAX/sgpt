@@ -2,13 +2,25 @@ $(document).ready(function () {
     $(document).on('click', '#btn_crear_actividad', function (e) {
         e.preventDefault();
         $('#mdl_modulo').modal('show');
+        Swal.fire({
+            imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
+            showCancelButton: false,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+        });
+        $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
+        $('.swal2-popup').css('background', 'transparent');
         const url = `/docente/seccion/${$('#seccion').val()}/actividad/crear/`;
-        const cargarModal = new Microservicio(url)
-        cargarModal.getModalFormGetCreateView('#mdl_modulo')
+        $('#mdl_modulo #contenido').load(url, function () {
+            swal.close();
+            $('#mdl_modulo #contenido form').attr('action', url);
+            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar').css("display","block")
+            $('#mdl_modulo .modal-footer button[data-bs-dismiss=modal]').text('cancelar');
+        });
     });
     $(document).on('click', '#btn_guardar', function (e) {
         e.preventDefault();
-        const url = $('#form_crear_actividad').attr('action');
+        const url = $('#form_crear_actividad ').attr('action');
         Swal.fire({
             title: '¿Está seguro de crear esta actividad?',
             icon: 'warning',
@@ -22,48 +34,6 @@ $(document).ready(function () {
                 let formData = new FormData($('#form_crear_actividad').get(0));
                 const cargarModal = new Microservicio(url)
                 cargarModal.postFormData(formData, '#mdl_modulo')
-                // $.ajax({
-                //     type: 'POST',
-                //     url: url,
-                //     data: formData,
-                //     cache: false,
-                //     processData: false,
-                //     contentType: false,
-                //     beforeSend: function () {
-                //         Swal.fire({
-                //             imageUrl: '<br><div class="text-center"><img class="js-loader"></div>',
-                //             showCancelButton: false,
-                //             showConfirmButton: false,
-                //             allowOutsideClick: false,
-                //         });
-                //         $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
-                //         $('.swal2-popup').css('background', 'transparent');
-                //     },
-                //     success: function (response) {
-                //         if (response['estado'] == 0) {
-                //             $('#mdl_modulo').modal('hide');
-                //             Swal.fire(
-                //                 'Creado!',
-                //                 'El actividad fue creada con exito!',
-                //                 'success'
-                //             )
-                //             setTimeout(function(){
-                //                 window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                //             }, 2000);
-
-                //         }
-                //         else {
-                //             Swal.fire(
-                //                 'Alerta!',
-                //                 response['error'],
-                //                 'warning'
-                //             )
-                //         }
-                //     },
-                //     error: function () {
-                //         swal.close();
-                //     },
-                // });
             }
         })
     });
@@ -182,6 +152,7 @@ $(document).ready(function () {
         let button = $('#mdl_modulo .modal-footer .btn_accion').html()
         let action = $('#mdl_modulo form').attr('action')
         let params = $('#mdl_modulo form').serialize()
+        console.log(action)
         let fullpath = action + '?' + params
         $('#mdl_modulo #contenido').load(fullpath, function () {
             $('#mdl_modulo .modal-footer .btn_accion').html(button)

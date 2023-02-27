@@ -70,8 +70,25 @@ class Microservicio {
             const cuerpo = modal + ' #contenido'
             const url = this.url
             $(cuerpo).load(url, function () {
+                $(modal).modal('show');
                 $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
-                $(modal + ' .modal-body form').attr('action', url);
+                $(modal + ' .modal-body form').attr('action', url).attr('id','form_crear');
+                closeLoader()
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+    getModalFormGetUpdateView(modal) {
+        try {
+            openLoader()
+            const cuerpo = modal + ' #contenido'
+            const url = this.url
+            $(cuerpo).load(url, function () {
+                $(modal).modal('show');
+                $(modal + ' .modal-footer .btn_accion').text('actualizar').attr('id', 'btn_actualizar');
+                $(modal + ' .modal-body form').attr('action', url).attr('id','form_actualizar');
                 closeLoader()
             });
         } catch (error) {
@@ -159,6 +176,26 @@ class Microservicio {
             "columnDefs": args['columnDefs'],
         });
     }
+}
+
+function getHtmlSwal(title,message) {
+    return `
+    <div class="card-body">
+        <h5 class="card-title">
+            <font style="vertical-align: inherit;">
+                <font style="vertical-align: inherit;">
+                    ${title}
+                </font>
+            </font>
+        </h5>
+        <p class="card-text">
+            <font style="vertical-align: inherit;">
+                <font style="vertical-align: inherit;">
+                    ${message}
+                </font>
+            </font>
+        </p>
+    </div>`
 }
 
 $(document).ready(function () {
