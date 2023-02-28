@@ -1,0 +1,1 @@
+from proyecto.json.general import ProyectoSerializer

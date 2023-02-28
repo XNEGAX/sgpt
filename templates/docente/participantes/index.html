@@ -27,6 +27,7 @@
                     <th class="text-left">NOMBRE</th>
                     <th>CORREO</th>
                     <th style="width: 10%;" class="text-center">Proyecto</th>
+                    <th style="width: 10%;" class="text-center">Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +40,7 @@
                     <td class="text-left">{{alumno_seccion.correo}}</td>
                     <td class="text-center" style="width: 10%;">
                         {% if con_actividades and alumno_seccion.proyecto.cantidad_actividades_respondida_todas|default:0 > 0 and alumno_seccion.proyecto.is_aprobado %}
-                        <a href="/docente/seccion/alumno/{{alumno_seccion.id}}/actividades/" target="_blank">
+                        <a href="/docente/seccion/alumno/{{proyecto.id}}/actividades/" target="_blank">
                             <i class='bx bxs-detail bx-1-3 text-success clickeable'></i>
                         </a>
                         {% elif not con_actividades %}
@@ -47,12 +48,13 @@
                         {% elif not alumno_seccion.proyecto %}
                         <i class='bx bxs-detail bx-1-3 text-gray no-clickeable' title="El alumno no ha definido su proyecto"></i>
                         {% elif alumno_seccion.proyecto.is_pendiente %}
-                        <i class='bx bx-confused bx-1-3 text-warning clickeable' title="El proyecto pendiente de aprobacion"></i>
+                        <i class='bx bx-confused bx-1-3 text-warning clickeable btn_aprobar' url='{{alumno_seccion.url}}' tipo="0" title="El proyecto pendiente de aprobacion"></i>
                         {% elif alumno_seccion.proyecto.is_rechazado %}
-                        <i class='bx bx-dizzy bx-1-3 text-danger clickeable' title="El proyecto rechazado"></i>
+                        <i class='bx bx-dizzy bx-1-3 text-danger clickeable btn_aprobar' url='{{alumno_seccion.url}}' tipo="1" title="El proyecto fue rechazado"></i>
                         {% elif alumno_seccion.proyecto.cantidad_actividades_respondida_todas|default:0 == 0 %}
                         <i class='bx bxs-detail bx-1-3 text-gray no-clickeable' title="El alumno no ha iniciado con las actvidades del proyecto"></i>
                         {% endif %}
+                        <td class="text-center {{alumno_seccion.clase}}">{{alumno_seccion.estado|upper}}</td>
                     </td>
                 </tr>
                 {%empty%}
@@ -73,20 +75,5 @@
 
 {% endblock content %}
 {% block script %}
-<script src="{% static 'udla/js/docente/seccion/index.js' %}"></script>
+<script src="{% static 'udla/js/docente/participantes/index.js' %}"></script>
 {% endblock script %}
-
-<div class="modal-header">
-    <h5 class="modal-title p-l-25 text-primary fw-bold text-uppercase" id="exampleModalLabel4">Alumnos de la sección</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
-    {% csrf_token %}
-    <div class="row ">
-        <div class="col-12">
-            <div class="table-responsive">
-                
-            </div>
-        </div>
-    </div>
-</div>

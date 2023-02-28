@@ -13,7 +13,6 @@ def format(instance,**kwargs):
     metadata = {}
     modelo = ContentType.objects.filter(model=instance._meta.db_table.replace('_','')).last()
     if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
-        print(instance)
         metadata = instance.__dict__
         metadata["detalle"] = str(model_to_dict(instance))
         for k,v in metadata.items():

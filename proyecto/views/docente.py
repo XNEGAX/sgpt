@@ -6,6 +6,8 @@ from django.views.generic import ListView,TemplateView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from proyecto.auth import RoyalGuard
 from function import JsonGenericView
@@ -20,6 +22,8 @@ from proyecto.models import ActividadRespuestaProyecto
 from proyecto.models import Proyecto
 # forms
 from proyecto.content import ActividadModelForm
+# serializer
+from proyecto.json import ProyectoSerializer
 
 """ inicio bloque seccion docente"""
 
@@ -68,26 +72,53 @@ class ListarParticipantes(RoyalGuard,ListView):
     model = AlumnoSeccion
 
     def get_queryset(self):
+        filter = self.request.GET.get('filter')
         lista_alumnos_seccion = AlumnoSeccion.objects.filter(
             seccion_id=self.kwargs['seccion_id'],
             usuario__is_staff=True
         ).distinct()
+        if filter:
+            lista_alumnos_seccion = lista_alumnos_seccion.filter(
+                Q(usuario__first_name__icontains=filter) | Q(usuario__last_name__icontains=filter) | 
+                Q(usuario__username__icontains=filter) | Q(usuario__email__icontains=filter),
+            )
         data = []
         for alumno_seccion in lista_alumnos_seccion:
             rut = alumno_seccion.usuario.username.split('@')[0]
+
+            estado = 'No definido por el alumno'
+            clase = 'text-gray'
+            url =''
             proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
+            if proyecto and proyecto.is_pendiente:
+                estado = 'Pendiente Aprobación'
+                clase = 'text-warning'
+                url = f'/docente/proyecto/{proyecto.id}/estado/'
+            elif proyecto and proyecto.is_rechazado:
+                estado = 'Rechazado'
+                clase = 'text-danger'
+                url = f'/docente/proyecto/{proyecto.id}/estado/'
+            elif proyecto and proyecto.is_aprobado:
+                estado = 'Aprobado'
+                clase = 'text-success'
+                url = f'/docente/proyecto/{proyecto.id}/avances/'
+
             data.append({
                 'rut': validar_rut.format_rut_without_dots(rut),
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
-                'proyecto': proyecto
+                'proyecto': proyecto,
+                'estado':estado,
+                'clase':clase,
+                'url':url
             })
         return data
 
     def get_context_data(self, **kwargs):
         context = super(ListarParticipantes, self).get_context_data(**kwargs)
         context['con_actividades'] = True if len(Actividad.objects.filter(seccion_id=self.kwargs['seccion_id']))>0 else False
+        context['filter'] = self.request.GET.get('filter')
         return context
 
 class MantenedorActividad(RoyalGuard,TemplateView):
@@ -174,5 +205,21 @@ class EliminarActividad(RoyalGuard,DestroyAPIView):
 
         except ProtectedError as e:
             return JsonResponse(status=423, data={'detail':str(e)})
+        
+class ProyectoActualizar(GenericAPIView, UpdateModelMixin):
+    serializer_class = ProyectoSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return  Proyecto.objects.filter(pk=self.kwargs.get('pk'))
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        proyecto = self.get_object()
+        return JsonResponse({
+            'estado': '0',
+            'respuesta': f'Proyecto {"aprobado" if proyecto.is_aprobado else "rechazado"}!'
+        }, status=200,safe=False)
 """ fin bloque seccion docente"""

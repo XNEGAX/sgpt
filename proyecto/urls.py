@@ -1,4 +1,6 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+
 from proyecto.views import Home
 from proyecto.views import Salir
 from proyecto.views import CambioPerfil
@@ -22,13 +24,12 @@ from proyecto.views.docente import MantenedorActividad
 from proyecto.views.docente import CrearActividad
 from proyecto.views.docente import ActualizarActividad
 from proyecto.views.docente import EliminarActividad
+from proyecto.views.docente import ProyectoActualizar
 
 from proyecto.views.alumno import ListarSeccionesAlumno
 from proyecto.views.alumno import CrearProyectoTitulo
 from proyecto.views.alumno import ActualizarProyectoTitulo
 from proyecto.views.alumno import ResponderActvidades
-
-
 
 app_name = 'proyecto'
 
@@ -58,6 +59,7 @@ urlpatterns = [
     path('docente/seccion/<seccion_id>/actividad/crear/', CrearActividad.as_view(), name="docente_seccion_actividad_crear"),
     path('seccion/<seccion_id>/actividad/<pk>/actualizar/', ActualizarActividad.as_view(), name="docente_seccion_actividad_actualizar"),
     path('seccion/actividad/<pk>/eliminar/', EliminarActividad.as_view(), name="docente_seccion_actividad_eliminar"),
+    path('docente/proyecto/<pk>/estado/', ProyectoActualizar.as_view(), name="docente_proyecto_estado"),
     
     path('alumno/secciones/', ListarSeccionesAlumno.as_view(), name="alumno_secciones"),
     path('alumno/seccion/<alumno_seccion_id>/proyecto/crear/', CrearProyectoTitulo.as_view(), name="alumno_seccion_proyecto_crear"),

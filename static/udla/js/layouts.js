@@ -97,10 +97,57 @@ class Microservicio {
 
     }
     post(params) {
+        params = Object.assign(params, this.params);
         $.ajax({
             url: this.url,
             type: 'POST',
             data: params,
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                Swal.fire(
+                    response['respuesta'], '',
+                    'success'
+                )
+                setTimeout(function () {
+                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                }, 2000);
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
+    }
+    patch(params) {
+        $.ajax({
+            url: this.url,
+            type: 'PATCH',
+            data: params,
+            headers: { "X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val() },
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                Swal.fire(
+                    response['respuesta'], '',
+                    'success'
+                )
+                setTimeout(function () {
+                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                }, 2000);
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
+    }
+    put(params) {
+        $.ajax({
+            url: this.url,
+            type: 'PUT',
+            data: params,
+            headers: { "X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val() },
             beforeSend: function () {
                 openLoader()
             },

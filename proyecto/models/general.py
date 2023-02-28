@@ -271,6 +271,12 @@ class Proyecto(models.Model):
     def __str__(self):
         return f"{self.nombre}"
     
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.strip().upper()
+        self.descripcion = self.descripcion.strip().upper()
+        self.motivo_rechazo = self.motivo_rechazo if self.motivo_rechazo !='' else None
+        super(Proyecto, self).save(*args, **kwargs)
+    
     @property
     def is_pendiente(self):
         return self.ind_aprobado is None
