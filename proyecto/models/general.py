@@ -257,6 +257,7 @@ class Proyecto(models.Model):
     nombre = models.TextField(blank=False, null=False)
     descripcion = models.TextField(blank=False, null=False)
     ind_aprobado = models.BooleanField(blank=True, null=True)
+    motivo_rechazo = models.TextField(blank=True, null=True)
     alumno_seccion = models.OneToOneField(AlumnoSeccion, on_delete=models.CASCADE,related_name='fk_alumno_seccion_proyecto',db_column='alumno_seccion_id')
     fecha_desde =  models.DateTimeField()
     fecha_hasta =  models.DateTimeField()
@@ -266,6 +267,47 @@ class Proyecto(models.Model):
     class Meta:
         managed = True
         db_table = 'proyecto'
+
+    def __str__(self):
+        return f"{self.nombre}"
+    
+    @property
+    def is_pendiente(self):
+        return self.ind_aprobado is None
+    
+    @property
+    def is_aprobado(self):
+        return self.ind_aprobado is True
+
+    @property
+    def is_rechazado(self):
+        return self.ind_aprobado is False
+    
+    @property
+    def actividades_respondida_todas(self):
+        return self.fk_proyecto_actividad_respuesta_proyecto.all()
+    
+    @property
+    def cantidad_actividades_respondida_todas(self):
+        return len(self.actividades_respondida_todas)
+
+    @property
+    def actividades_respondidas_por_publicar(self):
+        return self.fk_proyecto_actividad_respuesta_proyecto.filter(ind_publicada=False)
+
+    @property
+    def cantidad_actividades_respondidas_por_publicar(self):
+        return len(self.actividades_respondidas_por_publicar)
+    
+    @property
+    def actividades_respondidas_publicadas(self):
+        return self.fk_proyecto_actividad_respuesta_proyecto.filter(ind_publicada=True)
+
+    @property
+    def cantidad_actividades_respondidas_publicadas(self):
+        return len(self.actividades_respondidas_publicadas)
+
+
 
 class ActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

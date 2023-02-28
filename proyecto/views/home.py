@@ -18,6 +18,7 @@ class Home(RoyalGuard,View):
                     'modelo_name':log.modelo.name.title(),
                     'accion_nombre':log.accion_nombre,
                     'fecha':log.fecha,
+                    'responsable':log.responsable.get_full_name(),
                     'instance':log.instancia_recuperada
                 })
             context['transacciones'] = log_data

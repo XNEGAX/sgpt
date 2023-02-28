@@ -33,7 +33,11 @@
             <td class="text-center">{{alumno_seccion.estado}}</td>
             <td class="text-center">
               {% if alumno_seccion.con_preguntas %}
-              <a href="{{alumno_seccion.url}}" accion="{{alumno_seccion.accion}}" class="btn_traer_modal">
+              <a {% if alumno_seccion.accion == 0 %}href{%else%}url{%endif%}="{{alumno_seccion.url}}"
+               accion="{{alumno_seccion.accion}}" 
+               {% if alumno_seccion.accion != 0 %}class="btn_traer_modal"{%endif%} 
+               estado="{{alumno_seccion.estado}}"
+              {% if alumno_seccion.motivo_rechazo %}motivo="{{alumno_seccion.motivo_rechazo}}"{%endif%}>
                 <i class='bx bxs-detail text-primary clickeable'></i>
               </a>
               {% else %}

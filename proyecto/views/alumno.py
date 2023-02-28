@@ -29,25 +29,26 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
         for alumno_seccion in lista_alumnos_seccion:
             docente_seccion = alumno_seccion.seccion.fk_seccion_docente_seccion.all().last()
             profesor = docente_seccion.usuario.get_full_name() if docente_seccion else 'Por asignar'
+        
+            estado = 'Proyecto por definir'
+            motivo_rechazo = ''
+            accion = 1
+            url = f"/alumno/seccion/{alumno_seccion.id}/proyecto/crear/"
             proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
-            url = ''
-            accion = 0
-            if not proyecto:
-                url = f"/alumno/seccion/{alumno_seccion.id}/proyecto/crear/"
-                accion = 1
-            elif proyecto.ind_aprobado in (False,None,):
+            if proyecto and proyecto.is_pendiente:
+                estado = 'Proyecto pendiente Aprobación'
                 url = f"/alumno/seccion/proyecto/{proyecto.id}/actualizar/"
                 accion = 2
-            else:
-                url = f"/alumno/seccion/proyecto/{proyecto.id}/actividades/"
-            
-            estado = 'Proyecto por definir'
-            if Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado__isnull=True).exists():
-                estado = 'Proyecto pendiente Aprobación'
-            if Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=True).exists():
-                estado = 'Proyecto aprobado'
-            if Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=False).exists():
+            elif proyecto and proyecto.is_rechazado:
                 estado = 'Proyecto rechazado'
+                motivo_rechazo = proyecto.motivo_rechazo
+                url = f"/alumno/seccion/proyecto/{proyecto.id}/actualizar/"
+                accion = 3
+            elif proyecto and proyecto.is_aprobado:
+                estado = 'Proyecto aprobado'
+                url = f"/alumno/seccion/proyecto/{proyecto.id}/actividades/"
+                accion = 0
+                
             data.append({
                 'id': alumno_seccion.id,
                 'seccion': alumno_seccion.seccion,
@@ -58,6 +59,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
                 'con_preguntas':len(docente_seccion.seccion.fk_seccion_actividad.all())>0,
                 'url':url,
                 'accion':accion,
+                'motivo_rechazo':motivo_rechazo.upper()
             })
         return data
     

@@ -2,12 +2,17 @@ $(document).ready(function () {
     $(document).on('click', '.btn_traer_modal', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        const url = $(this).attr('href');
+        const url = ($(this).attr('href') != undefined) ? $(this).attr('href'): $(this).attr('url')
         const accion = $(this).attr('accion');
+        const motivo_rechazo = $(this).attr('motivo');
+        const estado = $(this).attr('estado');
         const cargarModal = new Microservicio(url)
+        if (accion==='0') {
+            window.location.href = url
+        }
         if (accion==='1') {
             Swal.fire({
-                title: "Definir proyecto",
+                title: estado,
                 html: getHtmlSwal(
                     "No has creado tu proyecto aun!"
                     ,"Presiona aceptar para continuar"
@@ -25,14 +30,24 @@ $(document).ready(function () {
                 }
             })
         }
-        else if (accion==='2') {
-            Swal.fire({
-                title: "Pendiente de aprobación",
-                html: getHtmlSwal(
-                    "Podras editar el proyecto las veces que sean necesarias, mientras este no se encuentre aprobado"
+        else{
+            let title = estado
+            let icon = 'error'
+            let html = getHtmlSwal(
+                "MOTIVO: "+motivo_rechazo,"Presiona editar para continuar"
+            )
+            if (accion==='2'){
+                title = estado,
+                icon = 'warning'
+                html = getHtmlSwal(
+                    "El profesor no ha visto tu propuesta aun"
                     ,"Presiona editar para continuar"
-                ),
-                icon: 'warning',
+                )
+            }
+            Swal.fire({
+                title: title,
+                html: html,
+                icon: icon,
                 confirmButtonColor: '#EB6923',
                 confirmButtonText: '<span class="pull-left"></span><span class="bold">Editar</span>',
                 cancelButtonText: '<span class="pull-left"></span><span class="bold">Cancelar</span>',
@@ -43,9 +58,6 @@ $(document).ready(function () {
                     cargarModal.getModalFormGetUpdateView('#mdl_modulo')
                 }
             })
-        }
-        else{
-            window.location.href = url
         }
         
     });

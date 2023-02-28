@@ -35,15 +35,22 @@
       <div class="card-body">
         <ul class="p-0 m-0">
           {% for tr in transacciones %}
+          <div class="divider divider-primary">
+            <div class="divider-text"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{tr.accion_nombre|lower}}</font></font></div>
+          </div>
           <li class="d-flex mb-4 pb-1">
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <small class="text-muted d-block mb-1">{{tr.modelo_name}}</small>
-                <h6 class="mb-0">{{tr.instance}}</h6>
+              <div class="user-progress d-flex align-items-center gap-1">
+                <h6 class="mb-0">{{tr.modelo_name}}: </h6>
+                <span class="text-muted">{{tr.instance}}</span>
               </div>
               <div class="user-progress d-flex align-items-center gap-1">
-                <h6 class="mb-0">Fecha de {{tr.accion_nombre|lower}}: </h6>
+                <h6 class="mb-0">Fecha : </h6>
                 <span class="text-muted">{{tr.fecha|date:'Y-m-d H:i:s'}}</span>
+              </div>
+              <div class="user-progress d-flex align-items-center gap-1">
+                <h6 class="mb-0">Responsable: </h6>
+                <span class="text-muted">{{tr.responsable|title}}</span>
               </div>
             </div>
           </li>

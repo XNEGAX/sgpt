@@ -50,7 +50,7 @@ class MantenedorUsuario(RoyalGuard, ListView):
                     'id': perfil_usuario.usuario.id,
                     'is_staff': perfil_usuario.usuario.is_staff,
                 })
-        return sorted(data, key=lambda d: d[campo]) if campo else data
+        return sorted(data, key=lambda d: d[campo]) if campo else sorted(data, key=lambda d: d['rut'])
 
     def get_context_data(self, **kwargs):
         context = super(MantenedorUsuario, self).get_context_data(**kwargs)

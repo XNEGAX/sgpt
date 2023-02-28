@@ -75,16 +75,13 @@ class ListarParticipantes(RoyalGuard,ListView):
         data = []
         for alumno_seccion in lista_alumnos_seccion:
             rut = alumno_seccion.usuario.username.split('@')[0]
+            proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
             data.append({
                 'rut': validar_rut.format_rut_without_dots(rut),
                 'nombre_completo': alumno_seccion.usuario.get_full_name(),
                 'correo': alumno_seccion.usuario.email.upper(),
                 'id': alumno_seccion.id,
-                'con_proyecto': not Proyecto.objects.filter(alumno_seccion=alumno_seccion).last(),
-                'con_proyecto_pendiente':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado__isnull=True).exists(),
-                'con_proyecto_aprobado':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=True).exists(),
-                'con_proyecto_rechazado':Proyecto.objects.filter(alumno_seccion=alumno_seccion,ind_aprobado=False).exists(),
-                'con_respuesta':len(ActividadRespuestaProyecto.objects.filter(proyecto__alumno_seccion=alumno_seccion))
+                'proyecto': proyecto
             })
         return data
 

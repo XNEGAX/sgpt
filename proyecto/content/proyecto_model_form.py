@@ -48,3 +48,9 @@ class ProyectoModelForm(forms.ModelForm):
         if data.get('fecha_desde') and data.get('fecha_hasta') and (data.get('fecha_desde') > data.get('fecha_hasta')):
             self.add_error('fecha_desde', "Ingrese un rango correcto de fechas.")
         return data
+    
+
+    def save(self, commit=True):
+        data = super(ProyectoModelForm, self).save(commit)
+        data.ind_aprobado =  None
+        return data
