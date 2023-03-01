@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
+from function import formatear_error
  
 class Modulo(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -130,6 +131,28 @@ class Seccion(models.Model):
 
     def get_semestre_nombre(self):
         return f'{self.semestre} / {self.fecha_desde.year}'
+    
+    def get_configuracion_base(self):
+        parametros = Parametro.objects.filter(nombre='actividades_base').last()
+        if parametros:
+            return parametros
+        return None
+    
+    def set_configuracion_base(self,responsable):
+        parametros = self.get_configuracion_base()
+        if parametros:
+            for actividad in parametros.metadatos:
+                data = actividad.get('fields')
+                Actividad(
+                    actividad_padre_id = data.get('actividad_padre'),
+                    nombre = data.get('nombre'),
+                    descripcion = data.get('descripcion'),
+                    seccion = self,
+                    tipo_entrada_id = data.get('tipo_entrada'),
+                    ind_base = data.get('ind_base') if data.get('ind_base') else False,
+                    orden = data.get('orden'),
+                    responsable = responsable
+                ).save()
 
     class Meta:
         managed = True
@@ -175,6 +198,7 @@ class Actividad(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_actividad',db_column='seccion_id')
     tipo_entrada = models.ForeignKey(TipoEntrada, on_delete=models.CASCADE,blank=True, null=True,related_name='fk_tipo_entrada_actividad',db_column='tipo_entrada_id')
+    ind_base = models.BooleanField(default=False)
     orden = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad',db_column='responsable_id')
@@ -290,6 +314,14 @@ class Proyecto(models.Model):
         return self.ind_aprobado is False
     
     @property
+    def actividades_seccion(self):
+        return self.alumno_seccion.seccion.fk_seccion_actividad.all()
+    
+    @property
+    def cantidad_actividades_seccion(self):
+        return len(self.actividades_seccion)
+    
+    @property
     def actividades_respondida_todas(self):
         return self.fk_proyecto_actividad_respuesta_proyecto.all()
     
@@ -314,12 +346,11 @@ class Proyecto(models.Model):
         return len(self.actividades_respondidas_publicadas)
 
 
-
 class ActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_actividad_respuesta_proyecto',db_column='proyecto_id')
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='fk_actividad_actividad_respuesta_usuario',db_column='actividad_id')
-    respuesta = models.TextField(blank=False, null=False)
+    respuesta = models.JSONField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=True)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad_respuesta_usuario',db_column='responsable_id')
@@ -328,6 +359,15 @@ class ActividadRespuestaProyecto(models.Model):
         managed = True
         db_table = 'actividad_respuesta_proyecto'
         unique_together = ('proyecto','actividad','respuesta',)
+
+class Proyectoseccion(models.Model):
+    proyecto = models.OneToOneField(Proyecto,primary_key=True,on_delete=models.CASCADE,related_name='fk_proyecto_proyecto_seccion',db_column='id')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_proyecto_seccion',db_column='seccion_id')
+    actividades = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'proyectoseccion'
 
 class BitacoraActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

@@ -36,7 +36,7 @@
           {% for actividad in object_list %}
           <tr>
             <td class="text-right">
-              {{actividad.orden_formateado}}</td>
+              {% if not actividad.ind_base %}{{actividad.orden_formateado}}{% else %}{%endif%}</td>
             <td>
               <strong 
               {% if actividad.descripcion != '-' and actividad.descripcion != '' and actividad.descripcion is not None%}
@@ -47,10 +47,14 @@
             <td class="text-left text-wrap">{{actividad.depende_de }}</td>
             <td class="text-center text-wrap">{{actividad.tipo_entrada|default:'-'}}</td>
             <td class="text-center">
+              {% if not actividad.ind_base %}
               <i class='bx bx-edit text-success clickeable btn_actualizar_actividad' actividad='/seccion/{{actividad.seccion.id}}/actividad/{{actividad.id}}/actualizar/'></i>
+              {% else %}-{%endif%}
             </td>
             <td class="text-center">
+              {% if not actividad.ind_base %}
               <i class='bx bx-x text-danger clickeable btn_eliminar_actividad' actividad='/seccion/actividad/{{actividad.id}}/eliminar/'></i>
+              {% else %}-{%endif%}
             </td>
           </tr>
           {%empty%}

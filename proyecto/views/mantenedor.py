@@ -11,11 +11,12 @@ from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from function import validar_rut
 from django.utils import timezone
+import ast
 # models
 from django.contrib.auth.models import User
 from proyecto.models import Perfil
 from proyecto.models import PerfilUsuario
-from proyecto.models import Seccion,DocenteSeccion,AlumnoSeccion
+from proyecto.models import Seccion,DocenteSeccion,AlumnoSeccion,Actividad,Parametro
 # forms
 from proyecto.content import UsuarioModelForm
 from proyecto.content import SeccionModelForm
@@ -160,6 +161,13 @@ class CrearSeccion(JsonGenericView, CreateView):
     model = Seccion
     form_class = SeccionModelForm
     template_name = 'mantenedor/seccion/content_crear.html'
+
+    def form_valid(self, form):
+        response = super(CrearSeccion, self).form_valid(form)
+        # response_data = ast.literal_eval(response.getvalue().decode("UTF-8"))
+        # if bool(response_data) and self.request.POST.get('chk_configuracion_base'):
+        #     Seccion.objects.get(pk=response_data.get('id')).set_configuracion_base(self.request.user)
+        return response
 
 class ActualizarSeccion(RoyalGuard, JsonGenericView, UpdateView):
     model = Seccion

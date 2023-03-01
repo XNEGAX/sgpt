@@ -14,7 +14,7 @@ $(document).ready(function () {
         $('#mdl_modulo #contenido').load(url, function () {
             swal.close();
             $('#mdl_modulo #contenido form').attr('action', url);
-            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar').css("display","block")
+            $('#mdl_modulo .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar').css("display", "block")
             $('#mdl_modulo .modal-footer button[data-bs-dismiss=modal]').text('cancelar');
         });
     });
@@ -68,10 +68,11 @@ $(document).ready(function () {
                         Swal.fire(
                             response['respuesta'], '',
                             'success'
-                        )
-                        setTimeout(function () {
-                            window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                        }, 2000);
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                            }
+                        })
                     },
                     error: function () {
                         swal.close();
@@ -128,10 +129,11 @@ $(document).ready(function () {
                                 'Modificado!',
                                 'El actividad fue modificada con exito!',
                                 'success'
-                            )
-                            setTimeout(function () {
-                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                            }, 2000);
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                }
+                            })
                         }
                         else {
                             Swal.fire(

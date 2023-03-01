@@ -33,27 +33,24 @@
         <h5 class="card-title m-0 me-2">Últimas modificaciones</h5>
       </div>
       <div class="card-body">
-        <ul class="p-0 m-0">
           {% for tr in transacciones %}
           <div class="divider divider-primary">
-            <div class="divider-text"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{tr.accion_nombre|lower}}</font></font></div>
+            <div class="divider-text">{{tr.accion_nombre|upper}}</div>
           </div>
-          <li class="d-flex mb-4 pb-1">
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="user-progress d-flex align-items-center gap-1">
-                <h6 class="mb-0">{{tr.modelo_name}}: </h6>
-                <span class="text-muted">{{tr.instance}}</span>
-              </div>
-              <div class="user-progress d-flex align-items-center gap-1">
-                <h6 class="mb-0">Fecha : </h6>
-                <span class="text-muted">{{tr.fecha|date:'Y-m-d H:i:s'}}</span>
-              </div>
-              <div class="user-progress d-flex align-items-center gap-1">
-                <h6 class="mb-0">Responsable: </h6>
-                <span class="text-muted">{{tr.responsable|title}}</span>
-              </div>
-            </div>
-          </li>
+          <table class="text-black w-100" style="font-size: 12px !important;">
+            <tr>
+              <td class="text-start">{{tr.modelo_name |upper}}</td>
+              <td class="text-start">{{tr.instance}}</td>
+            </tr>
+            <tr>
+              <td class="text-start">FECHA</td>
+              <td class="text-start">{{tr.fecha|date:'Y-m-d H:i:s'}}</td>
+            </tr>
+            <tr>
+              <td class="text-start">RESPONSABLE</td>
+              <td class="text-start">{{tr.responsable|upper}}</td>
+            </tr>
+          </table>
           {% empty %}
           <li class="d-flex mb-4 pb-1">
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
@@ -63,7 +60,6 @@
             </div>
           </li>
           {% endfor %}
-        </ul>
       </div>
     </div>
   </div>

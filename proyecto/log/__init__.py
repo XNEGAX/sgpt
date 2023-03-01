@@ -8,34 +8,53 @@ from django.dispatch import receiver
 from proyecto.models.log import Log
 from django.forms.models import model_to_dict
 from datetime import date,datetime
+import json
+from django.core import serializers
+from function import formatear_error
 
 def format(instance,**kwargs):
-    metadata = {}
-    modelo = ContentType.objects.filter(model=instance._meta.db_table.replace('_','')).last()
-    if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
-        metadata = instance.__dict__
-        metadata["detalle"] = str(model_to_dict(instance))
-        for k,v in metadata.items():
-            if isinstance(v,(date,datetime)):
-                metadata[k] = metadata.get(k).strftime("%Y-%m-%d %H:%M:%S")
-        if metadata.get('_state'):
-            del metadata["_state"]
-    return (modelo,metadata)
+    try:
+        metadata = {}
+        modelo = ContentType.objects.filter(model=instance._meta.db_table.replace('_','')).last()
+        if type(instance) not in (Log,ModelState,LogEntry,Site)  and 'Migration' not in str(type(instance)) and modelo:
+            metadata = instance.__dict__
+            metadata["detalle"] = serializers.serialize('json', [ instance, ]) #json.loads(json.dumps(model_to_dict(instance)))
+            if metadata.get('_state'):
+                del metadata["_state"]
+        return (modelo,metadata)
+    except Exception as exc:
+        print(formatear_error(exc))
 
+def default(o):
+    if type(o) is date or type(o) is datetime:
+        return o.isoformat()
+    
 class LogManager(models.Model):
     @receiver(post_save)
     def log_save(sender, instance,**kwargs):
         accion = 1 if kwargs.get('created') else 2
         data = format(instance,**kwargs)
         if len(data)>0 and bool(data[1]):
-            Log(modelo=data[0],accion=accion,fecha = data[1].get('fecha'),responsable_id=data[1].get('responsable_id'),metadatos=data[1]).save()
-            
+            Log(
+                modelo=data[0],
+                accion=accion,
+                fecha = data[1].get('fecha').isoformat(),
+                responsable_id= data[1].get('responsable_id'),
+                metadatos= json.dumps(data[1], default=default)
+            ).save()
+
     @receiver(post_delete)
     def log_save(sender, instance,**kwargs):
         accion = 3
         data = format(instance,**kwargs)
         if len(data)>0 and bool(data[1]):
-            Log(modelo=data[0],accion=accion,fecha = data[1].get('fecha'),responsable_id=data[1].get('responsable_id'),metadatos=data[1]).save()
+            Log(
+                modelo=data[0],
+                accion=accion,
+                fecha = data[1].get('fecha').isoformat(),
+                responsable_id=data[1].get('responsable_id'),
+                metadatos=json.dumps(data[1], default=default)
+            ).save()
 
     class Meta:
         managed = False

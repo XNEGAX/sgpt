@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
 from django.db.models import Q
+from django.db.models import Max
 from django.views.generic import ListView,TemplateView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
@@ -151,6 +152,7 @@ class MantenedorActividad(RoyalGuard,TemplateView):
                 'tipo_entrada':actividad.tipo_entrada,
                 'seccion':actividad.seccion,
                 'id':actividad.id,
+                'ind_base':actividad.ind_base,
             })
         context['object_list'] = sorted(actividades, key=lambda d: d['orden_formateado'])
         return context

@@ -72,7 +72,7 @@ class Microservicio {
             $(cuerpo).load(url, function () {
                 $(modal).modal('show');
                 $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
-                $(modal + ' .modal-body form').attr('action', url).attr('id','form_crear');
+                $(modal + ' .modal-body form').attr('action', url).attr('id', 'form_crear');
                 closeLoader()
             });
         } catch (error) {
@@ -88,7 +88,7 @@ class Microservicio {
             $(cuerpo).load(url, function () {
                 $(modal).modal('show');
                 $(modal + ' .modal-footer .btn_accion').text('actualizar').attr('id', 'btn_actualizar');
-                $(modal + ' .modal-body form').attr('action', url).attr('id','form_actualizar');
+                $(modal + ' .modal-body form').attr('action', url).attr('id', 'form_actualizar');
                 closeLoader()
             });
         } catch (error) {
@@ -109,10 +109,11 @@ class Microservicio {
                 Swal.fire(
                     response['respuesta'], '',
                     'success'
-                )
-                setTimeout(function () {
-                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                }, 2000);
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                    }
+                });
             },
             error: function () {
                 closeLoader()
@@ -132,10 +133,11 @@ class Microservicio {
                 Swal.fire(
                     response['respuesta'], '',
                     'success'
-                )
-                setTimeout(function () {
-                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                }, 2000);
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                    }
+                })
             },
             error: function () {
                 closeLoader()
@@ -155,17 +157,18 @@ class Microservicio {
                 Swal.fire(
                     response['respuesta'], '',
                     'success'
-                )
-                setTimeout(function () {
-                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                }, 2000);
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                    }
+                })
             },
             error: function () {
                 closeLoader()
             },
         });
     }
-    postFormData(formData,modal) {
+    postFormData(formData, modal) {
         const url = this.url
         $.ajax({
             type: 'POST',
@@ -183,10 +186,11 @@ class Microservicio {
                     Swal.fire(
                         response['mensaje'], '',
                         'success'
-                    )
-                    setTimeout(function () {
-                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                    }, 2000);
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                        }
+                    }) 
                 }
                 else {
                     Swal.fire(
@@ -225,7 +229,7 @@ class Microservicio {
     }
 }
 
-function getHtmlSwal(title,message) {
+function getHtmlSwal(title, message) {
     return `
     <div class="card-body">
         <h5 class="card-title">
@@ -303,14 +307,14 @@ $(document).ready(function () {
         if (![null, '', undefined].includes(titulo) && ![null, '', undefined].includes(info)) {
             Swal.fire({
                 title: '<h5 class="card-title text-primary fw-bold text-uppercase">' + titulo + '</h5>',
-                html: '<p class="text-justify">'+info+'</p>',
+                html: '<p class="text-justify">' + info + '</p>',
                 focusConfirm: false,
                 confirmButtonText:
                     '<i class="fa fa-thumbs-up"></i> Cerrar',
             })
         }
-        else{
-            alert('sdasdas')
+        else {
+            alert('No tiene las configuraciones solicitadas')
         }
     });
 });

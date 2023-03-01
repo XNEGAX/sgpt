@@ -46,11 +46,11 @@ $(document).ready(function () {
                                 'Creado!',
                                 'El seccion fue creada con exito!',
                                 'success'
-                            )
-                            setTimeout(function(){
-                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                            }, 2000);
-                            
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                }
+                            })  
                         }
                         else {
                             Swal.fire(
@@ -98,10 +98,11 @@ $(document).ready(function () {
                         Swal.fire(
                             response['respuesta'],'',
                             'success'
-                        )
-                        setTimeout(function(){
-                            window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                        }, 2000);
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                            }
+                        }) 
                     },
                     error: function () {
                         swal.close();
@@ -159,13 +160,14 @@ $(document).ready(function () {
                         if (response['estado'] == 0) {
                             $('#mdl_modulo').modal('hide');
                             Swal.fire(
-                                'Modificado!',
-                                'El seccion fue modificada con exito!',
+                                'Actualizado!',
+                                'El seccion fue actualizada con exito!',
                                 'success'
-                            )
-                            setTimeout(function(){
-                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                            }, 2000);
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                }
+                            })
                         }
                         else {
                             Swal.fire(

@@ -9,10 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from django.utils import timezone
+from django.core import serializers
 # models
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Actividad
-from proyecto.models import Proyecto
+from proyecto.models import Proyecto,Seccion,Proyectoseccion
 # forms
 from proyecto.content import ProyectoModelForm
 
@@ -87,7 +88,11 @@ class ActualizarProyectoTitulo(JsonGenericView, UpdateView):
 class ResponderActvidades(ListView):
     template_name = 'alumno/actividades/index.html'
 
-    def setup(self,request,*args,**kwargs):
-        if not Proyecto.objects.filter(alumno_seccion_id=kwargs.get('alumno_seccion_id'),ind_aprobado=True).exists():
-            return redirect("proyecto:alumno_seccion_proyecto", alumno_seccion_id=kwargs.get('alumno_seccion_id'))
-        return super(ResponderActvidades, self).get_context_data(**kwargs)
+    def get_queryset(self):
+        # Seccion.objects.get(pk=3).set_configuracion_base(self.request.user)
+        print(Proyectoseccion.objects.filter(seccion_id=1).values())
+        query_Set = Proyectoseccion.objects.filter(seccion_id=1).last().actividades
+        print(query_Set)
+        for q in query_Set:
+            print(q.get('actividades_hijas'))
+        return 

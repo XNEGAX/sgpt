@@ -57,10 +57,6 @@ class JsonGenericView(object):
             self.object = form.save(commit=False)
             if hasattr(self.object, 'responsable_id'):
                 self.object.responsable_id = self.request.user.id
-            if hasattr(self.object, 'fecha_desde'):
-                self.object.fecha_desde = self.object.fecha_desde.strftime("%Y-%m-%d")
-            if hasattr(self.object, 'fecha_hasta'):
-                self.object.fecha_hasta = self.object.fecha_hasta.strftime("%Y-%m-%d")
             self.object.save()
             
             context = {

@@ -53,10 +53,11 @@ $(document).ready(function () {
                                 'Creado!',
                                 'El usuario fue creado con exito!',
                                 'success'
-                            )
-                            setTimeout(function(){
-                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                            }, 2000);
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                }
+                            }) 
                         }
                         else {
                             Swal.fire(
@@ -105,10 +106,11 @@ $(document).ready(function () {
                 Swal.fire(
                     response['respuesta'],'',
                     'success'
-                )
-                setTimeout(function(){
-                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                }, 2000);
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                    }
+                }) 
             },
             error: function () {
                 swal.close();
@@ -190,10 +192,11 @@ $(document).ready(function () {
                                 'Modificado!',
                                 'El usuario fue modificado con exito!',
                                 'success'
-                            )
-                            setTimeout(function(){
-                                window.location.href = location.protocol + '//' + location.host + location.pathname;;
-                            }, 2000);
+                            ).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                }
+                            }) 
                         }
                         else {
                             Swal.fire(

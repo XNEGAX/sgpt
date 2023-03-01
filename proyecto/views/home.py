@@ -12,7 +12,7 @@ class Home(RoyalGuard,View):
         context = {}
         if request.session.get('perfil_activo').upper() =='ADMINISTRADOR':
             log_data = []
-            logs = Log.objects.all().order_by('-fecha')[:10]
+            logs = Log.objects.all().order_by('-fecha')[:5]
             for log in logs:
                 log_data.append({
                     'modelo_name':log.modelo.name.title(),
