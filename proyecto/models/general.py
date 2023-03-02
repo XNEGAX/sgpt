@@ -2,8 +2,6 @@ from proyecto.log import LogManager
 import json
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
-from django.utils import timezone
 from function import formatear_error
  
 class Modulo(models.Model):
@@ -84,9 +82,25 @@ class Parametro(models.Model):
     nombre = models.TextField(blank=False, null=False,unique=True)
     metadatos=models.JSONField()
 
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.strip().upper()
+        self.metadatos = json.dumps(self.metadatos)
+        super(Parametro, self).save(*args, **kwargs)
+
+    def get_metadatos(self):
+        try:
+            return self.metadatos
+        except:
+            return list(json.loads(str(self.metadatos)))
+    
+    def __str__(self):
+        return self.nombre
+
     class Meta:
         managed = True
         db_table = 'parametro'
+
+    
 
 class ReporteConfigurable(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
@@ -132,27 +146,57 @@ class Seccion(models.Model):
     def get_semestre_nombre(self):
         return f'{self.semestre} / {self.fecha_desde.year}'
     
-    def get_configuracion_base(self):
-        parametros = Parametro.objects.filter(nombre='actividades_base').last()
-        if parametros:
-            return parametros
-        return None
+    def set_actividad(self,parametros):
+        actividad = Actividad(**parametros)
+        actividad.save()
+        return actividad
     
-    def set_configuracion_base(self,responsable):
-        parametros = self.get_configuracion_base()
-        if parametros:
-            for actividad in parametros.metadatos:
-                data = actividad.get('fields')
-                Actividad(
-                    actividad_padre_id = data.get('actividad_padre'),
-                    nombre = data.get('nombre'),
-                    descripcion = data.get('descripcion'),
-                    seccion = self,
-                    tipo_entrada_id = data.get('tipo_entrada'),
-                    ind_base = data.get('ind_base') if data.get('ind_base') else False,
-                    orden = data.get('orden'),
-                    responsable = responsable
-                ).save()
+    def set_configuracion_base(self,tipo,responsable):
+        try:
+            tipo = 'ACTIVIDADES_BASE_COMPLETA' if int(tipo) == 1 else 'ACTIVIDADES_BASE_MINIMA'
+            parametros = Parametro.objects.filter(nombre=tipo).last()
+            actividades_abuelas = parametros.get_metadatos()
+            for actividad_abuela in actividades_abuelas:
+                temp_abuela = actividad_abuela.copy()
+                temp_abuela['responsable_id'] = responsable.id
+                temp_abuela['seccion_id'] = self.id
+                temp_abuela['actividad_padre_id'] =None
+                if 'actividades' in temp_abuela:
+                    del temp_abuela['actividades']
+                if temp_abuela.get('tipo_entrada'):
+                    temp_abuela['tipo_entrada_id'] = temp_abuela['tipo_entrada']
+                    del temp_abuela['tipo_entrada']
+                abuela = self.set_actividad(temp_abuela)
+
+                actividades_padres = actividad_abuela.get('actividades')
+                if actividades_padres:
+                    for actividad_padre in actividades_padres:
+                        temp_padre = actividad_padre.copy()
+                        temp_padre['responsable_id'] = responsable.id
+                        temp_padre['seccion_id'] = self.id
+                        temp_padre['actividad_padre_id'] =abuela.pk
+                        if 'actividades' in temp_padre:
+                            del temp_padre['actividades']
+                        if temp_padre.get('tipo_entrada'):
+                            temp_padre['tipo_entrada_id'] = temp_padre['tipo_entrada']
+                            del temp_padre['tipo_entrada']
+                        padre = self.set_actividad(temp_padre)
+
+                        actividades_hijas = actividad_padre.get('actividades')
+                        if actividades_hijas:
+                            for actividad_hija in actividades_hijas:
+                                temp_hija = actividad_hija.copy()
+                                temp_hija['responsable_id'] = responsable.id
+                                temp_hija['seccion_id'] = self.id
+                                temp_hija['actividad_padre_id'] =padre.pk
+                                if temp_hija.get('tipo_entrada'):
+                                    temp_hija['tipo_entrada_id'] = temp_hija['tipo_entrada']
+                                    del temp_hija['tipo_entrada']
+                                self.set_actividad(temp_hija)
+            return True
+        except Exception as exc:
+            print(formatear_error(exc))
+            return False
 
     class Meta:
         managed = True

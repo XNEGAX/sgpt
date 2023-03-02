@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
 from django.db.models import Q
@@ -19,8 +19,9 @@ import base64
 from proyecto.models import DocenteSeccion
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Actividad
-from proyecto.models import ActividadRespuestaProyecto
+from proyecto.models import ActividadRespuestaProyecto,Seccion
 from proyecto.models import Proyecto
+from proyecto.models import Proyectoseccion
 # forms
 from proyecto.content import ActividadModelForm
 # serializer
@@ -32,6 +33,15 @@ class MantenedorSeccionesDocente(RoyalGuard,ListView):
     template_name = 'docente/seccion/index.html'
     paginate_by = 10
     model = DocenteSeccion
+
+    def dispatch(self, request, *args, **kwargs):
+        tipo_configuracion = request.GET.get('configuration')
+        seccion_seleccionada = request.GET.get('selected')
+        if tipo_configuracion and seccion_seleccionada:
+            resultado = Seccion.objects.get(pk=seccion_seleccionada).set_configuracion_base(tipo_configuracion,request.user)
+            if resultado:
+                return redirect(f"/docente/seccion/{seccion_seleccionada}/actividades/")
+        return super(MantenedorSeccionesDocente, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         year_selected = int(self.request.GET.get('year')) if self.request.GET.get('year') else timezone.now().year
@@ -53,6 +63,7 @@ class MantenedorSeccionesDocente(RoyalGuard,ListView):
                 'fecha_desde': seccion_docente.seccion.fecha_desde,
                 'fecha_hasta': seccion_docente.seccion.fecha_hasta,
                 'con_alumnos': True if len(AlumnoSeccion.objects.filter(seccion=seccion_docente.seccion))>0 else False,
+                'con_actividades': True if len(Actividad.objects.filter(seccion=seccion_docente.seccion))>0 else False,
             })
         return data
 

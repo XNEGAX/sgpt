@@ -7,7 +7,7 @@
 <div class="card">
   <div class="card-header">
     <h5 class="card-title text-primary fw-bold text-uppercase">Lista de usuarios</h5>
-    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element" id="form_filtro_orden">
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element" id="form_filtro_orden" autocomplete="off">
       <div class="form-row">
         <div class="form-group col-md-2">
           <div class="input-group" style="position: absolute;right: 56px !important;max-width: 300px !important;">
@@ -43,7 +43,7 @@
             <td>{{usuario.correo| upper}}</td>
             <td class="text-center fw-bold">{{usuario.perfil| upper}}</td>
             <td class="text-center">
-              <form action="/usuario/impersonar/" method="POST">
+              <form action="/usuario/impersonar/" method="POST" autocomplete="off">
                 <input type="hidden" name="usuario_id" value="{{usuario.id}}">
                 {% csrf_token %}
                 {% if usuario.is_staff%}

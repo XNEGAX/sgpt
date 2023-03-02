@@ -38,8 +38,8 @@ class LogManager(models.Model):
             Log(
                 modelo=data[0],
                 accion=accion,
-                fecha = data[1].get('fecha').isoformat(),
-                responsable_id= data[1].get('responsable_id'),
+                fecha = data[1].get('fecha',datetime.now()).isoformat(),
+                responsable_id= data[1].get('responsable_id',0),
                 metadatos= json.dumps(data[1], default=default)
             ).save()
 
@@ -51,8 +51,8 @@ class LogManager(models.Model):
             Log(
                 modelo=data[0],
                 accion=accion,
-                fecha = data[1].get('fecha').isoformat(),
-                responsable_id=data[1].get('responsable_id'),
+                fecha = data[1].get('fecha',datetime.now()).isoformat(),
+                responsable_id=data[1].get('responsable_id',0),
                 metadatos=json.dumps(data[1], default=default)
             ).save()
 

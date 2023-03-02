@@ -8,7 +8,7 @@
         <h5 class="card-title text-primary fw-bold text-uppercase">Definición del proyecto</h5>
     </div>
     <div class="card-body">
-        <form method="post" id="form_crear_proyecto">
+        <form method="post" id="form_crear_proyecto" autocomplete="off">
             {% csrf_token %}
             <div class="row g-2">
                 {% for input in form %}

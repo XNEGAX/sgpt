@@ -3,7 +3,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" id="form_crear_usuario">
+    <form method="post" id="form_crear_usuario" autocomplete="off">
         {% csrf_token %}
         <div class="row g-2">
             {% for input in form %}

@@ -6,7 +6,9 @@
 <div class="card overflow-hidden">
   <div class="card-header">
     <h5 class="card-title text-primary fw-bold text-uppercase">Mis secciones</h5>
-    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline">
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline" autocomplete="off">
+      <input type="hidden" name="configuration" id="configuration" value="">
+      <input type="hidden" name="selected" id="selected" value="">
       <div class="form-row">
         <div class="form-group col-md-4">
           <select id="year" name="year" class="form-control" style="max-width: 120px !important;appearance: auto !important">
@@ -56,9 +58,10 @@
               {% endif %}
             </td>
             <td class="text-center">
-              <a href="/docente/seccion/{{seccion.id}}/actividades/">
-                <i class='bx bxs-book-bookmark text-primary clickeable'></i>
+              <a {% if seccion.con_actividades%}href="/docente/seccion/{{seccion.id}}/actividades/"{%endif%}>
+                <i class='bx bxs-book-bookmark text-primary clickeable {% if not seccion.con_actividades%}btn_configuracion_base' seccion="{{seccion.id}}"{%else%}'{%endif%}></i>
               </a>
+              
             </td>
           </tr>
           {%empty%}
