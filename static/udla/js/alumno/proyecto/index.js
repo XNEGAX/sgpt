@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    $('#summernote').summernote();
     summernote_list.forEach(function (item) {
         $('#'+item).summernote({
             height: 600,
@@ -9,5 +8,4 @@ $(document).ready(function () {
               ]
         });
     });
-    
 });
