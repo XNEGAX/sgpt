@@ -7,7 +7,7 @@
 
 {% if request.session.perfil_activo|lower == 'administrador'%}
 <div class="row m-l-5">
-  <div class="col-lg-8 mb-4 order-0">
+  <div class="col-lg-7 mb-4 order-0">
     <div class="card">
       <div class="d-flex align-items-end row">
         <div class="col-sm-7">
@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-4 order-2 mb-4">
+  <div class="col-md-5 order-2 mb-4">
     <div class="card">
       <div class="card-header d-flex align-items-center justify-content-between" style="padding: 25px !important;">
         <h5 class="card-title m-0 me-2">Últimas modificaciones</h5>
@@ -39,7 +39,7 @@
           </div>
           <table class="text-black w-100" style="font-size: 12px !important;">
             <tr>
-              <td class="text-start">{{tr.modelo_name |upper}}</td>
+              <td class="text-start">{{tr.modelo_nombre |upper}}</td>
               <td class="text-start">{{tr.instance}}</td>
             </tr>
             <tr>

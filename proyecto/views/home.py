@@ -5,17 +5,19 @@ from function import validar_rut
 # models
 from proyecto.models.log import Log
 from proyecto.models import PerfilUsuario
-
+from proyecto.models import Proyecto
 
 class Home(RoyalGuard,View):
     def get(self, request):
         context = {}
+        if 'proyecto' in request.session:
+            del request.session['proyecto']
         if request.session.get('perfil_activo').upper() =='ADMINISTRADOR':
             log_data = []
             logs = Log.objects.all().order_by('-fecha')[:5]
             for log in logs:
                 log_data.append({
-                    'modelo_name':log.modelo.name.title(),
+                    'modelo_nombre':log.modelo.name,
                     'accion_nombre':log.accion_nombre,
                     'fecha':log.fecha,
                     'responsable':log.responsable.get_full_name(),
@@ -36,4 +38,11 @@ class Home(RoyalGuard,View):
                         'id': perfil_usuario.usuario.id,
                     })
             context['lista_alumnos'] = sorted(data, key=lambda d: d['nombre_completo'])
+        else:
+            proyecto = Proyecto.objects.filter(in_activo=True,ind_aprobado=True,alumno_seccion__usuario=request.user).last()
+            if proyecto:
+                request.session['proyecto'] = {
+                    'url':proyecto.url,
+                    'actividades_menu':proyecto.actividades_menu
+                }
         return render(request, 'home/index.html', context)

@@ -16,16 +16,19 @@ class ConsultaBD(object):
     def rows_to_dict_list(self,cursor):
         columns = [i[0] for i in cursor.description]
         return [dict(zip(columns, row)) for row in cursor]
-
-    def execute_proc(self):
+    
+    def execute_proc(self,onefetch=False):
         cursor = connections['default'].cursor()
         try:
             cursor.callproc(self.procedimiento,self.parametros)
             data = self.rows_to_dict_list(cursor)
+            if onefetch:
+                data = data[0] if len(data)>0 else data
             cursor.close()
             return data
         except Exception as exc:
-            return formatear_error(exc)
+            print(formatear_error(exc)) 
+        return [] if not onefetch else {}
 
     def execute_lines(self):
         cursor = connections['default'].cursor()

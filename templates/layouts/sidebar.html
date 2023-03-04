@@ -12,7 +12,7 @@
 
     <div class="menu-inner-shadow"></div>
 
-    <ul class="menu-inner py-1">
+    <ul class="menu-inner py-1 ps ps--active-y">
         {% if request.session.modulos%}
             {% for m1 in request.session.modulos %}
                 {% url m1.url as url_m1 %}
@@ -45,6 +45,9 @@
                 </li>
                 {% endif %}
             {% endfor %}
+        {% endif %}
+        {% if request.session.proyecto %}
+        {% include "layouts/project.html" %}
         {% endif %}
     </ul>
 </aside>

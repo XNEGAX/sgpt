@@ -17,7 +17,7 @@
           </select>
         </div>
         <div class="form-group col-md-2">
-          <div class="input-group" style="position: absolute;right: 56px !important;max-width: 300px !important;">
+          <div class="input-group" style="position: absolute;right: 25px !important;max-width: 300px !important;">
             <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}"/>
             <button class="btn btn-outline-primary" type="submit">Filtrar</button>
           </div>
@@ -79,5 +79,5 @@
 
 {% endblock content %}
 {% block script %}
-<script src="{% static 'udla/js/mantenedor/seccion/index.js' %}"></script>
+<script src="{% static 'udla/js/mantenedor/seccion/index.js' %}?q={{csrf_token}}"></script>
 {% endblock script %}

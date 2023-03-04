@@ -11,9 +11,9 @@ from function import JsonGenericView
 from django.utils import timezone
 from django.core import serializers
 # models
-from proyecto.models import AlumnoSeccion
+from proyecto.models import AlumnoSeccion,Parametro
 from proyecto.models import Actividad
-from proyecto.models import Proyecto,Seccion,Proyectoseccion
+from proyecto.models import Proyecto,Seccion
 # forms
 from proyecto.content import ProyectoModelForm
 
@@ -25,7 +25,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
     def get_queryset(self):
         lista_alumnos_seccion = AlumnoSeccion.objects.filter(
             usuario=self.request.user,
-        ).distinct().order_by('-id')
+        ).distinct()
         data = []
         for alumno_seccion in lista_alumnos_seccion:
             docente_seccion = alumno_seccion.seccion.fk_seccion_docente_seccion.all().last()
@@ -60,12 +60,12 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
                 'con_preguntas':len(docente_seccion.seccion.fk_seccion_actividad.all())>0,
                 'url':url,
                 'accion':accion,
-                'motivo_rechazo':motivo_rechazo.upper()
+                'motivo_rechazo':motivo_rechazo.upper(),
             })
         return data
     
 
-class CrearProyectoTitulo(JsonGenericView,CreateView):
+class CrearProyectoTitulo(RoyalGuard,JsonGenericView,CreateView):
     model = Proyecto
     form_class = ProyectoModelForm
     template_name = 'alumno/proyecto/content_crear.html'
@@ -86,13 +86,35 @@ class ActualizarProyectoTitulo(JsonGenericView, UpdateView):
     template_name = 'alumno/proyecto/content_actualizar.html'
 
 class ResponderActvidades(ListView):
-    template_name = 'alumno/actividades/index.html'
+    template_name = 'alumno/proyecto/index.html'
+
+    def setup(self,request, *args, **kwargs):
+        super(ResponderActvidades, self).setup(request, *args, **kwargs)
+        #inicio cambio de activo
+        proyectos = Proyecto.objects.filter(pk=kwargs.get("proyecto_id"))
+        if not proyectos.filter(in_activo=True).exists():
+            proyectos.update(in_activo=False)
+            proyectos.filter(pk=kwargs.get("proyecto_id")).update(in_activo=True)
+        # fin cambio de activo
+        proyecto = Proyecto.objects.get(pk=kwargs.get("proyecto_id"))
+        if proyecto:
+            request.session['proyecto'] = {
+                'url':proyecto.url,
+                'actividades_menu':proyecto.actividades_menu
+            }
 
     def get_queryset(self):
-        # Seccion.objects.get(pk=3).set_configuracion_base(self.request.user)
-        print(Proyectoseccion.objects.filter(seccion_id=1).values())
-        query_Set = Proyectoseccion.objects.filter(seccion_id=1).last().actividades
-        print(query_Set)
-        for q in query_Set:
-            print(q.get('actividades_hijas'))
-        return 
+        return Proyecto.objects.get(pk=self.kwargs.get('proyecto_id'))
+    
+    def get_context_data(self, **kwargs):
+        context = super(ResponderActvidades, self).get_context_data(**kwargs)
+        actividades= context.get('object_list').actividades_seccion.filter(actividad_padre=self.request.GET.get('actividad')).order_by('orden')
+        if len(actividades)==0:
+            actividades = context.get('object_list').actividades_seccion.filter(id=self.request.GET.get('actividad')).order_by('orden')
+        context['actividades_seccion'] = actividades
+        context.get('object_list').gantt
+        return context
+    
+
+
+         

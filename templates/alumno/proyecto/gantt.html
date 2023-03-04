@@ -1,8 +1,38 @@
-<div class="col-md-6 col-sm-12">
-    <div class="card overflow-hidden mb-4" style="height: 300px;">
-      <h5 class="card-header"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Barra de desplazamiento horizontal</font></font></h5>
-      <div class="card-body ps ps--active-x" id="horizontal-example">
-        <img src="../assets/img/backgrounds/18.jpg" alt="imagen de la barra de desplazamiento">
-      <div class="ps__rail-x" style="width: 591px; left: 1378.4px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 414px; width: 177px;"></div></div><div class="ps__rail-y" style="top: 0px; right: -1378.4px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+{% load static %}
+<div class="card gantt-container">
+  <div class="row">
+    <div class="col-md-4 col-sm-12">
+      <div class="mt-2-2">
+        <table class="table table-striped w-100">
+          <thead>
+            <tr>
+              <th>Tarea</th>
+              <th width="30%">Inicio</th>
+              <th width="30%">Término</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tarea in object_list.tareas %}
+            <tr>
+              <td style="height: 35.5px !important;">{{tarea.nombre}}</td>
+              <td style="height: 35.5px !important;">{{tarea.fecha_inicio|date:"d-m-Y"}}</td>
+              <td style="height: 35.5px !important;">{{tarea.fecha_termino|date:"d-m-Y"}}</td>
+            </tr>
+            {%empty%}
+            <tr>
+              <td colspan="3" class="text-center">
+                <strong>No existen tareas</strong>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+      <div class="gantt-graphic-container">
+        <img src="data:image/svg+xml;base64,{{object_list.gantt}}" />
+      </div>
     </div>
   </div>
+</div>

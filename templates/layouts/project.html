@@ -1,0 +1,29 @@
+{% load extras %}
+<li class="menu-header small text-uppercase background-primary ">
+    <a href="{{request.session.proyecto.url}}" class="menu-header-text fw-bold text-white">
+        Mi Proyecto&nbsp;&nbsp;<i class="menu-icon tf-icons bx bx-coffee bx-1-3"></i>
+    </a>
+</li>
+<i class="bx bx-bowl-hot"></i>
+{% for aa in request.session.proyecto.actividades_menu %}
+<li class="menu-item 
+    {% if request.get_full_path == aa.url and request.get_full_path not in aa.actividades_hijo_url %}active{%endif%}
+    {% if request.get_full_path != aa.url and request.get_full_path in aa.actividades_hijo_url %}active open{%endif%}
+    ">
+    <a href="{{aa.url}}" class="menu-link{% if aa.is_padre%} menu-toggle{% endif %}">
+      <i class="menu-icon tf-icons bx bx-folder"></i>
+      <div data-i18n="{{aa.nombre}}">{{aa.nombre}}</div>
+    </a>
+    {% if aa.is_padre%}
+    <ul class="menu-sub">
+        {% for ah in aa.actividades_hijo %}
+        <li class="menu-item {% if request.get_full_path == ah.url %}active{%endif%}">
+            <a href="{{ah.url}}" class="menu-link">
+            <div data-i18n="Account">{{ah.nombre}}</div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+  </li>
+{% endfor %}

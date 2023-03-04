@@ -531,31 +531,22 @@ table.table th {
   margin-top: 5px !important;
 }
 
-.card-header,
-.card-footer {
-  padding: 60px !important;
-}
-
-.table-responsive {
-  padding-left: 30px !important;
-  padding-right: 30px !important;
-}
-
 @media screen and (max-width: 900px) {
   .table-responsive {
     overflow: auto;
     overflow-x: scroll;
   }
+
   .table-responsive::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #F5F5F5;
   }
-  
+
   .table-responsive::-webkit-scrollbar {
     width: 10px;
     background-color: #F5F5F5;
   }
-  
+
   .table-responsive::-webkit-scrollbar-thumb {
     background-color: #EB6923;
   }
@@ -564,4 +555,87 @@ table.table th {
 
 .bx-1-3 {
   font-size: 1.3rem !important;
+}
+
+.breackcrum {
+  margin-left: 20px !important;
+}
+
+.breackcrum h5 {
+  font-size: 14px !important;
+  padding-top: 0 !important;
+}
+
+.text-title {
+  font-size: .75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: inherit !important;
+}
+
+.text-blue {
+  color: #3B86E8 !important;
+}
+
+.word-wrap {
+  word-wrap: break-word
+}
+
+.background-primary {
+  background-color: #EB6923 !important;
+}
+
+.bg-menu-theme .menu-inner>.menu-header::before {
+  background-color: white !important;
+}
+
+.btn-flotante {
+  position: absolute;
+  right: 10px;
+  box-shadow: 0px 8px 15px rgb(0 0 0 / 10%);
+  z-index: 99;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+}
+.shadow{
+  box-shadow: 0px 8px 15px rgb(0 0 0 / 10%) !important;
+}
+
+.top-10{
+  top: 10px !important;
+}
+
+form.no-card {
+  margin-top: inherit !important;
+}
+
+
+.gantt-graphic-container {
+  overflow: auto;
+  overflow-x: scroll;
+}
+
+@media screen and (max-height: 400px) {
+  .gantt-container {
+    overflow: auto;
+    overflow-y: scroll;
+  }
+}
+
+.gantt-graphic-container::-webkit-scrollbar-track, .gantt-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
+}
+
+.gantt-graphic-container::-webkit-scrollbar, .gantt-container::-webkit-scrollbar {
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+.gantt-graphic-container::-webkit-scrollbar-thumb, .gantt-container::-webkit-scrollbar-thumb {
+  background-color: #EB6923;
+}
+
+.mt-2-2 {
+  margin-top: 2.2rem !important;
 }

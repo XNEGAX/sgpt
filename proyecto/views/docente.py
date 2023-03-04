@@ -21,7 +21,6 @@ from proyecto.models import AlumnoSeccion
 from proyecto.models import Actividad
 from proyecto.models import ActividadRespuestaProyecto,Seccion
 from proyecto.models import Proyecto
-from proyecto.models import Proyectoseccion
 # forms
 from proyecto.content import ActividadModelForm
 # serializer
@@ -219,7 +218,7 @@ class EliminarActividad(RoyalGuard,DestroyAPIView):
         except ProtectedError as e:
             return JsonResponse(status=423, data={'detail':str(e)})
         
-class ProyectoActualizar(GenericAPIView, UpdateModelMixin):
+class ProyectoActualizar(RoyalGuard,GenericAPIView, UpdateModelMixin):
     serializer_class = ProyectoSerializer
     permission_classes = [IsAuthenticated]
 

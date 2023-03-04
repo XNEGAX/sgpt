@@ -1,8 +1,14 @@
 from proyecto.log import LogManager
 import json
+import gantt
+import base64
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from function import formatear_error
+from function import ConsultaBD
+from datetime import datetime,date
+from function.gantt import CustomProject
  
 class Modulo(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -91,7 +97,7 @@ class Parametro(models.Model):
         try:
             return self.metadatos
         except:
-            return list(json.loads(str(self.metadatos)))
+            return json.loads(self.metadatos)
     
     def __str__(self):
         return self.nombre
@@ -146,6 +152,14 @@ class Seccion(models.Model):
     def get_semestre_nombre(self):
         return f'{self.semestre} / {self.fecha_desde.year}'
     
+    @property
+    def periodo(self):
+        return f"{self.fecha_desde.strftime('%d/%m/%Y')} - {self.fecha_hasta.strftime('%d/%m/%Y')}"
+    
+    @property
+    def ind_activa(self):
+        return self.fecha_desde.date()<=datetime.now().date() and self.fecha_hasta.date()>=datetime.now().date()
+    
     def set_actividad(self,parametros):
         actividad = Actividad(**parametros)
         actividad.save()
@@ -157,7 +171,7 @@ class Seccion(models.Model):
             parametros = Parametro.objects.filter(nombre=tipo).last()
             actividades_abuelas = parametros.get_metadatos()
             for actividad_abuela in actividades_abuelas:
-                temp_abuela = actividad_abuela.copy()
+                temp_abuela = dict(actividad_abuela).copy()
                 temp_abuela['responsable_id'] = responsable.id
                 temp_abuela['seccion_id'] = self.id
                 temp_abuela['actividad_padre_id'] =None
@@ -248,7 +262,7 @@ class Actividad(models.Model):
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad',db_column='responsable_id')
 
     def __str__(self):
-        return f"{self.orden_formateado} {self.nombre}"
+        return f"{self.orden_formateado if not self.ind_base else ''} {self.nombre}"
     
     @property
     def depende_de(self):
@@ -299,6 +313,7 @@ class Actividad(models.Model):
     class Meta:
         managed = True
         db_table = 'actividad'
+        unique_together = ('actividad_padre', 'seccion','orden',)
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
@@ -318,13 +333,13 @@ class AlumnoSeccion(models.Model):
 
     def __str__(self):
         return f"{self.usuario.get_full_name()} - {self.seccion}"
-        
 
 class Proyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     nombre = models.TextField(blank=False, null=False)
     descripcion = models.TextField(blank=False, null=False)
     ind_aprobado = models.BooleanField(blank=True, null=True)
+    in_activo = models.BooleanField(blank=False, null=False,default=True)
     motivo_rechazo = models.TextField(blank=True, null=True)
     alumno_seccion = models.OneToOneField(AlumnoSeccion, on_delete=models.CASCADE,related_name='fk_alumno_seccion_proyecto',db_column='alumno_seccion_id')
     fecha_desde =  models.DateTimeField()
@@ -337,13 +352,24 @@ class Proyecto(models.Model):
         db_table = 'proyecto'
 
     def __str__(self):
-        return f"{self.nombre}"
-    
+        return self.nombre
+
+    def __unicode__(self):
+       return self.nombre
+        
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
         self.descripcion = self.descripcion.strip().upper()
         self.motivo_rechazo = self.motivo_rechazo if self.motivo_rechazo !='' else None
         super(Proyecto, self).save(*args, **kwargs)
+
+    @property
+    def detalles(self):
+        return ConsultaBD('public.sp_web_get_detalle_proyectos',(self.id,)).execute_proc(True)
+    
+    @property
+    def periodo(self):
+        return f"{self.fecha_desde.strftime('%d/%m/%Y')} - {self.fecha_hasta.strftime('%d/%m/%Y')}"
     
     @property
     def is_pendiente(self):
@@ -388,6 +414,56 @@ class Proyecto(models.Model):
     @property
     def cantidad_actividades_respondidas_publicadas(self):
         return len(self.actividades_respondidas_publicadas)
+    
+    @property
+    def url(self):
+        return f'/alumno/seccion/proyecto/{self.id}/actividades/'
+    
+    @property
+    def actividades_menu(self):
+        actividades_padre = []
+        actividades_padre_proyecto = self.actividades_seccion.filter(actividad_padre=None).order_by('orden')
+        for actividad_padre_proyecto in actividades_padre_proyecto:
+            actividades_hijo = []
+            actividades_hijo_url = []
+            actividades_hijo_proyecto = self.actividades_seccion.filter(actividad_padre=actividad_padre_proyecto.id).order_by('orden')
+            for actividad_hijo_proyecto in actividades_hijo_proyecto:
+                actividades_hijo_url.append(f'{self.url}?actividad={actividad_hijo_proyecto.id}')
+                actividades_hijo.append({
+                    'url':f'{self.url}?actividad={actividad_hijo_proyecto.id}',
+                    'nombre': actividad_hijo_proyecto.nombre,
+                })
+
+            actividades_padre.append({
+                'url':f'{self.url}?actividad={actividad_padre_proyecto.id}' if not actividad_padre_proyecto.is_padre else 'javascript:void(0);',
+                'is_padre': actividad_padre_proyecto.is_padre,
+                'nombre': actividad_padre_proyecto.nombre,
+                'actividades_hijo_url':actividades_hijo_url,
+                'actividades_hijo':actividades_hijo,
+            })
+        return actividades_padre
+    
+    @property
+    def ruta(self):
+        path = 'proyecto/gantt/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return f'{path}{self.id}'
+    
+    @property
+    def tareas(self):
+        return self.fk_proyecto_gantt.all()
+
+    @property
+    def gantt(self):
+        gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
+        p = CustomProject(color='#35C367')
+        for tarea in self.tareas:
+            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
+        p.make_svg_for_tasks(filename=self.ruta, today=datetime.now().date(), start=self.fecha_desde, end=self.fecha_hasta)
+
+        with open(self.ruta, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode('utf-8')
 
 
 class ActividadRespuestaProyecto(models.Model):
@@ -403,15 +479,6 @@ class ActividadRespuestaProyecto(models.Model):
         managed = True
         db_table = 'actividad_respuesta_proyecto'
         unique_together = ('proyecto','actividad','respuesta',)
-
-class Proyectoseccion(models.Model):
-    proyecto = models.OneToOneField(Proyecto,primary_key=True,on_delete=models.CASCADE,related_name='fk_proyecto_proyecto_seccion',db_column='id')
-    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE,related_name='fk_seccion_proyecto_seccion',db_column='seccion_id')
-    actividades = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'proyectoseccion'
 
 class BitacoraActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

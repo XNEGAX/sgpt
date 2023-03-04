@@ -47,7 +47,7 @@ class ActividadModelForm(forms.ModelForm):
             fields_keyOrder = ['tipo_actividad','actividad_padre','nombre','descripcion','tipo_entrada','orden']
             if tipo_actividad== 2:
                 actividades =[]
-                for actividad in Actividad.objects.filter(seccion_id=seccion_id,actividad_padre__actividad_padre_id__isnull=True,).order_by('orden'):
+                for actividad in Actividad.objects.filter(seccion_id=seccion_id,actividad_padre__actividad_padre_id__isnull=True,ind_base=False).order_by('orden'):
                     actividades.append((actividad.id,f"{actividad.orden_formateado} {actividad.nombre}"))
 
                 self.fields['actividad_padre'] = forms.ChoiceField(

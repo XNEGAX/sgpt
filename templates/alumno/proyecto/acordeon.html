@@ -1,12 +1,18 @@
-<div class="accordion-item card">
-    <h2 class="accordion-header text-body d-flex justify-content-between" id="accordionIconThree">
-      <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionIcon-3" aria-expanded="false" aria-controls="accordionIcon-3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-        Acordeón Artículo 3
-      </font></font></button>
-    </h2>
-    <div id="accordionIcon-3" class="accordion-collapse collapse" data-bs-parent="#accordionIcon" style="">
-      <div class="accordion-body"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-        Pastel de avena toffee barra de chocolate jujubes. </font><font style="vertical-align: inherit;">Pastel de queso con gotas de limón y brownie de malvavisco. </font><font style="vertical-align: inherit;">Muffin dulce de gominolas de malvavisco de pan de jengibre. </font><font style="vertical-align: inherit;">Dulce rollo garra de oso bastones de caramelo pastel de avena grageas caramelos. </font><font style="vertical-align: inherit;">Muffin de caramelos de galleta danesa de oblea de helado.
-      </font></font></div>
+<div class="accordion-item card mt-2">
+    <span class="d-flex justify-content-between" id="accordionIconThree">
+        <button type="button" class="accordion-button collapsed text-title text-blue fw-bold"
+            data-bs-toggle="collapse" data-bs-target="#accordion-{{actividad.id}}" aria-expanded="false"
+            aria-controls="accordionIcon-3">
+            {% if not actividad.ind_base %}{{actividad.orden}}.{% else %}{%endif%}&nbsp; {{actividad.nombre}}
+        </button>
+    </span>
+    <div id="accordion-{{actividad.id}}" class="accordion-collapse collapse" data-bs-parent="#accordionIcon">
+        <div class="accordion-body">
+            {% if actividad.tipo_entrada.tipo == 'textarea' %}
+                {% include "alumno/proyecto/textarea.html" %}
+            {% elif 'gantt' in actividad.nombre|lower %}
+                {% include "alumno/proyecto/gantt.html" %}
+            {% endif %}
+        </div>
     </div>
-  </div>
+</div>
