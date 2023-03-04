@@ -59,11 +59,13 @@
                 <div class="card-header">
                     <h5 class="card-title text-blue fw-bold text-uppercase">{{actividad.nombre}}</h5>
                 </div>
-                <form action="{{request.path}}?actividad={{actividad.id}}" method="post" class="no-card">
+                <form action="{{request.path}}?actividad={{actividad.id}}" method="post" class="no-card" id="form_responder_actividad">
                     {% if not actividad.tipo_entrada.ind_archivo and not actividad.tipo_entrada.ind_multiple and 'gantt' not in actividad.nombre|lower %}
                         {% include "alumno/proyecto/textarea.html" %}
                     {% elif 'gantt' in actividad.nombre|lower %}
                         {% include "alumno/proyecto/gantt.html" %}
+                    {% elif actividad.tipo_entrada.ind_archivo and actividad.tipo_entrada.ind_multiple %}
+                        {% include "alumno/proyecto/imagen.html" %}
                     {% endif %}
                 </form>
                 <div class="card-footer">
@@ -74,22 +76,6 @@
                         <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-10" id="btn_agregar_tarea" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">
                             <i class="bx bx-plus"></i>
                         </button>
-                        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel" aria-hidden="true" style="visibility: hidden;">
-                            <div class="offcanvas-header">
-                                <h5 id="offcanvasEndLabel" class="offcanvas-title">Nueva tarea</h5>
-                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                            </div>
-                            <div class="offcanvas-body mx-0 flex-grow-0">
-                                aqui va el form
-                                <div id="contenido"></div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-                                        cancelar
-                                    </button>
-                                    <button type="button" class="btn btn-primary btn_accion">Guardar</button>
-                                </div>
-                            </div>
-                        </div>
                         {% endif %}
                     </div>
                 </div>

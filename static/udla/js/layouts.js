@@ -190,7 +190,7 @@ class Microservicio {
                         if (result.isConfirmed) {
                             window.location.href = location.protocol + '//' + location.host + location.pathname;;
                         }
-                    }) 
+                    })
                 }
                 else {
                     Swal.fire(
@@ -317,4 +317,13 @@ $(document).ready(function () {
             alert('No tiene las configuraciones solicitadas')
         }
     });
+    //init fix summernote paragraph
+    $(document).on('click', '.note-btn.dropdown-toggle', function (e) {
+        $(this).closest('.note-btn-group').children('ul').addClass('show');
+    })
+    $(document).on('click', '.note-dropdown-menu.dropdown-menu.show button', function (e) {
+        $('.note-dropdown-menu.dropdown-menu.show').removeClass('show');
+    })
+    //finaly fix summernote paragraph
+
 });
