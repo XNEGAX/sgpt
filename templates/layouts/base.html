@@ -73,8 +73,9 @@
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="breackcrum">
-                            {{request.session.breadcrumb | safe}}
-
+                            {% block breackcrum%}
+                             {{request.session.breadcrumb | safe}}
+                            {% endblock breackcrum%}
                         </div>
                         {% block content %} {% endblock content %}
                     </div>

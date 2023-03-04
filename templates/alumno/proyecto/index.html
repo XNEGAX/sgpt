@@ -2,7 +2,11 @@
 {% load static %}
 {% block modal %}
 {% endblock modal%}
+{% block breackcrum%}
+{{breackcrum|safe}}
+{% endblock breackcrum%}
 {% block content %}
+{% if not actividad_enviada %}
 <div class="card mt-2">
     <div class="card-header">
         <h5 class="card-title text-primary fw-bold text-uppercase">proyecto</h5>
@@ -40,10 +44,13 @@
         </div>
     </div>
 </div>
-
+{% endif %}
 <div class="card mt-2">
     <script>
         let summernote_list = []
+        let imagenes_list = []
+        let tablas_list =[]
+        let documentos_list = []
     </script>
     <div class="card-body">
         {% if actividades_seccion|length > 1 %}
@@ -69,13 +76,14 @@
                     
                 </h5>
                 </div>
-                <form action="{{request.path}}?actividad={{actividad.id}}" method="post" class="no-card" id="form_responder_actividad">
+                <form action="{{request.path}}respuesta/" method="post" class="no-card" id="form_responder_actividad">
+                    <input type="hidden" name="actividad_id" value="{{actividad.id}}">
                     {% if not actividad.tipo_entrada.ind_archivo and not actividad.tipo_entrada.ind_multiple and 'gantt' not in actividad.nombre|lower %}
                         {% include "alumno/proyecto/textarea.html" %}
                     {% elif 'gantt' in actividad.nombre|lower %}
                         {% include "alumno/proyecto/gantt.html" %}
                     {% elif actividad.tipo_entrada.ind_archivo and actividad.tipo_entrada.ind_multiple %}
-                        {% include "alumno/proyecto/imagen.html" %}
+                        {% include "alumno/proyecto/tabla.html" %}
                     {% endif %}
                 </form>
                 <div class="card-footer">

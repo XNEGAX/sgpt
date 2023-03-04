@@ -108,11 +108,22 @@ class ResponderActvidades(ListView):
     
     def get_context_data(self, **kwargs):
         context = super(ResponderActvidades, self).get_context_data(**kwargs)
+        breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyecto / </span>{context.get("object_list").nombre.capitalize()}</h5>'
         actividades= context.get('object_list').actividades_seccion.filter(actividad_padre=self.request.GET.get('actividad')).order_by('orden')
         if len(actividades)==0:
             actividades = context.get('object_list').actividades_seccion.filter(id=self.request.GET.get('actividad')).order_by('orden')
+            if len(actividades)==1:
+                if actividades[0].actividad_padre:
+                    breackcrum = f'''<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{context.get("object_list").nombre.capitalize()} / {actividades[0].actividad_padre.nombre.capitalize()} / </span>{actividades[0].nombre.capitalize()}</h5>'''
+                else:
+                    breackcrum = f'''<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{context.get("object_list").nombre.capitalize()} / </span>{actividades[0].nombre.capitalize()}</h5>'''
+        else:
+            print(1)
+            if self.request.GET.get('actividad'):
+                breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{context.get("object_list").nombre.capitalize()} / </span>{actividades[0].actividad_padre.nombre.capitalize()}</h5>'
         context['actividades_seccion'] = actividades
-        context.get('object_list').gantt
+        context['breackcrum'] = breackcrum
+        context['actividad_enviada'] = self.request.GET.get('actividad')
         return context
     
 
