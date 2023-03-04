@@ -69,11 +69,10 @@
                     {% if actividad.descripcion != '-' and actividad.descripcion != '' and actividad.descripcion is not None%}
                     titulo="Descripción" info="{{actividad.descripcion |lower|capfirst  }}" title="Incluye descripción" 
                     {% endif %}
-                    >{{actividad.nombre}}
+                    >{% if not actividad.ind_base %}{{actividad.orden_formateado}}{% else %}{%endif%} {{actividad.nombre}}
                     {% if actividad.descripcion != '-' and actividad.descripcion != '' and actividad.descripcion is not None%}
                     &nbsp;<i class="bx bx-info-circle bx-1-3" style="vertical-align: inherit !important;"></i>
                     {% endif %}
-                    
                 </h5>
                 </div>
                 <form action="{{request.path}}respuesta/" method="post" class="no-card" id="form_responder_actividad">
@@ -89,7 +88,7 @@
                 <div class="card-footer">
                     <div class="btn-footer-table">
                         {% if 'gantt' not in actividad.nombre|lower %}
-                        <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-360 right-30" id="btn_guardar_actividad"><i class="bx bx-save"></i></button>
+                        <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-160 right-30" id="btn_guardar_actividad"><i class="bx bx-save"></i></button>
                         {% else %}
                         <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-360 right-30" id="btn_agregar_tarea" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">
                             <i class="bx bx-plus"></i>
