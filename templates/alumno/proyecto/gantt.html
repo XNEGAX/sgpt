@@ -3,20 +3,33 @@
   <div class="row">
     <div class="col-md-4 col-sm-12">
       <div class="mt-2-2">
-        <table class="table table-striped w-100">
+        <table class="table table-striped w-100 table-detail-gantt" style="margin-top: 40px !important;">
           <thead>
             <tr>
               <th>Tarea</th>
               <th width="30%">Inicio</th>
               <th width="30%">Término</th>
+              <th><i class="bx bx-dots-vertical-rounded"></i></th>
             </tr>
           </thead>
           <tbody>
             {% for tarea in object_list.tareas %}
             <tr>
-              <td style="height: 35.5px !important;">{{tarea.nombre}}</td>
-              <td style="height: 35.5px !important;">{{tarea.fecha_inicio|date:"d-m-Y"}}</td>
-              <td style="height: 35.5px !important;">{{tarea.fecha_termino|date:"d-m-Y"}}</td>
+              <td>{{tarea.nombre}}</td>
+              <td>{{tarea.fecha_inicio|date:"d-m-Y"}}</td>
+              <td>{{tarea.fecha_termino|date:"d-m-Y"}}</td>
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i
+                      class="bx bx-dots-vertical-rounded"></i></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0);" tarea="{{tarea.id}}"><i
+                        class="bx bx-edit-alt me-1"></i> Actualizar</a>
+                    <a class="dropdown-item" href="javascript:void(0);" tarea="{{tarea.id}}"><i
+                        class="bx bx-trash me-1"></i> Eliminar</a>
+                  </div>
+                </div>
+              </td>
             </tr>
             {%empty%}
             <tr>
@@ -34,22 +47,5 @@
         <img src="data:image/svg+xml;base64,{{object_list.gantt}}" />
       </div>
     </div>
-  </div>
-</div>
-
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEnd" aria-labelledby="offcanvasEndLabel" aria-hidden="true" style="visibility: hidden;">
-  <div class="offcanvas-header">
-      <h5 id="offcanvasEndLabel" class="offcanvas-title">Nueva tarea</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body mx-0 flex-grow-0">
-      aqui va el form
-      <div id="contenido"></div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-              cancelar
-          </button>
-          <button type="button" class="btn btn-primary btn_accion">Guardar</button>
-      </div>
   </div>
 </div>

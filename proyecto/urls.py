@@ -31,6 +31,8 @@ from proyecto.views.alumno import CrearProyectoTitulo
 from proyecto.views.alumno import ActualizarProyectoTitulo
 from proyecto.views.alumno import ResponderActvidades
 
+from proyecto.views.alumno import CrearTareaProyecto
+
 app_name = 'proyecto'
 
 urlpatterns = [
@@ -65,5 +67,9 @@ urlpatterns = [
     path('alumno/seccion/<alumno_seccion_id>/proyecto/crear/', CrearProyectoTitulo.as_view(), name="alumno_seccion_proyecto_crear"),
     path('alumno/seccion/proyecto/<pk>/actualizar/', ActualizarProyectoTitulo.as_view(), name="alumno_seccion_proyecto_actualizar"),
     path('alumno/seccion/proyecto/<proyecto_id>/actividades/', ResponderActvidades.as_view(), name="alumno_seccion_actividades"),
+
+    path('alumno/proyecto/<proyecto_id>/tarea/crear/', CrearTareaProyecto.as_view(), name="alumno_proyecto_tarea_crear"),
+    path('alumno/proyecto/<proyecto_id>/tarea/actualizar/', CrearTareaProyecto.as_view(), name="alumno_proyecto_tarea_actualizar"),
+    path('alumno/proyecto/<proyecto_id>/tarea/eliminar/', CrearTareaProyecto.as_view(), name="alumno_proyecto_tarea_eliminar"),
     
 ]

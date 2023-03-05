@@ -13,9 +13,10 @@ from django.core import serializers
 # models
 from proyecto.models import AlumnoSeccion,Parametro
 from proyecto.models import Actividad
-from proyecto.models import Proyecto,Seccion
+from proyecto.models import Proyecto,Seccion,Gantt
 # forms
 from proyecto.content import ProyectoModelForm
+from proyecto.content import GanttModelForm
 
 class ListarSeccionesAlumno(RoyalGuard,ListView):
     template_name = 'alumno/seccion/index.html'
@@ -68,7 +69,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
 class CrearProyectoTitulo(RoyalGuard,JsonGenericView,CreateView):
     model = Proyecto
     form_class = ProyectoModelForm
-    template_name = 'alumno/proyecto/content_crear.html'
+    template_name = 'alumno/seccion/content_crear.html'
 
     def get_initial(self):
         initial = self.request.GET.dict()
@@ -83,7 +84,7 @@ class CrearProyectoTitulo(RoyalGuard,JsonGenericView,CreateView):
 class ActualizarProyectoTitulo(JsonGenericView, UpdateView):
     model = Proyecto
     form_class = ProyectoModelForm
-    template_name = 'alumno/proyecto/content_actualizar.html'
+    template_name = 'alumno/seccion/content_actualizar.html'
 
 class ResponderActvidades(ListView):
     template_name = 'alumno/proyecto/index.html'
@@ -118,7 +119,6 @@ class ResponderActvidades(ListView):
                 else:
                     breackcrum = f'''<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{context.get("object_list").nombre.capitalize()} / </span>{actividades[0].nombre.capitalize()}</h5>'''
         else:
-            print(1)
             if self.request.GET.get('actividad'):
                 breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{context.get("object_list").nombre.capitalize()} / </span>{actividades[0].actividad_padre.nombre.capitalize()}</h5>'
         context['actividades_seccion'] = actividades
@@ -126,6 +126,24 @@ class ResponderActvidades(ListView):
         context['actividad_enviada'] = self.request.GET.get('actividad')
         return context
     
+
+
+
+class CrearTareaProyecto(JsonGenericView,CreateView):
+    model = Gantt
+    form_class = GanttModelForm
+    template_name = 'alumno/proyecto/content_crear.html'
+
+    def get_initial(self):
+        print(timezone.now())
+        initial = self.request.GET.dict()
+        initial['proyecto_id'] = self.kwargs['proyecto_id']
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(CrearTareaProyecto, self).get_context_data(**kwargs)
+        context['proyecto_id'] = self.kwargs['proyecto_id']
+        return context
 
 
          

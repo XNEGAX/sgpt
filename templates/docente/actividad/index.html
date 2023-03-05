@@ -3,11 +3,14 @@
 {% block modal %}
 {% include "docente/actividad/mdl_modulo.html" %}
 {% endblock modal%}
+{% block breackcrum%}
+{{breackcrum|safe}}
+{% endblock breackcrum%}
 {% block content %}
 <input type="hidden" id="seccion" value="{{seccion}}">
 <div class="card overflow-hidden">
   <div class="card-header">
-    <h5 class="card-title text-primary fw-bold text-uppercase">Actividades de la sección</h5>
+    <h5 class="card-title text-primary fw-bold text-uppercase">Actividades de la sección / {{seccion_nombre}}</h5>
     <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline" autocomplete="off">
       <div class="form-row">
         <div class="form-group col-md-2">

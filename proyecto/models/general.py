@@ -141,8 +141,8 @@ class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     codigo = models.TextField(blank=False, null=False, unique=True)
     semestre = models.ForeignKey(Semestre, models.CASCADE, blank=False, null=False,related_name='fk_seccion_semestre',db_column='semestre_id')
-    fecha_desde = models.DateTimeField(blank=False, null=False)
-    fecha_hasta = models.DateTimeField(blank=False, null=False)
+    fecha_desde = models.DateField(blank=False, null=False)
+    fecha_hasta = models.DateField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_seccion',db_column='responsable_id')
 
@@ -342,8 +342,8 @@ class Proyecto(models.Model):
     in_activo = models.BooleanField(blank=False, null=False,default=True)
     motivo_rechazo = models.TextField(blank=True, null=True)
     alumno_seccion = models.OneToOneField(AlumnoSeccion, on_delete=models.CASCADE,related_name='fk_alumno_seccion_proyecto',db_column='alumno_seccion_id')
-    fecha_desde =  models.DateTimeField()
-    fecha_hasta =  models.DateTimeField()
+    fecha_desde =  models.DateField()
+    fecha_hasta =  models.DateField()
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_proyecto',db_column='responsable_id')
 
@@ -362,10 +362,6 @@ class Proyecto(models.Model):
         self.descripcion = self.descripcion.strip().upper()
         self.motivo_rechazo = self.motivo_rechazo if self.motivo_rechazo !='' else None
         super(Proyecto, self).save(*args, **kwargs)
-
-    @property
-    def detalles(self):
-        return ConsultaBD('public.sp_web_get_detalle_proyectos',(self.id,)).execute_proc(True)
     
     @property
     def periodo(self):
@@ -459,8 +455,9 @@ class Proyecto(models.Model):
         gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
         p = CustomProject(color='#35C367')
         for tarea in self.tareas:
-            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
-        p.make_svg_for_tasks(filename=self.ruta, today=datetime.now().date(), start=self.fecha_desde, end=self.fecha_hasta)
+            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio.date(), duration=tarea.duration))
+       
+        p.make_svg_for_tasks(filename=self.ruta, today=datetime.now().date(), start=self.fecha_desde.date(), end=self.fecha_hasta.date())
 
         with open(self.ruta, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
@@ -497,8 +494,8 @@ class Gantt(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_gantt',db_column='proyecto_id')
     nombre = models.TextField(blank=False, null=False)
-    fecha_inicio =  models.DateTimeField()
-    fecha_termino =  models.DateTimeField()
+    fecha_inicio =  models.DateField()
+    fecha_termino =  models.DateField()
     duration = models.IntegerField(blank=False, null=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_gantt',db_column='responsable_id')

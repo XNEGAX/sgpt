@@ -80,6 +80,22 @@ class Microservicio {
         }
 
     }
+    getOffcanvasFormGetCreateView(modal) {
+        try {
+            openLoader()
+            const cuerpo = modal + ' #contenido'
+            const url = this.url
+            $(cuerpo).load(url, function () {
+                $(modal).offcanvas("toggle");
+                $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
+                $(modal + ' .modal-body form').attr('action', url).attr('id', 'form_crear');
+                closeLoader()
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
     getModalFormGetUpdateView(modal) {
         try {
             openLoader()
@@ -292,7 +308,8 @@ $(document).ready(function () {
                 position: 'top',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#mdl_modulo').modal('hide');
+                    $('.modal').modal('hide');
+                    $('[data-bs-dismiss="offcanvas"]').click();
                 }
             })
 
@@ -302,8 +319,6 @@ $(document).ready(function () {
     $(document).on('click', '.btn_info', function (e) {
         const titulo = $(this).attr('titulo');
         const info = $(this).attr('info');
-        console.log(titulo)
-        console.log(info)
         if (![null, '', undefined].includes(titulo) && ![null, '', undefined].includes(info)) {
             Swal.fire({
                 title: '<h5 class="card-title text-primary fw-bold text-uppercase">' + titulo + '</h5>',
@@ -326,4 +341,9 @@ $(document).ready(function () {
     })
     //finaly fix summernote paragraph
 
+    //fix min number
+    $(document).on('change','[type="number"]',function () {
+        if (!$(this).val() || (parseInt($(this).val()) <= 11 && parseInt($(this).val()) >= $(this).attr('min')));
+        else $(this).val($(this).data("old"));
+    });
 });

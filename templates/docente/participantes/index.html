@@ -3,10 +3,13 @@
 {% block modal %}
 {% include "docente/participantes/mdl_modulo.html" %}
 {% endblock modal%}
+{% block breackcrum%}
+{{breackcrum|safe}}
+{% endblock breackcrum%}
 {% block content %}
 <div class="card overflow-hidden">
   <div class="card-header">
-    <h5 class="card-title text-primary fw-bold text-uppercase">Alumnos de la sección</h5>
+    <h5 class="card-title text-primary fw-bold text-uppercase">Alumnos de la sección / {{seccion_nombre}}</h5>
     <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline">
       <div class="form-row">
         <div class="form-group col-md-2">
@@ -48,7 +51,7 @@
                         {% elif not alumno_seccion.proyecto %}
                         <i class='bx bxs-detail bx-1-3 text-gray no-clickeable' title="El alumno no ha definido su proyecto"></i>
                         {% elif alumno_seccion.proyecto.is_pendiente %}
-                        <i class='bx bx-confused bx-1-3 text-warning clickeable btn_aprobar' url='{{alumno_seccion.url}}' tipo="0" title="El proyecto pendiente de aprobacion"></i>
+                        <i class='bx bx-confused bx-1-3 text-warning clickeable btn_aprobar' url='{{alumno_seccion.url}}' tipo="0" title="El proyecto pendiente de aprobacion" nombre="{{proyecto.nombre}}" descripcion="{{proyecto.descripcion}}"></i>
                         {% elif alumno_seccion.proyecto.is_rechazado %}
                         <i class='bx bx-dizzy bx-1-3 text-danger clickeable btn_aprobar' url='{{alumno_seccion.url}}' tipo="1" title="El proyecto fue rechazado"></i>
                         {% elif alumno_seccion.proyecto.cantidad_actividades_respondida_todas|default:0 == 0 %}

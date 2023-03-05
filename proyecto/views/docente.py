@@ -128,8 +128,13 @@ class ListarParticipantes(RoyalGuard,ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ListarParticipantes, self).get_context_data(**kwargs)
+        seccion_obj = Seccion.objects.get(pk=self.kwargs['seccion_id'])
+        context['seccion_nombre'] = seccion_obj.codigo
+        breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{seccion_obj.codigo} / </span>Alumnos</h5>'
+        context['breackcrum'] = breackcrum
         context['con_actividades'] = True if len(Actividad.objects.filter(seccion_id=self.kwargs['seccion_id']))>0 else False
         context['filter'] = self.request.GET.get('filter')
+        context['proyecto'] = Proyecto.objects.filter(alumno_seccion__seccion=seccion_obj).last()
         return context
 
 class MantenedorActividad(RoyalGuard,TemplateView):
@@ -151,6 +156,10 @@ class MantenedorActividad(RoyalGuard,TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MantenedorActividad, self).get_context_data(**kwargs)
         context['seccion'] = self.kwargs['seccion_id']
+        seccion_obj = Seccion.objects.get(pk=self.kwargs['seccion_id'])
+        context['seccion_nombre'] = seccion_obj.codigo
+        breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{seccion_obj.codigo} / </span>Actividades</h5>'
+        context['breackcrum'] = breackcrum
         context['filter'] = self.request.GET.get('filter')
         actividades =[]
         for actividad in self.get_queryset():

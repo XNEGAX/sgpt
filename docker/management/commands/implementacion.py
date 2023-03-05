@@ -181,7 +181,7 @@ class Command(MigrateCommand):
             SELECT setval('docente_seccion_id_seq',2, true);
             --proyecto demo
             INSERT INTO public.proyecto(id, nombre, descripcion, ind_aprobado, in_activo, motivo_rechazo, fecha_desde, fecha_hasta, fecha, alumno_seccion_id, responsable_id)
-            VALUES(1, 'PROYECTO PRUEBA 1', 'PROYECTO PRUEBA 1', NULL, true, NULL, '2023-02-28 21:00:00.000', '2023-08-30 20:00:00.000', '2023-03-04 00:04:49.683', 3, 2);
+            VALUES(1, 'PROYECTO PRUEBA 1', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', NULL, true, NULL, '2023-02-28 21:00:00.000', '2023-08-30 20:00:00.000', '2023-03-04 00:04:49.683', 3, 2);
             SELECT setval('proyecto_id_seq',2, true);
             --tipos dato
             INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'PARRAFO', 'textarea', false, false, NULL, '2023-03-01 11:40:14.538', 0);
@@ -249,67 +249,6 @@ class Command(MigrateCommand):
             INSERT INTO public.actividad(id, nombre, descripcion, ind_base, orden, fecha, actividad_padre_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(2, 'BIBLIOGRAFÍA (APA)', '', true, 98, '2023-02-28 19:53:44.267', NULL, 2, 1, 1);
             INSERT INTO public.actividad(id, nombre, descripcion, ind_base, orden, fecha, actividad_padre_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(1, 'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.', true, 0, '2023-02-26 19:55:20.145', NULL, 2, 1, 1);
             SELECT setval('actividad_id_seq',107, true);
-            --se crea sp para traer el detalle de proyectos
-            CREATE OR REPLACE FUNCTION sp_web_get_detalle_proyectos(p_proyecto_id int4)
-            RETURNS TABLE(
-                alumno json,
-                profesor json,
-                actividades_seccion json
-            )
-            LANGUAGE plpgsql AS 
-            $func$
-            BEGIN
-                RETURN QUERY 
-                select (
-                    select row_to_json(autor) from (
-                        select split_part(t3.username,'@',1) as rut, t3.first_name||' '||t3.last_name as nombre
-                    ) autor
-                ) autor,(
-                    select row_to_json(evaluador) from (
-                        select split_part(t5.username,'@',1) as rut, t5.first_name||' '||t5.last_name as nombre
-                    ) evaluador
-                ) evaluador,(
-                    select to_json(array_agg(row_to_json(actividades))) from (
-                        select s1.orden,s1.id,s1.nombre,s1.descripcion,s1.actividad_padre_id,s1.seccion_id,s1.tipo_entrada_id,s1.ind_base,
-                            case when (select count(*) from actividad p3 where p3.actividad_padre_id= s1.id) > 0 
-                            then (
-                                select to_json(array_agg(row_to_json(actividades_hijas))) from (
-                                    select p1.orden,p1.id,p1.nombre,p1.descripcion,p1.actividad_padre_id,p1.seccion_id,p1.tipo_entrada_id,p1.ind_base,
-                                        case when (select count(*) from actividad o3 where o3.actividad_padre_id= p1.id) > 0 
-                                        then (
-                                            select to_json(array_agg(row_to_json(actividades_nietas))) from (
-                                                select o1.orden,o1.id,o1.nombre,o1.descripcion,o1.actividad_padre_id,o1.seccion_id,o1.tipo_entrada_id,o1.ind_base
-                                                from actividad o1 where o1.actividad_padre_id= p1.id order by o1.orden
-                                            ) actividades_nietas
-                                        ) else null end as actividades_nietas,
-                                        case when (select count(*) from actividad_respuesta_proyecto o4 where o4.proyecto_id = t1.id and o4.actividad_id = p1.id)>0
-                                        then (
-                                            select to_json(array_agg(row_to_json(respuestas))) from (
-                                                select o2.id,o2.respuesta,o2.ind_publicada,o2.fecha from actividad_respuesta_proyecto o2 where o2.proyecto_id = t1.id and o2.actividad_id = p1.id
-                                            ) respuestas
-                                        ) else null end as respuestas
-                                    from actividad p1 where p1.actividad_padre_id= s1.id order by p1.orden
-                                ) actividades_hijas
-                            ) else null end as actividades_hijas,
-                            case when (select count(*) from actividad_respuesta_proyecto p4 where p4.proyecto_id = t1.id and p4.actividad_id = s1.id)>0
-                            then (
-                                select to_json(array_agg(row_to_json(respuestas))) from (
-                                    select p2.id,p2.respuesta,p2.ind_publicada,p2.fecha from actividad_respuesta_proyecto p2 where p2.proyecto_id = t1.id and p2.actividad_id = s1.id
-                                ) respuestas
-                            ) else null end as respuestas
-                        from actividad s1
-                        where s1.seccion_id = 1 and s1.actividad_padre_id is null
-                        order by s1.orden
-                    ) actividades
-                ) as actividades 
-                from proyecto t1
-                inner join alumno_seccion t2 on t1.alumno_seccion_id = t2.id
-                inner join auth_user t3 on t2.usuario_id = t3.id
-                inner join docente_seccion t4 on t2.seccion_id =t4.seccion_id
-                inner join auth_user t5 on t4.usuario_id = t5.id
-                where t1.id = p_proyecto_id;
-                END
-            $func$;
             """).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))

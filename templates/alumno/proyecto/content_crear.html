@@ -1,26 +1,21 @@
 <div class="modal-header">
-    <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">DEFINICIÓN DE PROYECTO</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Nueva Tarea</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" id="form_crear_usuario" autocomplete="off">
+    <form method="post" autocomplete="off" action="{{request.path}}">
+        <input type="hidden" id="validado" name="validado">
         {% csrf_token %}
         <div class="row g-2">
-            {% for input in form %}
+            {% for input in form.visible_fields %}
             <div class="col-12 mb-0">
                 <label for="{{input.name}}" class="form-label"> {{input.label}}</label>
                 {{input}}
             </div>
             {% endfor %}
+            {% for input in form.hidden_fields %}
+                {{ input }}
+            {% endfor %}
         </div>
-        <br>
-        {% for perfil in perfiles %}
-        <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" value="{{perfil.id}}" id="{{perfil.nombre|lower}}" name="perfiles[]">
-            <label class="form-check-label" for="{{perfil.nombre|lower}}">{{perfil.nombre}}</label>
-        </div>
-        {% endfor %}
     </form>
 </div>
-
-{{form.perfiles}}

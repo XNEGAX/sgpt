@@ -4,6 +4,8 @@ $(document).ready(function () {
         const url = $(this).attr('url');
         const tipo = $(this).attr('tipo');
         const id = $(this).attr('proyecto');
+        const nombre = $(this).attr('nombre');
+        const descripcion = $(this).attr('descripcion');
         const peticion = new Microservicio(url)
         let title = 'Cambiar estado proyecto'
         let html = getHtmlSwal(
@@ -14,7 +16,10 @@ $(document).ready(function () {
             title = 'Cambiar estado proyecto'
             html = getHtmlSwal(
                 "Una vez aprobado el proyecto el alumno podra iniciar con sus actividades"
-                , "Seleccione una opcion para continuar"
+                , ` <h5 class="card-title text-start mt-5" style="font-size: 14px !important;"><strong>PROYECTO</strong>: ${nombre}</h5>
+                        <p class="card-text text-justify" style="font-size: 14px !important;">
+                        <strong>RESEÑA</strong>: ${descripcion}
+                    </p>`
             )
         }
         Swal.fire({
@@ -26,6 +31,7 @@ $(document).ready(function () {
                 label:'Ingrese motivo del rechazo',
                 id:'motivo_rechazo_proyecto'
             },
+            width: '1200px',
             confirmButtonColor: '#EB6923',
             confirmButtonText: '<span class="pull-left"></span><span class="bold">Aprobar</span>',
             showDenyButton: true,

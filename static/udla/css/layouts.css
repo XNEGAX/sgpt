@@ -654,3 +654,7 @@ form.no-card {
 .mt-2-2 {
   margin-top: 2.2rem !important;
 }
+
+table.table-detail-gantt > :not(caption) > * > * {
+  padding: 0.32rem 0.25rem !important;
+}
