@@ -3,8 +3,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" autocomplete="off" action="{{request.path}}">
-        <input type="hidden" id="validado" name="validado">
+    <form method="post" autocomplete="off">
         {% csrf_token %}
         <div class="row g-2">
             {% for input in form.visible_fields %}

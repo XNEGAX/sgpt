@@ -23,6 +23,20 @@ $(document).ready(function () {
         const cargarModal = new Microservicio(url)
         const formData = new FormData($('#contenido form').get(0));
         cargarModal.postFormData(formData,'#mdl_modulo')
-        
+    });
+
+    $(document).on('click', '.btn_actualizar_tarea', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const url = $(this).attr('url');
+        const cargarModal = new Microservicio(url)
+        cargarModal.getOffcanvasFormGetCreateView('#mdl_modulo')
+    })
+
+    $(document).on('click', '.btn_eliminar_tarea', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('url');
+        const cargarModal = new Microservicio(url)
+        cargarModal.delete()
     });
 });

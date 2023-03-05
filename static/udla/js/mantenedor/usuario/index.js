@@ -55,7 +55,7 @@ $(document).ready(function () {
                                 'success'
                             ).then((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                     window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                                 }
                             }) 
                         }
@@ -108,7 +108,7 @@ $(document).ready(function () {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 }) 
             },
@@ -194,7 +194,7 @@ $(document).ready(function () {
                                 'success'
                             ).then((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                                     window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                                 }
                             }) 
                         }

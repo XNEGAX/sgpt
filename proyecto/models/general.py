@@ -7,7 +7,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from function import formatear_error
 from function import ConsultaBD
-from datetime import datetime,date
+from datetime import datetime
+from datetime import date
+from function import getDatetime
 from function.gantt import CustomProject
  
 class Modulo(models.Model):
@@ -440,11 +442,18 @@ class Proyecto(models.Model):
         return actividades_padre
     
     @property
+    def archivo_existe(self):
+        path = f'proyecto/gantt/{self.id}.svg'
+        if not os.path.exists(path):
+            False
+        return True
+    
+    @property
     def ruta(self):
         path = 'proyecto/gantt/'
         if not os.path.exists(path):
             os.makedirs(path)
-        return f'{path}{self.id}'
+        return f'{path}{self.id}.svg'
     
     @property
     def tareas(self):
@@ -454,11 +463,30 @@ class Proyecto(models.Model):
     def gantt(self):
         gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
         p = CustomProject(color='#35C367')
-        for tarea in self.tareas:
-            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio.date(), duration=tarea.duration))
-       
-        p.make_svg_for_tasks(filename=self.ruta, today=datetime.now().date(), start=self.fecha_desde.date(), end=self.fecha_hasta.date())
+        # tcm11 = gantt.Task(name='tcm11', start=date(2014, 12, 25), duration=4)
+        # tcm12 = gantt.Task(name='tcm12', start=date(2014, 12, 26), duration=5)
+        # ms1 = gantt.Milestone(name=' ', depends_of=[tcm11, tcm12])
+        # tcm21 = gantt.Task(name='tcm21', start=date(2014, 12, 30), duration=4, depends_of=[ms1])
+        # tcm22 = gantt.Task(name='tcm22', start=date(2014, 12, 30), duration=6, depends_of=[ms1])
+        # ms2 = gantt.Milestone(name='MS2', depends_of=[ms1, tcm21, tcm22])
+        # tcm31 = gantt.Task(name='tcm31', start=date(2014, 12, 30), duration=6, depends_of=[tcm22,tcm21,tcm22])
+        # ms3 = gantt.Milestone(name='MS3', depends_of=[ms1])
 
+
+        # p.add_task(tcm11)
+        # p.add_task(tcm12)
+        # p.add_task(ms1)
+        # p.add_task(tcm21)
+        # p.add_task(tcm22)
+        # p.add_task(ms2)
+        # p.add_task(tcm31)
+        # p.add_task(ms3)
+        
+        
+        for tarea in self.tareas:
+            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
+        p.make_svg_for_tasks(filename=self.ruta, today=getDatetime(), start=self.fecha_desde, end=self.fecha_hasta)
+        # p.make_svg_for_tasks(filename=self.ruta, today=date(2014, 12, 31), start=date(2014,9, 22), end=date(2015, 1, 14))
         with open(self.ruta, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
 
@@ -503,6 +531,12 @@ class Gantt(models.Model):
     class Meta:
         managed = True
         db_table = 'gantt'
+
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.strip().upper()
+        diferencia = self.fecha_termino - self.fecha_inicio
+        self.duration = diferencia.days
+        super(Gantt, self).save(*args, **kwargs)
 
 class TipoDocumento(models.Model):
     id = models.AutoField(primary_key=True)

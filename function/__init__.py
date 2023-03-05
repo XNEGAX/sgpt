@@ -5,6 +5,10 @@ from datetime import datetime
 from django.utils.html import strip_tags
 from dateutil.parser import parse
 
+def getDatetime():
+    import pytz
+    return datetime.now(tz=pytz.timezone('Chile/Continental'))
+
 def formatear_error(error):
     return f'Error en la linea {format(sys.exc_info()[-1].tb_lineno)} {type(error).__name__} {error}'
 

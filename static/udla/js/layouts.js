@@ -127,7 +127,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 });
             },
@@ -151,7 +151,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 })
             },
@@ -175,7 +175,30 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
+                    }
+                })
+            },
+            error: function () {
+                closeLoader()
+            },
+        });
+    }
+    delete() {
+        $.ajax({
+            url: this.url,
+            type: 'DELETE',
+            headers: { "X-CSRFToken": $('input[name=csrfmiddlewaretoken]').val() },
+            beforeSend: function () {
+                openLoader()
+            },
+            success: function (response) {
+                Swal.fire(
+                    response['respuesta'], '',
+                    'success'
+                ).then((result) => {
+                    if (result.isConfirmed) {
+                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 })
             },
@@ -204,7 +227,7 @@ class Microservicio {
                         'success'
                     ).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = location.protocol + '//' + location.host + location.pathname;;
+                            window.location.href = window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search
                         }
                     })
                 }
