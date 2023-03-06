@@ -1,30 +1,39 @@
-{% load static %}
-<div class="d-flex align-items-start align-items-sm-center gap-4">
-  <img src="{% static 'assets\img\avatars\sin_imagen.png' %}" alt="user-avatar" class="d-block rounded" height="400"
-    width="900" id="uploadedAvatar">
-  <div class="button-wrapper">
-    <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-      <span class="d-none d-sm-block">Subir imagen</span>
-      <i class="bx bx-upload d-block d-sm-none"></i>
-      <input type="file" id="upload" class="account-file-input" hidden="" accept="image/png, image/jpeg">
-    </label>
-    <p class="text-muted mb-0">Se admiten archivos JPG, GIF o PNG.</p>
-  </div>
+<div class="modal-header">
+  <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Nueva 
+      {% if actividades_seccion.0.tipo_entrada.ind_archivo and 'gantt' not in actividades_seccion.0.nombre|lower %}
+      {{actividades_seccion.0.tipo_entrada.nombre}}
+      {% else %}
+      Tarea
+      {% endif %}
+      </h5>
+  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
-<script>
-  "use strict";
-  document.addEventListener("DOMContentLoaded", function (e) {
-    {
-      let e = document.getElementById("uploadedAvatar");
-      const t = document.querySelector(".account-file-input"), c = document.querySelector(".account-image-reset");
-      if (e) {
-        const n = e.src;
-        t.onchange = () => {
-          t.files[0] && (e.src = window.URL.createObjectURL(t.files[0]))
-        }
-      }
-      return
-    }
-  });
-
-</script>
+<div class="modal-body">
+  <form method="post" autocomplete="off" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="actividad_id" value="{{actividades_seccion.0.id}}">
+      <div class="row">
+        
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="mt-2 mb-3">
+            <label for="nombre_archivo_actividad" class="form-label">Nombre de la {{actividades_seccion.0.tipo_entrada.nombre}} <span class="text-danger obligatorio">*</span></label>
+            <input id="nombre_archivo_actividad" name="nombre_archivo_actividad" class="form-control form-control" type="text" required>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="row mt-3 input_image_row">
+        <label for="largeInput" class="form-label">Archivo <span class="text-danger obligatorio">*</span></label>
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 ">
+          <div class="text-muted input_image_description">No ha subido archivo</div>
+        </div>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+          <label for="archivo_actividad" class="form-label">
+            <input class="form-control" type="file" id="archivo_actividad" name="actividad_valor" accept="image/png, image/gif, image/jpeg" required>
+            <i class="bx bx-image-add bx-2-5"></i>
+          </label>
+        </div>
+      </div>
+  </form>
+</div>

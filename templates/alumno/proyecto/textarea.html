@@ -1,4 +1,5 @@
-<div id="summernote-{{actividad.id}}"></div>
+<input type="hidden" name="publicar" id="publicar">
+<textarea id="summernote-{{actividad.id}}" name="actividad_valor">{{actividad.respuesta.respuesta|default:''}}</textarea>
 <script>
     summernote_list.push('summernote-{{actividad.id}}');
 </script>

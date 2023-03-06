@@ -7,6 +7,9 @@
 {{breackcrum|safe}}
 {% endblock breackcrum%}
 {% block content %}
+<script>
+    let summernote_list = []
+</script>
 {% if not actividad_enviada %}
 <div class="card mt-2">
     <div class="card-header">
@@ -40,12 +43,6 @@
 {% endif %}
 <input type="hidden" name="proyecto_id" id="proyecto_id" value="{{object_list.id}}">
 <div class="card mt-2">
-    <script>
-        let summernote_list = []
-        let imagenes_list = []
-        let tablas_list =[]
-        let documentos_list = []
-    </script>
     <div class="card-body">
         {% if actividades_seccion|length > 1 %}
             {% for actividad in actividades_seccion %}
@@ -57,6 +54,9 @@
             {% endfor %}
         {% else %}
             {% for actividad in actividades_seccion %}
+                <script>
+                    let archivos_list = {% if actividad.respuesta.respuesta %}{{actividad.respuesta_formateada|safe}}{%else%}[]{%endif%}
+                </script>
                 <div class="card-header">
                     <h5 class="card-title text-blue fw-bold text-uppercase
                     {% if actividad.descripcion != '-' and actividad.descripcion != '' and actividad.descripcion is not None%}btn_info clickeable{% endif %}"
@@ -69,8 +69,9 @@
                     {% endif %}
                 </h5>
                 </div>
-                <form action="{{request.path}}respuesta/" method="post" class="no-card" id="form_responder_actividad">
+                <form action="{{request.path}}" method="post" class="no-card" id="form_responder_actividad">
                     <input type="hidden" name="actividad_id" value="{{actividad.id}}">
+                    {% csrf_token %}
                     {% if not actividad.tipo_entrada.ind_archivo and not actividad.tipo_entrada.ind_multiple and 'gantt' not in actividad.nombre|lower %}
                         {% include "alumno/proyecto/textarea.html" %}
                     {% elif 'gantt' in actividad.nombre|lower %}
@@ -81,12 +82,16 @@
                 </form>
                 <div class="card-footer">
                     <div class="btn-footer-table">
-                        {% if 'gantt' not in actividad.nombre|lower %}
+                        {% if not actividad.tipo_entrada.ind_archivo and not actividad.tipo_entrada.ind_multiple and 'gantt' not in actividad.nombre|lower %}
                         <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-160 right-30" id="btn_guardar_actividad"><i class="bx bx-save"></i></button>
-                        {% else %}
+                        {% elif 'gantt' in actividad.nombre|lower %}
                         <button class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-160 right-30" id="btn_agregar_tarea">
                             <i class="bx bx-plus"></i>
                         </button>
+                        {% elif actividad.tipo_entrada.ind_archivo and actividad.tipo_entrada.ind_multiple %}
+                        <a class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-160 right-30 text-white" style="padding: 11px !important;" id="btn_agregar_archivos" tipo="{{actividad.tipo_entrada.formato}}">
+                            <i class="bx bx-plus"></i>
+                        </a>
                         {% endif %}
                     </div>
                 </div>
@@ -96,5 +101,13 @@
 </div>
 {% endblock content %}
 {% block script %}
-<script src="{% static 'udla/js/alumno/proyecto/index.js' %}?q={{csrf_token}}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+<script src="{% static 'udla/js/alumno/proyecto/index.js' %}"></script>
+<script>
+    
+</script>
 {% endblock script %}

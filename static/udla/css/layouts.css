@@ -557,6 +557,10 @@ table.table th {
   font-size: 1.3rem !important;
 }
 
+.bx-2-5 {
+  font-size: 2.5rem !important;
+}
+
 .breackcrum {
   margin-left: 20px !important;
 }
@@ -596,11 +600,12 @@ table.table th {
   height: 60px;
   text-align: center;
 }
-.shadow{
+
+.shadow {
   box-shadow: 0px 8px 15px rgb(0 0 0 / 10%) !important;
 }
 
-.top-10{
+.top-10 {
   top: 10px !important;
 }
 
@@ -612,11 +617,23 @@ table.table th {
   top: 160px !important;
 }
 
-.right-10{
+.top-250 {
+  top: 250px !important;
+}
+
+.bottom-10 {
+  bottom: 10 !important;
+}
+
+.bottom-20 {
+  bottom: 20px !important;
+}
+
+.right-10 {
   right: 10px !important;
 }
 
-.right-30{
+.right-30 {
   right: 30px !important;
 }
 
@@ -637,17 +654,20 @@ form.no-card {
   }
 }
 
-.gantt-graphic-container::-webkit-scrollbar-track, .gantt-container::-webkit-scrollbar-track {
+.gantt-graphic-container::-webkit-scrollbar-track,
+.gantt-container::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #F5F5F5;
 }
 
-.gantt-graphic-container::-webkit-scrollbar, .gantt-container::-webkit-scrollbar {
+.gantt-graphic-container::-webkit-scrollbar,
+.gantt-container::-webkit-scrollbar {
   width: 10px;
   background-color: #F5F5F5;
 }
 
-.gantt-graphic-container::-webkit-scrollbar-thumb, .gantt-container::-webkit-scrollbar-thumb {
+.gantt-graphic-container::-webkit-scrollbar-thumb,
+.gantt-container::-webkit-scrollbar-thumb {
   background-color: #EB6923;
 }
 
@@ -655,6 +675,31 @@ form.no-card {
   margin-top: 2.2rem !important;
 }
 
-table.table-detail-gantt > :not(caption) > * > * {
+table.table-detail-gantt> :not(caption)>*>* {
   padding: 0.32rem 0.25rem !important;
+}
+
+.input_image_row input[type="file"] {
+  display: none;
+}
+
+.input_image_row [class*="col-"] .input_image_description {
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.53;
+  color: #697a8d;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #d9dee3;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.375rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.obligatorio {
+  font-size: 20px !important;
+  vertical-align: middle !important;
 }

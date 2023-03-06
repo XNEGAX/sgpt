@@ -1,5 +1,11 @@
 <div class="modal-header">
-    <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Nueva Tarea</h5>
+    <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Nueva 
+        {% if actividad.tipo_entrada.ind_archivo and 'gantt' not in actividad.nombre|lower %}
+        {{actividad.nombre}}
+        {% else %}
+        Tarea
+        {% endif %}
+        </h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="modal-body">

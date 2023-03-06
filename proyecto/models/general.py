@@ -312,6 +312,23 @@ class Actividad(models.Model):
         else:
             return f"{self.orden}."
 
+    @property
+    def respuesta(self):
+        return self.fk_actividad_actividad_respuesta_usuario.last()
+    
+    @property
+    def respuesta_formateada(self):
+        if self.respuesta:
+            if self.respuesta.respuesta and self.tipo_entrada.ind_archivo and self.tipo_entrada.ind_multiple and 'gantt' not in self.nombre.lower():
+                respuesta = list(self.respuesta.respuesta)
+                for r in respuesta:
+                    with open(r.get('ruta_archivo'), "rb") as image_file:
+                        r['archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
+                    r['orden'] = f"{self.tipo_entrada.nombre.capitalize()} {self.orden_formateado}"
+                    r['tipo'] = self.tipo_entrada.formato
+                return respuesta
+        return self.respuesta
+
     class Meta:
         managed = True
         db_table = 'actividad'
@@ -441,6 +458,29 @@ class Proyecto(models.Model):
             })
         return actividades_padre
     
+    def set_gantt(self,archivo):
+        actividad = self.actividades_seccion.filter(nombre__icontains='gantt').last()
+        if actividad:
+            respuesta = ActividadRespuestaProyecto.objects.filter(
+                proyecto=self,
+                actividad=actividad
+            )
+            if respuesta.exists():
+                respuesta.update(
+                    respuesta = archivo,
+                )
+            else:
+                obj = ActividadRespuestaProyecto(
+                    proyecto = self,
+                    actividad = actividad,
+                    respuesta = archivo,
+                    responsable_id = 0,
+                    ind_publicada = True
+                )
+                obj.save()
+                return True
+        return False
+
     @property
     def archivo_existe(self):
         path = f'proyecto/gantt/{self.id}.svg'
@@ -463,30 +503,14 @@ class Proyecto(models.Model):
     def gantt(self):
         gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
         p = CustomProject(color='#35C367')
-        # tcm11 = gantt.Task(name='tcm11', start=date(2014, 12, 25), duration=4)
-        # tcm12 = gantt.Task(name='tcm12', start=date(2014, 12, 26), duration=5)
-        # ms1 = gantt.Milestone(name=' ', depends_of=[tcm11, tcm12])
-        # tcm21 = gantt.Task(name='tcm21', start=date(2014, 12, 30), duration=4, depends_of=[ms1])
-        # tcm22 = gantt.Task(name='tcm22', start=date(2014, 12, 30), duration=6, depends_of=[ms1])
-        # ms2 = gantt.Milestone(name='MS2', depends_of=[ms1, tcm21, tcm22])
-        # tcm31 = gantt.Task(name='tcm31', start=date(2014, 12, 30), duration=6, depends_of=[tcm22,tcm21,tcm22])
-        # ms3 = gantt.Milestone(name='MS3', depends_of=[ms1])
-
-
-        # p.add_task(tcm11)
-        # p.add_task(tcm12)
-        # p.add_task(ms1)
-        # p.add_task(tcm21)
-        # p.add_task(tcm22)
-        # p.add_task(ms2)
-        # p.add_task(tcm31)
-        # p.add_task(ms3)
-        
-        
-        for tarea in self.tareas:
-            p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
+        tareas = self.tareas
+        if len(tareas)>0:
+            for tarea in self.tareas:
+                p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
+        else:
+            p.add_task(gantt.Task(name=self.nombre, start=self.fecha_desde, duration=1))
         p.make_svg_for_tasks(filename=self.ruta, today=getDatetime(), start=self.fecha_desde, end=self.fecha_hasta)
-        # p.make_svg_for_tasks(filename=self.ruta, today=date(2014, 12, 31), start=date(2014,9, 22), end=date(2015, 1, 14))
+        self.set_gantt(self.ruta)
         with open(self.ruta, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
 
@@ -496,7 +520,7 @@ class ActividadRespuestaProyecto(models.Model):
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_actividad_respuesta_proyecto',db_column='proyecto_id')
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='fk_actividad_actividad_respuesta_usuario',db_column='actividad_id')
     respuesta = models.JSONField(blank=False, null=False)
-    ind_publicada = models.BooleanField(default=True)
+    ind_publicada = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad_respuesta_usuario',db_column='responsable_id')
     
@@ -504,6 +528,41 @@ class ActividadRespuestaProyecto(models.Model):
         managed = True
         db_table = 'actividad_respuesta_proyecto'
         unique_together = ('proyecto','actividad','respuesta',)
+
+    def save(self, *args, **kwargs):
+        if self.actividad.tipo_entrada.ind_archivo and self.actividad.tipo_entrada.ind_multiple:
+            archivo = kwargs.get('archivo')
+            nombre = kwargs.get('nombre')
+            indice = kwargs.get('indice')
+            self.respuesta = self.subir_archivo(archivo,nombre,indice)
+            kwargs = {}
+        super(ActividadRespuestaProyecto, self).save(*args, **kwargs)
+
+    def subir_archivo(self,data,nombre,indice=0):
+        archivos = []
+        if self.respuesta:
+            archivos = list(self.respuesta)
+        # generamos la ruta
+        ruta = f'media/proyecto/{self.proyecto.id}/actividad/{self.actividad.id}/'
+        if not os.path.exists(ruta):
+            os.makedirs(ruta)
+        #generamos el nombre del archivo
+        temp_name = data.name.split('.')
+        file_name = ''
+        if isinstance(temp_name, list):
+            for extension in temp_name:
+                file_name = f'{indice}.{extension}'
+        else:
+            file_name = f'{indice}.pdf'
+        ruta_archivo = f'{ruta}{file_name}'
+        # subimos el archivo
+        open(ruta_archivo, 'wb').write(data.file.read())
+        archivos.append({
+            'nombre':nombre.upper(),
+            'indice':indice,
+            'ruta_archivo':ruta_archivo
+        })
+        return archivos
 
 class BitacoraActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

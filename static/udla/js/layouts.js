@@ -78,7 +78,6 @@ class Microservicio {
         } catch (error) {
             console.error(error);
         }
-
     }
     getOffcanvasFormGetCreateView(modal) {
         try {
@@ -127,7 +126,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
+                        window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 });
             },
@@ -151,7 +150,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
+                        window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 })
             },
@@ -175,7 +174,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
+                        window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 })
             },
@@ -198,7 +197,7 @@ class Microservicio {
                     'success'
                 ).then((result) => {
                     if (result.isConfirmed) {
-                         window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
+                        window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search;
                     }
                 })
             },
@@ -227,9 +226,13 @@ class Microservicio {
                         'success'
                     ).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search
+                            window.location.href = location.protocol + '//' + location.host + location.pathname + window.location.search
                         }
                     })
+                }
+                else if (response['estado'] == 3) {
+                    console.log(response['mensaje'])
+                    closeLoader()
                 }
                 else {
                     Swal.fire(
@@ -288,6 +291,19 @@ function getHtmlSwal(title, message) {
     </div>`
 }
 
+function validateForm(form) {
+    let status = true;
+    $("#" + form + ' :input').each(function () {
+        if (this.value == "") {
+            Swal.fire(
+                'Complete los datos solicitados', '',
+                'warning'
+            )
+            status = false;
+        }
+    });
+    return status;
+}
 $(document).ready(function () {
     $(document).on('click', '#btn_cambio_perfil', function (e) {
         e.preventDefault();
@@ -365,8 +381,41 @@ $(document).ready(function () {
     //finaly fix summernote paragraph
 
     //fix min number
-    $(document).on('change','[type="number"]',function () {
+    $(document).on('change', '[type="number"]', function () {
         if (!$(this).val() || (parseInt($(this).val()) <= 11 && parseInt($(this).val()) >= $(this).attr('min')));
         else $(this).val($(this).data("old"));
+    });
+
+
+    $(document).on('change', '.input_image_row [type="file"]', function (e) {
+        const nofile = $('.input_image_row [class*="col-"] .input_image_description').html();
+        if (this.files.length == 0) {
+            $('.input_image_row [class*="col-"] .input_image_description').html(nofile);
+        }
+        else {
+
+            let sFileName = this.files[0].name;
+            let _validFileExtensions = [".pdf", ".jpg", ".jpeg", "png"];
+            if (sFileName.length > 0) {
+                let blnValid = false;
+                for (let j = 0; j < _validFileExtensions.length; j++) {
+                    let sCurExtension = _validFileExtensions[j];
+                    if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                        blnValid = true;
+                        break;
+                    }
+                }
+                if (!blnValid) {
+                    Swal.fire(
+                        'Alerta!',
+                        'El formato del documento no es valido',
+                        'warning'
+                    )
+                    $('.input_image_row [class*="col-"] .input_image_description').html(nofile);
+                } else {
+                    $('.input_image_row [class*="col-"] .input_image_description').html(sFileName);
+                }
+            }
+        }
     });
 });
