@@ -7,7 +7,7 @@ function get_tabla_archivos() {
             <td class="text-start">${value['orden']}${key+1}</td>
             <td class="text-start">${value['nombre']}</td>
             <td class="text-center"><i class="bx bx-${icono} text-success clickeable btn_ver_archivo" file="${value['archivo']}" tipo="${value['tipo']}" title="${value['nombre']}"></i></td>
-            <td class="text-center"><i class="bx bx-trash text-danger clickeable btn_eliminar_archivos_temporal" key="${key}"></i></td>
+            <td class="text-center"><i class="bx bx-trash text-danger clickeable btn_eliminar_archivos_temporal" key="${btoa(value['nombre'])}" tipo="${value['tipo']}"></i></td>
         </tr>`
     });
     $("#tabla_archivos tbody").html(tbody);
@@ -36,7 +36,7 @@ $(document).ready(function () {
                     const url = $('#form_responder_actividad').attr('action');
                     const cargarModal = new Microservicio(url)
                     const formData = new FormData($('#form_responder_actividad').get(0));
-                    cargarModal.postFormData(formData, '#mdl_modulo')
+                    cargarModal.postFormData(formData, '#mdl_modulo',false)
                 }
             }
         });
@@ -118,8 +118,6 @@ $(document).ready(function () {
             const url = location.protocol + '//' + location.host + location.pathname
             const cargarModal = new Microservicio(url)
             const formData = new FormData($('#form_subir_archivo').get(0));
-            console.log(archivos_list.length)
-            formData.append('indice', archivos_list.length);
             formData.append('publicar', 1);
             cargarModal.postFormData(formData, '#mdl_modulo');
         }
@@ -142,5 +140,27 @@ $(document).ready(function () {
             cancelButtonText: '<span class="pull-left"></span><span class="bold">Cerrar</span>',
         })
         $('.swal2-container.swal2-backdrop-show').css('background', 'rgba(255,255,255,.8)');
+    })
+
+    $(document).on('click', '.btn_eliminar_archivos_temporal', function (e) {
+        const url = `/alumno/proyecto/${$('#proyecto_id').val()}/actividad/${$("input[name=actividad_id]").val()}/archivo/eliminar/`
+        const archivo = $(this).attr('key');
+        const servicio = new Microservicio(url)
+        Swal.fire({
+            html: getHtmlSwal(
+                "¿Está seguro de eliminar este archivo?"
+                , ""
+            ),
+            icon: 'warning',
+            confirmButtonColor: '#EB6923',
+            confirmButtonText: '<span class="pull-left"></span><span class="bold">Aceptar</span>',
+            cancelButtonText: '<span class="pull-left"></span><span class="bold">Cancelar</span>',
+            allowOutsideClick: false,
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                servicio.post({'archivo':archivo})
+            }
+        })
     })
 });

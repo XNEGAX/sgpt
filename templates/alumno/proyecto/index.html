@@ -55,7 +55,7 @@
         {% else %}
             {% for actividad in actividades_seccion %}
                 <script>
-                    let archivos_list = {% if actividad.respuesta.respuesta %}{{actividad.respuesta_formateada|safe}}{%else%}[]{%endif%}
+                    let archivos_list = {% if actividad.respuesta_formateada %}{{actividad.respuesta_formateada|safe}}{%else%}[]{%endif%}
                 </script>
                 <div class="card-header">
                     <h5 class="card-title text-blue fw-bold text-uppercase

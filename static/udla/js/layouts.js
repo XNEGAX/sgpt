@@ -206,8 +206,9 @@ class Microservicio {
             },
         });
     }
-    postFormData(formData, modal) {
+    postFormData(formData, modal, alerta = true) {
         const url = this.url
+        console.log(alerta)
         $.ajax({
             type: 'POST',
             url: url,
@@ -216,7 +217,9 @@ class Microservicio {
             processData: false,
             contentType: false,
             beforeSend: function () {
-                openLoader()
+                if (alerta === true) {
+                    openLoader()
+                }
             },
             success: function (response) {
                 if (response['estado'] == 0) {
@@ -393,7 +396,6 @@ $(document).ready(function () {
         if ($(this).attr('accept') === 'application/pdf') {
             tipo = [".pdf"]
         }
-        console.log(tipo)
         if (this.files.length == 0) {
             $('.input_image_row [class*="col-"] .input_image_description').html(nofile);
         }
@@ -413,7 +415,7 @@ $(document).ready(function () {
                 if (!blnValid) {
                     Swal.fire(
                         'El formato del archivo no es valido!',
-                        'Formatos permitidos *'+tipo.join(", "),
+                        'Formatos permitidos *' + tipo.join(", "),
                         'warning'
                     )
                     $('.input_image_row [class*="col-"] .input_image_description').html(nofile);

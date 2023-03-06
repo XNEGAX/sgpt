@@ -8,6 +8,8 @@ from proyecto.auth import RoyalGuard
 from function import JsonGenericView
 from django.http import JsonResponse
 from django.shortcuts import render
+import base64
+import ast
 # models
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Proyecto
@@ -137,9 +139,8 @@ class ResponderActvidades(View):
         if actividad.tipo_entrada.ind_archivo and actividad.tipo_entrada.ind_multiple:
             if respuesta.exists():
                 data = respuesta.last().respuesta
-            kwargs['nombre'] = request.POST.get('nombre_archivo_actividad')
+            kwargs['nombre'] = request.POST.get('nombre_archivo_actividad','').strip()
             kwargs['archivo'] = request.FILES.get('actividad_valor')
-            kwargs['indice'] = request.POST.get('indice')
             
         if respuesta.exists():
             obj = respuesta.last()
@@ -163,6 +164,28 @@ class ResponderActvidades(View):
         return JsonResponse({
             'estado': estado,
             'mensaje': mensaje
+        }, status=200,safe=False)
+    
+class EliminarArchivoActividad(View):
+    def post(self,request,proyecto_id,actividad_id):
+        #decodificamos
+        nombre = base64.b64decode(request.POST.get('archivo')).decode("UTF-8")
+        # buscamos la info existente
+        respuesta = ActividadRespuestaProyecto.objects.filter(
+            proyecto_id=proyecto_id,
+            actividad_id=actividad_id
+        ).last()
+        # comparamos
+        archivos = list(respuesta.respuesta)
+        for i in range(len(archivos)):
+            if archivos[i].get('nombre') == nombre:
+                archivos.pop(i)
+                break
+        respuesta.respuesta = archivos
+        respuesta.save(**{'update':1})
+        return JsonResponse({
+            'estado': '0',
+            'respuesta': 'Archivo elimiando!'
         }, status=200,safe=False)
 
 class CrearTareaProyecto(JsonGenericView,CreateView):

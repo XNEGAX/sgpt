@@ -322,9 +322,12 @@ class Actividad(models.Model):
             if self.respuesta.respuesta and self.tipo_entrada.ind_archivo and self.tipo_entrada.ind_multiple and 'gantt' not in self.nombre.lower():
                 respuesta = list(self.respuesta.respuesta)
                 for r in respuesta:
-                    with open(r.get('ruta_archivo'), "rb") as image_file:
-                        r['archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
-                    r['orden'] = f"{self.tipo_entrada.nombre.capitalize()} {self.orden_formateado}"
+                    try:
+                        with open(r.get('ruta_archivo'), "rb") as image_file:
+                            r['archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
+                    except:
+                        pass
+                    r['orden'] = f"{self.tipo_entrada.nombre.capitalize()} {self.orden_formateado if not self.ind_base else ''}"
                     r['tipo'] = self.tipo_entrada.formato
                 return respuesta
         return self.respuesta
@@ -531,37 +534,46 @@ class ActividadRespuestaProyecto(models.Model):
 
     def save(self, *args, **kwargs):
         if self.actividad.tipo_entrada.ind_archivo and self.actividad.tipo_entrada.ind_multiple:
-            archivo = kwargs.get('archivo')
-            nombre = kwargs.get('nombre')
-            indice = kwargs.get('indice')
-            self.respuesta = self.subir_archivo(archivo,nombre,indice)
+            update = kwargs.get('update')
+            if not update:
+                archivo = kwargs.get('archivo')
+                nombre = kwargs.get('nombre')
+                self.respuesta = self.subir_archivo(archivo,nombre)
             kwargs = {}
         super(ActividadRespuestaProyecto, self).save(*args, **kwargs)
 
-    def subir_archivo(self,data,nombre,indice=0):
+    def subir_archivo(self,data,nombre):
         archivos = []
         if self.respuesta:
             archivos = list(self.respuesta)
-        # generamos la ruta
+        # generamos la ruta si esta no existe
         ruta = f'media/proyecto/{self.proyecto.id}/actividad/{self.actividad.id}/'
         if not os.path.exists(ruta):
             os.makedirs(ruta)
-        #generamos el nombre del archivo
-        temp_name = data.name.split('.')
-        file_name = ''
-        if isinstance(temp_name, list):
-            for extension in temp_name:
-                file_name = f'{indice}.{extension}'
+        # obtenemos la extencion y el nuevo nombre del archivo
+        if self.actividad.tipo_entrada.formato =='pdf':
+            file_name = f'{nombre}.pdf'
         else:
-            file_name = f'{indice}.pdf'
-        ruta_archivo = f'{ruta}{file_name}'
+            temp_name = data.name.split('.')
+            file_name = ''
+            if isinstance(temp_name, list):
+                for extension in temp_name:
+                    file_name = f'{nombre}.{extension}'  
         # subimos el archivo
+        ruta_archivo = f'{ruta}{file_name}'
         open(ruta_archivo, 'wb').write(data.file.read())
-        archivos.append({
-            'nombre':nombre.upper(),
-            'indice':indice,
-            'ruta_archivo':ruta_archivo
-        })
+        # validamos si ya existe uno con el mismo nombre
+        existe = False
+        for archivo in archivos:
+            if archivo.get('nombre').upper() == nombre.upper():
+                archivo['ruta_archivo'] = ruta_archivo
+                existe= True
+        print(existe)
+        if not existe:
+            archivos.append({
+                'nombre':nombre.upper(),
+                'ruta_archivo':ruta_archivo
+            })
         return archivos
 
 class BitacoraActividadRespuestaProyecto(models.Model):
