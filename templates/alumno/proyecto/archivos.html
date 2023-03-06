@@ -1,9 +1,9 @@
 <div class="modal-header">
-  <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Nueva 
+  <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">
       {% if actividades_seccion.0.tipo_entrada.ind_archivo and 'gantt' not in actividades_seccion.0.nombre|lower %}
-      {{actividades_seccion.0.tipo_entrada.nombre}}
+      Nuev{% if actividades_seccion.0.tipo_entrada.formato == 'jpeg'%}a {{actividades_seccion.0.tipo_entrada.nombre}}{%else%}o Docuemnto{%endif%}
       {% else %}
-      Tarea
+      Nueva Tarea
       {% endif %}
       </h5>
   <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -16,7 +16,7 @@
         
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="mt-2 mb-3">
-            <label for="nombre_archivo_actividad" class="form-label">Nombre de la {{actividades_seccion.0.tipo_entrada.nombre}} <span class="text-danger obligatorio">*</span></label>
+            <label for="nombre_archivo_actividad" class="form-label">Nombre <span class="text-danger obligatorio">*</span></label>
             <input id="nombre_archivo_actividad" name="nombre_archivo_actividad" class="form-control form-control" type="text" required>
           </div>
         </div>
@@ -29,11 +29,17 @@
           <div class="text-muted input_image_description">No ha subido archivo</div>
         </div>
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-          <label for="archivo_actividad" class="form-label">
-            <input class="form-control" type="file" id="archivo_actividad" name="actividad_valor" accept="image/png, image/gif, image/jpeg" required>
-            <i class="bx bx-image-add bx-2-5"></i>
+          <label for="archivo_actividad" class="form-label clickeable">
+            <input class="form-control" type="file" id="archivo_actividad" name="actividad_valor" 
+            accept="{% if actividades_seccion.0.tipo_entrada.formato == 'jpeg'%}image/png, image/gif, image/jpeg{%else%}application/pdf{%endif%}"
+            required>
+            <i class="bx {% if actividades_seccion.0.tipo_entrada.formato == 'jpeg'%}bx-image-add{%else%}bx-layer-plus{%endif%} bx-2-5"></i>
           </label>
         </div>
+        <span class="text-muted">Formato {% if actividades_seccion.0.tipo_entrada.formato == 'jpeg'%}
+          png,gif,jpeg
+          {%else%}
+          pdf{%endif%}</span>
       </div>
   </form>
 </div>

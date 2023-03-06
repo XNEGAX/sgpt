@@ -1,11 +1,12 @@
 function get_tabla_archivos() {
     let tbody = ''
     $.each(archivos_list, function (key, value) {
+        let icono = (value['tipo']=='pdf')?'file':'image'
         tbody += `
         <tr class="archivos_temporales tr_${key}_archivos">
             <td class="text-start">${value['orden']}${key+1}</td>
             <td class="text-start">${value['nombre']}</td>
-            <td class="text-center"><i class="bx bx-image text-success clickeable btn_ver_archivo" file="${value['archivo']}" tipo="${value['tipo']}" title="${value['nombre']}"></i></td>
+            <td class="text-center"><i class="bx bx-${icono} text-success clickeable btn_ver_archivo" file="${value['archivo']}" tipo="${value['tipo']}" title="${value['nombre']}"></i></td>
             <td class="text-center"><i class="bx bx-trash text-danger clickeable btn_eliminar_archivos_temporal" key="${key}"></i></td>
         </tr>`
     });
@@ -105,18 +106,19 @@ $(document).ready(function () {
         e.preventDefault();
         e.stopPropagation();
         $('#mdl_modulo').offcanvas("toggle");
-        $('#mdl_modulo #contenido-' + $(this).attr('tipo')).show();
+        $('#mdl_modulo #contenido-archivos').show();
         $('#mdl_modulo .modal-footer .btn_accion').text('Subir').attr('id', 'btn_subir_archivos');
-        $('#mdl_modulo .modal-body form').attr('id', 'form_subir_' + $(this).attr('tipo'));
+        $('#mdl_modulo .modal-body form').attr('id', 'form_subir_archivo');
     })
 
     $(document).on('click', '#btn_subir_archivos', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        if (validateForm('form_subir_jpeg')) {
+        if (validateForm('form_subir_archivo')) {
             const url = location.protocol + '//' + location.host + location.pathname
             const cargarModal = new Microservicio(url)
-            const formData = new FormData($('#form_subir_jpeg').get(0));
+            const formData = new FormData($('#form_subir_archivo').get(0));
+            console.log(archivos_list.length)
             formData.append('indice', archivos_list.length);
             formData.append('publicar', 1);
             cargarModal.postFormData(formData, '#mdl_modulo');
@@ -127,6 +129,10 @@ $(document).ready(function () {
         let html = ''
         if ($(this).attr('tipo')=='jpeg') {
             html = `<img src="data:image/png;base64, ${$(this).attr('file')}" style="max-width:1600px !important"/>`
+        }
+        else{
+            html = `<iframe
+            src="data:application/pdf;base64,${$(this).attr('file')}" width=100% height=600></iframe>`
         }
         Swal.fire({
             title: $(this).attr('title'),

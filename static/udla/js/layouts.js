@@ -389,13 +389,18 @@ $(document).ready(function () {
 
     $(document).on('change', '.input_image_row [type="file"]', function (e) {
         const nofile = $('.input_image_row [class*="col-"] .input_image_description').html();
+        let tipo = [".jpg", ".jpeg", "png"]
+        if ($(this).attr('accept') === 'application/pdf') {
+            tipo = [".pdf"]
+        }
+        console.log(tipo)
         if (this.files.length == 0) {
             $('.input_image_row [class*="col-"] .input_image_description').html(nofile);
         }
         else {
 
             let sFileName = this.files[0].name;
-            let _validFileExtensions = [".pdf", ".jpg", ".jpeg", "png"];
+            let _validFileExtensions = tipo;
             if (sFileName.length > 0) {
                 let blnValid = false;
                 for (let j = 0; j < _validFileExtensions.length; j++) {
@@ -407,8 +412,8 @@ $(document).ready(function () {
                 }
                 if (!blnValid) {
                     Swal.fire(
-                        'Alerta!',
-                        'El formato del documento no es valido',
+                        'El formato del archivo no es valido!',
+                        'Formatos permitidos *'+tipo.join(", "),
                         'warning'
                     )
                     $('.input_image_row [class*="col-"] .input_image_description').html(nofile);
