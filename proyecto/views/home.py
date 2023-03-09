@@ -2,15 +2,17 @@ from django.shortcuts import render
 from django.views.generic import View
 from proyecto.auth import RoyalGuard
 from function import validar_rut
-# models
-from proyecto.models.log import Log
-from proyecto.models import PerfilUsuario
-from proyecto.models import Proyecto
 import base64
 from function import getDatetime
 import numpy as np 
 import matplotlib.pyplot as plt
 from django.db.models import Count
+# models
+from proyecto.models.log import Log
+from proyecto.models import PerfilUsuario
+from proyecto.models import Proyecto
+from proyecto.models import ActividadRespuestaProyecto
+
 
 def getGraphLog(ano=getDatetime().year):
     from io import BytesIO
@@ -38,9 +40,42 @@ def getGraphLog(ano=getDatetime().year):
     plt.bar(X_axis + 0.9, eliminados, 0.3, label = 'Eliminados', align='center')
     
     plt.xticks(X_axis, meses, rotation='vertical')
-    plt.xlabel("Groups")
+    plt.xlabel("Meses")
+    plt.ylabel("Actividades completas x mes")
     plt.ylabel("Registros x acción")
     plt.title("Registros x mes")
+    plt.legend()
+    plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png).decode('utf-8')
+    plt.close()
+    buffer.close()
+    return graph
+
+def getGraphActividadesxMes(proyecto):
+    from io import BytesIO
+
+    meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+    meses_nombre = proyecto.alumno_seccion.seccion.meses_duracion_nombre
+    meses_numero = proyecto.alumno_seccion.seccion.meses_duracion_numero
+
+    actividades = []
+    for indice in range(len(meses)):
+        cantidad = ActividadRespuestaProyecto.objects.filter(proyecto=proyecto,fecha__month=indice+1,actividad__ind_base=False).count()
+        actividades.append(cantidad)
+        
+    
+    X_axis = np.arange(len(meses))
+    
+    plt.bar(X_axis + 0.3, actividades, 0.3, label = 'Actividades', align='center')
+    plt.xticks(X_axis, meses, rotation='vertical')
+    plt.xlabel("Meses")
+    plt.ylabel("Actividades completas x mes")
+    plt.title("Avance del proyecto x mes")
+    plt.subplots_adjust(bottom=0.20)
     plt.legend()
     plt.show()
     buffer = BytesIO()
@@ -89,9 +124,14 @@ class Home(RoyalGuard,View):
         else:
             proyecto = Proyecto.objects.filter(in_activo=True,ind_aprobado=True,alumno_seccion__usuario=request.user).last()
             if proyecto:
-                print(proyecto.descripcion.encode('latin_1'))
                 request.session['proyecto'] = {
                     'url':proyecto.url,
                     'actividades_menu':proyecto.actividades_menu
                 }
+                context['graph_actividadesxmes'] = getGraphActividadesxMes(proyecto)
+                context['cantidad_capitulos'] = proyecto.actividades_seccion.filter(ind_base=False,actividad_padre__isnull=True).count()
+                context['cantidad_actividades_respondida_todas'] = len(proyecto.actividades_respondida_todas.filter(actividad__ind_base=False))
+                context['porcentaje_avance'] =proyecto.porcentaje_avance
+                context['avance_x_captulo'] =proyecto.avance_x_captulo
+
         return render(request, 'home/index.html', context)

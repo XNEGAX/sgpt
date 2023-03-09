@@ -238,8 +238,8 @@
 <div class="row m-l-5">
   <div class="col-lg-8 mb-4 order-0">
     <div class="row">
-      <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4 h-100">
-        <div class="card">
+      <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card m-l-10 h-100">
           <div class="d-flex align-items-end row">
             <div class="col-sm-7">
               <div class="card-body">
@@ -248,7 +248,7 @@
                   {% if request.session.cantidad_perfiles == 0 %}
                   Te hemos asignado el perfil de invitado, ya que no has sido dado de alta en este sistema.
                   {% else %}
-                  Tienes un <span class="fw-bold">100%</span> de tu informe completado.
+                  Tienes un <span class="fw-bold">{{porcentaje_avance}}%</span> de tu informe completado.
                   {% endif%}
                 </p>
               </div>
@@ -263,111 +263,53 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4 h-100">
-        <div class="card">
-          <h5 class="card-header m-0 me-2 pb-3">Trabajo x mes</h5>
-          <div id="totalRevenueChart" class="px-2"></div>
+      <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4">
+        <div class="card m-l-10 h-100">
+          <div class="card-body">
+            <div class="gantt-container">
+              <img src="data:image/svg;base64, {{graph_actividadesxmes}}" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  {% if avance_x_captulo %}
   <div class="col-lg-4 col-md-4 order-1">
-    <div class="card h-100" style="max-height: 567px !important;margin-left: 10px !important;">
+    <div class="card m-l-10 h-100">
       <div class="card-header d-flex align-items-center justify-content-between pb-0">
         <div class="card-title mb-0">
           <h5 class="m-0 me-2">Detalle del avance</h5>
-          <small class="text-muted">8 fases</small>
+          <small class="text-muted">{{cantidad_capitulos}} capítulos</small>
         </div>
       </div>
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="d-flex flex-column align-items-center gap-1">
-            <h2 class="mb-2">46</h2>
-            <span>actividades</span>
+            <h2 class="mb-2">{{cantidad_actividades_respondida_todas}}</h2>
+            <span>actividades terminadas</span>
           </div>
-          <div id="orderStatisticsChart"></div>
         </div>
         <ul class="p-0 m-0">
+          {% for capitulo in avance_x_captulo %}
           <li class="d-flex mb-4 pb-1">
             <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-primary"><i class='bx bxs-business'></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class='bx bx-star'></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-0">ASPECTOS DE LA EMPRESA</h6>
-                <small class="fw-semibold">4 de 4</small>
+                <h6 class="mb-0">{{capitulo.nombre}}</h6>
+                <small class="fw-semibold">{{capitulo.respondidas}} de {{capitulo.pendientes}}</small>
               </div>
             </div>
           </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-success"><i class='bx bxl-product-hunt'></i></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">SITUACIÓN ACTUAL DEL PROYECTO</h6>
-                <small class="fw-semibold">6 de 6</small>
-              </div>
-            </div>
-          </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-info"><i class='bx bxl-sketch'></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">PLANTEAMIENTO DE OBJETIVOS</h6>
-                <small class="fw-semibold">2 de 2</small>
-              </div>
-            </div>
-          </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-secondary"><i class='bx bxs-factory'></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">ESTUDIO DE FACTIBILIDAD Y GESTIÓN DE RIESGOS</h6>
-                <small class="fw-semibold">4 de 4</small>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <i class='bx bxs-chevrons-right float-end'></i>
+          {% endfor%}
         <br>
       </div>
     </div>
   </div>
+  {% endif %}
 </div>
-<div class="row">
-  <div class="col-6 mb-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title d-flex align-items-start justify-content-between">
-          <div class="avatar flex-shrink-0">
-            <img src="{% static 'assets/img/icons/unicons/chart-success.png' %}" alt="chart success" class="rounded" />
-          </div>
-        </div>
-        <span class="fw-semibold d-block mb-1">Mi avance por fase</span>
-        <h3 class="card-title mb-2 text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> 100%</h3>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 mb-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title d-flex align-items-start justify-content-between">
-          <div class="avatar flex-shrink-0">
-            <img src="{% static 'assets/img/icons/unicons/chart-success.png' %}" alt="chart success" class="rounded" />
-          </div>
-        </div>
-        <span class="fw-semibold d-block mb-1">Mi avance por actividad</span>
-        <h3 class="card-title mb-2 text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> 100%</h3>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% endif %}
 {% endblock content %}
 {% block script %}

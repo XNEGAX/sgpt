@@ -5,6 +5,7 @@ import dateutil.relativedelta
 import svgwrite
 import sys
 import logging
+from function import mes_nombre_completo
 
 __LOG__ = None
 mm = 3.543307
@@ -93,20 +94,7 @@ class CustomProject(gantt.Project):
         's': 'D',
     }
 
-    mes_nombre_completo = {
-        'january': 'Enero',
-        'february': 'Febrero',
-        'march': 'Marzo',
-        'april': 'Abril',
-        'may': 'Mayo',
-        'june': 'Junio',
-        'july': 'Julio',
-        'august': 'Agosto',
-        'september': 'Septiembre',
-        'october': 'Octubre',
-        'november': 'Noviembre',
-        'december': 'Diciembre',
-    }
+    
 
     def traducir_dia_nombre(self, text):
         return self.dias_nombre_completo[text.lower()]
@@ -115,7 +103,7 @@ class CustomProject(gantt.Project):
         return self.dias_nombre_mnemonico[text.lower()]
 
     def traducir_mes_nombre(self, text):
-        return self.mes_nombre_completo[text.lower()]
+        return mes_nombre_completo[text.lower()]
 
     def check_conflicts_between_task_and_resources_vacations(self):
         """

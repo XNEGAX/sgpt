@@ -235,7 +235,9 @@ class Microservicio {
                 }
                 else if (response['estado'] == 3) {
                     console.log(response['mensaje'])
-                    closeLoader()
+                    if (alerta === true) {
+                        closeLoader()
+                    }
                 }
                 else {
                     Swal.fire(
@@ -246,7 +248,9 @@ class Microservicio {
                 }
             },
             error: function () {
-                closeLoader()
+                if (alerta === true) {
+                    closeLoader()
+                }
             },
         });
     }

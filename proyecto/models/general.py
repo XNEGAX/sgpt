@@ -214,6 +214,44 @@ class Seccion(models.Model):
             print(formatear_error(exc))
             return False
 
+
+    @property
+    def meses_duracion_nombre(self):
+        from dateutil.relativedelta import relativedelta
+        from function import mes_nombre_completo
+        data= []
+        temp_inicio = self.fecha_desde
+        while temp_inicio<self.fecha_hasta:
+            data.append(mes_nombre_completo[temp_inicio.strftime('%B').lower()])
+            temp_inicio+= relativedelta(months=1)
+        return data
+
+    @property
+    def meses_duracion_numero(self):
+        from dateutil.relativedelta import relativedelta
+        data= []
+        temp_inicio = self.fecha_desde
+        while temp_inicio<self.fecha_hasta:
+            data.append(temp_inicio.month)
+            temp_inicio+= relativedelta(months=1)
+        return data
+
+    @property
+    def dias_duracion(self):
+        return (self.fecha_hasta - self.fecha_desde).days
+    
+    @property
+    def horas_duracion(self):
+        return self.dias_duracion * 24
+    
+    @property
+    def tiempo_esperado_actividad(self):
+        cantidad_actividades = len(self.fk_seccion_actividad.all())
+        if self.horas_duracion>0 and cantidad_actividades>0:
+            return self.horas_duracion / cantidad_actividades
+        return 0
+
+
     class Meta:
         managed = True
         db_table = 'seccion'
@@ -331,11 +369,11 @@ class Actividad(models.Model):
                     r['tipo'] = self.tipo_entrada.formato
                 return respuesta
         return self.respuesta
+    
 
     class Meta:
         managed = True
         db_table = 'actividad'
-        unique_together = ('actividad_padre', 'seccion','orden',)
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
@@ -480,7 +518,7 @@ class Proyecto(models.Model):
                     responsable_id = 0,
                     ind_publicada = True
                 )
-                obj.save()
+                obj.save(**{'update':1})
                 return True
         return False
 
@@ -504,18 +542,74 @@ class Proyecto(models.Model):
 
     @property
     def gantt(self):
-        gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
-        p = CustomProject(color='#35C367')
-        tareas = self.tareas
-        if len(tareas)>0:
-            for tarea in self.tareas:
-                p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration))
-        else:
-            p.add_task(gantt.Task(name=self.nombre, start=self.fecha_desde, duration=1))
-        p.make_svg_for_tasks(filename=self.ruta, today=getDatetime(), start=self.fecha_desde, end=self.fecha_hasta)
-        self.set_gantt(self.ruta)
-        with open(self.ruta, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode('utf-8')
+        try:
+            gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
+            p = CustomProject(color='#35C367')
+            tareas = self.tareas
+            if len(tareas)>0:
+                for tarea in self.tareas:
+                    p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration+1))
+            else:
+                p.add_task(gantt.Task(name=self.nombre, start=self.fecha_desde, duration=1))
+            p.make_svg_for_tasks(filename=self.ruta, today=getDatetime(), start=self.fecha_desde, end=self.fecha_hasta)
+            self.set_gantt(self.ruta)
+            with open(self.ruta, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        except Exception as e:
+            with open('proyecto/gantt/default.svg', "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        
+    @property
+    def porcentaje_avance(self):
+        cantidad_sin_respuesta = 0
+        cantidad_con_respuesta = len(self.actividades_respondida_todas.filter(actividad__ind_base=False))
+        padres = self.actividades_seccion.filter(actividad_padre__isnull=True,ind_base=False)
+        for padre in padres:
+            if not padre.is_padre and not padre.is_abuelo:
+                cantidad_sin_respuesta += 1
+            else:
+                hijas = self.actividades_seccion.filter(actividad_padre=padre)
+                for hija in hijas:
+                    if not hija.is_padre:
+                        cantidad_sin_respuesta += 1
+                    else:
+                        cantidad_sin_respuesta += len(self.actividades_seccion.filter(actividad_padre=hija))
+
+        if cantidad_sin_respuesta>0:
+            return"{:.1f}".format((cantidad_con_respuesta*100)/cantidad_sin_respuesta)
+        return 0
+    
+    @property
+    def avance_x_captulo(self):
+        data = []
+        padres = self.actividades_seccion.filter(actividad_padre__isnull=True,ind_base=False).order_by('orden')
+        for padre in padres:
+            pendientes = 0
+            respondidas = 0
+            if not padre.is_padre and not padre.is_abuelo:
+                pendientes += 1
+                respondidas += len(self.actividades_respondida_todas.filter(actividad=padre))
+            else:
+                hijas = self.actividades_seccion.filter(actividad_padre=padre)
+                for hija in hijas:
+                    if not hija.is_padre:
+                        pendientes += 1
+                        respondidas += len(self.actividades_respondida_todas.filter(actividad=hija))
+                    else:
+                        pendientes += len(self.actividades_seccion.filter(actividad_padre=hija))
+                        nietas = self.actividades_seccion.filter(actividad_padre=hija)
+                        for nieta in nietas:
+                            respondidas += len(self.actividades_respondida_todas.filter(actividad=nieta))
+
+
+            data.append({
+                'nombre': padre.nombre,
+                'pendientes':pendientes,
+                'respondidas':respondidas,
+            })
+
+        return data
+
 
 
 class ActividadRespuestaProyecto(models.Model):
@@ -531,6 +625,9 @@ class ActividadRespuestaProyecto(models.Model):
         managed = True
         db_table = 'actividad_respuesta_proyecto'
         unique_together = ('proyecto','actividad','respuesta',)
+
+    def __str__(self):
+        return f'{self.proyecto.nombre}/{self.actividad.nombre}'
 
     def save(self, *args, **kwargs):
         if self.actividad.tipo_entrada.ind_archivo and self.actividad.tipo_entrada.ind_multiple:
@@ -604,7 +701,9 @@ class Gantt(models.Model):
         db_table = 'gantt'
 
     def save(self, *args, **kwargs):
+        from dateutil.relativedelta import relativedelta
         self.nombre = self.nombre.strip().upper()
+        temp_fin = self.fecha_termino + relativedelta(day=1)
         diferencia = self.fecha_termino - self.fecha_inicio
         self.duration = diferencia.days
         super(Gantt, self).save(*args, **kwargs)

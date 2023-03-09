@@ -5,6 +5,21 @@ from datetime import datetime
 from django.utils.html import strip_tags
 from dateutil.parser import parse
 
+mes_nombre_completo = {
+    'january': 'Enero',
+    'february': 'Febrero',
+    'march': 'Marzo',
+    'april': 'Abril',
+    'may': 'Mayo',
+    'june': 'Junio',
+    'july': 'Julio',
+    'august': 'Agosto',
+    'september': 'Septiembre',
+    'october': 'Octubre',
+    'november': 'Noviembre',
+    'december': 'Diciembre',
+}
+
 def getDatetime():
     import pytz
     return datetime.now(tz=pytz.timezone('Chile/Continental'))
