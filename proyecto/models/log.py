@@ -6,6 +6,8 @@ import json
 from dateutil import tz
 from proyecto.models import *
 
+
+
 def tzlocal():
     return tz.gettz('America / Chile')
 
@@ -54,4 +56,4 @@ class Log(models.Model):
                     if k in ('perfil_id','usuario_id','semestre_id','actividad_padre_id','tipo_entrada_id','seccion_id','alumno_seccion_id','proyecto_id','actividad_id','bitacora_padre_id','actividad_respuesta_proyecto_id','tipo_documento_id','documento_id'):
                         cadena[k]=v
                 return f'Relación {str(tuple(cadena.items()))}'.upper()
-                
+            

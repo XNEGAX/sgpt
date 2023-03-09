@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from function import ConsultaBD
 from function import formatear_error
 from django.core.management.commands.migrate import Command as MigrateCommand
@@ -7,7 +8,7 @@ class Command(MigrateCommand):
     def handle(self, *args, **options):
         super().handle(*args, **options)
         try:
-            ConsultaBD("""
+            query = """
             --HABILITA EL USO DEL LOCAL HOST
             UPDATE public.django_site SET "domain"='localhost', "name"='localhost' WHERE id=1;
             --USUARIO BASE
@@ -179,10 +180,6 @@ class Command(MigrateCommand):
             --docente seccion
             INSERT INTO public.docente_seccion(id, fecha, responsable_id, seccion_id, usuario_id)VALUES(1, now(), 1, 1, 2);
             SELECT setval('docente_seccion_id_seq',2, true);
-            --proyecto demo
-            INSERT INTO public.proyecto(id, nombre, descripcion, ind_aprobado, in_activo, motivo_rechazo, fecha_desde, fecha_hasta, fecha, alumno_seccion_id, responsable_id)
-            VALUES(1, 'PROYECTO PRUEBA 1', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', NULL, true, NULL, '2023-02-28 21:00:00.000', '2023-08-30 20:00:00.000', '2023-03-04 00:04:49.683', 3, 2);
-            SELECT setval('proyecto_id_seq',2, true);
             --tipos dato
             INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(1, 'PARRAFO', 'textarea', false, false, NULL, '2023-03-01 11:40:14.538', 0);
             INSERT INTO public.tipo_entrada(id, nombre, tipo, ind_archivo, ind_multiple, formato, fecha, responsable_id)VALUES(2, 'TABLA', 'file', true, true, 'jpeg', '2023-03-01 11:40:14.538', 0);
@@ -249,7 +246,14 @@ class Command(MigrateCommand):
             INSERT INTO public.actividad(id, nombre, descripcion, ind_base, orden, fecha, actividad_padre_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(2, 'BIBLIOGRAFÍA (APA)', '', true, 98, '2023-02-28 19:53:44.267', NULL, 2, 1, 1);
             INSERT INTO public.actividad(id, nombre, descripcion, ind_base, orden, fecha, actividad_padre_id, responsable_id, seccion_id, tipo_entrada_id)VALUES(1, 'INTRODUCCIÓN', 'ESTE CAPÍTULO CONSISTE EN UNA EXPOSICIÓN BREVE DEL PROBLEMA QUE SE PRETENDE SOLUCIONAR Y/O INVESTIGAR. TODA INFORMACIÓN DEBERÁ IR ACOMPAÑADA DE LA CORRESPONDIENTE CITA BIBLIOGRÁFICA, COMO SE INDICA MÁS ADELANTE. LA INTRODUCCIÓN TAMBIÉN DEBE PRESENTAR LA RELEVANCIA DEL PROYECTO O INVESTIGACIÓN.', true, 0, '2023-02-26 19:55:20.145', NULL, 2, 1, 1);
             SELECT setval('actividad_id_seq',107, true);
-            """).execute_lines()
+            """
+            demo_descripcion = "LOREM IPSUM IS SIMPLY DUMMY TEXT OF THE PRINTING AND TYPESETTING INDUSTRY. LOREM IPSUM HAS BEEN THE INDUSTRY''S STANDARD DUMMY TEXT EVER SINCE THE 1500S, WHEN AN UNKNOWN PRINTER TOOK A GALLEY OF TYPE AND SCRAMBLED IT TO MAKE A TYPE SPECIMEN BOOK. IT HAS SURVIVED NOT ONLY FIVE CENTURIES, BUT ALSO THE LEAP INTO ELECTRONIC TYPESETTING, REMAINING ESSENTIALLY UNCHANGED. IT WAS POPULARISED IN THE 1960S WITH THE RELEASE OF LETRASET SHEETS CONTAINING LOREM IPSUM PASSAGES, AND MORE RECENTLY WITH DESKTOP PUBLISHING SOFTWARE LIKE ALDUS PAGEMAKER INCLUDING VERSIONS OF LOREM IPSUM."
+            # demo_descripcion = demo_descripcion.encode(encoding='ascii',errors='backslashreplace')
+            query += f"""--proyecto demo
+            INSERT INTO public.proyecto(id, nombre, descripcion, ind_aprobado, in_activo, motivo_rechazo, fecha_desde, fecha_hasta, fecha, alumno_seccion_id, responsable_id)
+            VALUES(1, 'PROYECTO PRUEBA 1', '{demo_descripcion}', true, true, NULL, '2023-02-28 21:00:00.000', '2023-08-30 20:00:00.000', '2023-03-04 00:04:49.683', 3, 2);    
+            SELECT setval('proyecto_id_seq',2, true);"""
+            ConsultaBD(query).execute_lines()
         except Exception as exc:
             logging.warning(formatear_error(exc))
             print(formatear_error(exc))
