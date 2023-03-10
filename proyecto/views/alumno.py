@@ -10,11 +10,14 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import base64
 import ast
+from function import formatear_error
 # models
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Proyecto
 from proyecto.models import Gantt
-from proyecto.models import ActividadRespuestaProyecto,Actividad
+from proyecto.models import ActividadRespuestaProyecto
+from proyecto.models import Actividad
+from proyecto.models import BitacoraActividadRespuestaProyecto
 # forms
 from proyecto.content import ProyectoModelForm
 from proyecto.content import GanttModelForm
@@ -222,4 +225,35 @@ class EliminarTareaProyecto(DestroyAPIView):
         }, status=200,safe=False)
 
 
-         
+class ListarBitacora(ListView):
+    template_name = 'alumno/proyecto/bitacora_content.html'
+    paginate_by = 10
+    model = BitacoraActividadRespuestaProyecto
+    ordering  = ['-fecha']
+
+    def get_queryset(self):
+        return BitacoraActividadRespuestaProyecto.objects.filter(
+            actividad_respuesta_proyecto__proyecto_id=self.kwargs.get('proyecto_id'),
+            actividad_respuesta_proyecto__actividad_id=self.kwargs.get('actividad_id'),
+            bitacora_padre__isnull=True
+        )
+    
+    def post(self,request,proyecto_id,actividad_id):
+        nueva_pregunta = request.POST.get('nueva_pregunta')
+        bitacora_padre_id = request.GET.get('bitacora_padre_id')
+        actividad_respuesta_proyecto = ActividadRespuestaProyecto.objects.filter(
+            proyecto_id=proyecto_id,
+            actividad_id=actividad_id
+        ).last()
+        obj = BitacoraActividadRespuestaProyecto(
+            bitacora_padre_id=bitacora_padre_id,
+            actividad_respuesta_proyecto=actividad_respuesta_proyecto,
+            usuario=request.user,
+            comentario=nueva_pregunta,
+            responsable=request.user,
+        )
+        obj.save()
+        return JsonResponse({
+            'estado': '0',
+            'mensaje': 'Comentario enviado!' if not bitacora_padre_id else 'Respuesta enviada!'
+        }, status=200,safe=False)

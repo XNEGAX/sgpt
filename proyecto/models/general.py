@@ -610,8 +610,6 @@ class Proyecto(models.Model):
 
         return data
 
-
-
 class ActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_actividad_respuesta_proyecto',db_column='proyecto_id')
@@ -685,6 +683,33 @@ class BitacoraActividadRespuestaProyecto(models.Model):
     class Meta:
         managed = True
         db_table = 'bitacora_actividad_respuesta_proyecto'
+    
+    @property
+    def hijos(self):
+        return self.fk_bitacora_padre_bitacora_actividad_respuesta_proyecto.all()
+    
+    @property
+    def timpo_desde(self):
+        diferencia = getDatetime() - self.fecha
+        minutos = (diferencia.seconds / 60) if diferencia.seconds > 0 else 0
+        horas = (minutos / 60) if minutos > 0 else 0
+        if diferencia.days == 1:
+            return f'hace {int(diferencia.days)} día'
+        elif diferencia.days > 1:
+            return f'hace {int(diferencia.days)} días'
+        elif horas == 1:
+            return f'hace {int(horas)} hora'
+        elif horas > 1:
+            return f'hace {int(horas)} horas'
+        elif minutos == 1:
+            return f'hace {int(minutos)} minuto'
+        elif minutos > 1:
+            return f'hace {int(minutos)} minutos'
+        elif diferencia.seconds == 1:
+            return f'hace {int(diferencia.seconds)} segundo'
+        else:
+            return f'hace {int(diferencia.seconds)} segundos'
+
 
 class Gantt(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)

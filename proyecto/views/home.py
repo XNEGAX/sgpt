@@ -59,9 +59,6 @@ def getGraphActividadesxMes(proyecto):
     from io import BytesIO
 
     meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-    meses_nombre = proyecto.alumno_seccion.seccion.meses_duracion_nombre
-    meses_numero = proyecto.alumno_seccion.seccion.meses_duracion_numero
-
     actividades = []
     for indice in range(len(meses)):
         cantidad = ActividadRespuestaProyecto.objects.filter(proyecto=proyecto,fecha__month=indice+1,actividad__ind_base=False).count()

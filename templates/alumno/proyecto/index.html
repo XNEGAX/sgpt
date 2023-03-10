@@ -2,6 +2,7 @@
 {% load static %}
 {% block modal %}
 {% include "alumno/proyecto/offcanvas.html" %}
+{% include "alumno/proyecto/bitacora_canvas.html" %}
 {% endblock modal%}
 {% block breackcrum%}
 {{breackcrum|safe}}
@@ -55,7 +56,7 @@
         {% else %}
             {% for actividad in actividades_seccion %}
                 <script>
-                    let archivos_list = {% if actividad.respuesta_formateada %}{{actividad.respuesta_formateada|safe}}{%else%}[]{%endif%}
+                    let archivos_list = {% if actividad.respuesta_formateada and not actividad.tipo_entrada.tipo == 'textarea' %}{{actividad.respuesta_formateada|safe}}{%else%}[]{%endif%}
                 </script>
                 <div class="card-header">
                     <h5 class="card-title text-blue fw-bold text-uppercase
@@ -92,6 +93,9 @@
                         <a class="btn rounded-circle bx-1-3 btn-primary btn-flotante top-160 right-30 text-white" style="padding: 11px !important;" id="btn_agregar_archivos" tipo="{{actividad.tipo_entrada.formato}}">
                             <i class="bx bx-plus"></i>
                         </a>
+                        {% endif %}
+                        {% if actividad.respuesta %}
+                        <button class="btn rounded-circle bx-1-3 btn-info btn-flotante top-250 right-30" id="btn_ver_bitacora" actividad=""><i class="bx bx-book"></i></button>
                         {% endif %}
                     </div>
                 </div>

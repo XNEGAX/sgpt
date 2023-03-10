@@ -79,7 +79,7 @@ class Microservicio {
             console.error(error);
         }
     }
-    getOffcanvasFormGetCreateView(modal) {
+    getOffcanvasFormGetCreateView(modal,btn_id='form_crear') {
         try {
             openLoader()
             const cuerpo = modal + ' #contenido'
@@ -87,7 +87,7 @@ class Microservicio {
             $(cuerpo).load(url, function () {
                 $(modal).offcanvas("toggle");
                 $(modal + ' .modal-footer .btn_accion').text('Guardar').attr('id', 'btn_guardar');
-                $(modal + ' .modal-body form').attr('action', url).attr('id', 'form_crear');
+                $(modal + ' .modal-body form, '+modal + ' .offcanvas-footer form').attr('action', url).attr('id', btn_id);
                 closeLoader()
             });
         } catch (error) {
@@ -208,7 +208,6 @@ class Microservicio {
     }
     postFormData(formData, modal, alerta = true) {
         const url = this.url
-        console.log(alerta)
         $.ajax({
             type: 'POST',
             url: url,
@@ -308,6 +307,11 @@ function validateForm(form) {
             )
             status = false;
         }
+        if (status===false) {
+            console.log(this)
+            console.log(this.value)
+        }
+        
     });
     return status;
 }
