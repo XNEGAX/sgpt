@@ -4,8 +4,8 @@ from proyecto.models import Proyecto,Gantt
 
 class GanttModelForm(forms.ModelForm):
     nombre = forms.CharField(required=True, error_messages={'required': 'Ingrese nombre de la tarea'},label='NOMBRE',widget=forms.TextInput(attrs={'class':'form-control','id':'nombre','tabindex':'0'}))
-    fecha_inicio =  forms.DateField(required=True,error_messages={'required': 'Ingrese fecha incio'}, label='FECHA INICIO',widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_inicio','type':'date','tabindex':'1'}))
-    fecha_termino = forms.DateField(required=True,error_messages={'required': 'Ingrese fecha término'}, label='FECHA TÉRMINO',widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_termino','type':'date','tabindex':''}))
+    fecha_inicio =  forms.DateField(required=True,error_messages={'required': 'Ingrese fecha incio'}, label='FECHA INICIO',input_formats=['%Y-%m-%d'],widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_inicio','type':'date','tabindex':'1'}))
+    fecha_termino = forms.DateField(required=True,error_messages={'required': 'Ingrese fecha término'}, label='FECHA TÉRMINO',input_formats=['%Y-%m-%d'],widget=forms.DateInput(attrs={'class':'form-control','id':'fecha_termino','type':'date','tabindex':''}))
 
     class Meta:
         model = Gantt
@@ -20,13 +20,16 @@ class GanttModelForm(forms.ModelForm):
         super(GanttModelForm, self).__init__(*args, **kwargs)
         initial = kwargs.get('initial','')
         proyecto_id = initial.get('proyecto_id') or self.instance.proyecto_id
-        print(proyecto_id)
+
         if proyecto_id:
             self.fields['proyecto'] = forms.ModelChoiceField(
                 queryset=Proyecto.objects.filter(id=proyecto_id),
                 label='',required=True,empty_label=None,
                 widget = forms.Select(attrs={'class':'form-control','selected':proyecto_id,'style':'display:none'})
             )
+            proyecto = Proyecto.objects.get(id=proyecto_id)
+            self.fields['fecha_inicio'].widget.attrs.update({'min': proyecto.fecha_desde.strftime('%Y-%m-%d')})
+            self.fields['fecha_termino'].widget.attrs.update({'max': proyecto.fecha_hasta.strftime('%Y-%m-%d')})
 
     def clean_nombre(self):
         return self.cleaned_data.get('nombre').strip().upper()

@@ -11,6 +11,7 @@ from django.shortcuts import render
 import base64
 import ast
 from function import formatear_error
+from django.http import StreamingHttpResponse
 # models
 from proyecto.models import AlumnoSeccion
 from proyecto.models import Proyecto
@@ -18,9 +19,11 @@ from proyecto.models import Gantt
 from proyecto.models import ActividadRespuestaProyecto
 from proyecto.models import Actividad
 from proyecto.models import BitacoraActividadRespuestaProyecto
+from proyecto.models import Documento,VersionDocumento
 # forms
 from proyecto.content import ProyectoModelForm
 from proyecto.content import GanttModelForm
+from proyecto.content.proyecto_docx import ProyectoDocx
 # serializer
 from proyecto.json import GanttSerializer
 
@@ -42,6 +45,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
             motivo_rechazo = ''
             accion = 1
             url = f"/alumno/seccion/{alumno_seccion.id}/proyecto/crear/"
+            documento = None
             proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
             if proyecto and proyecto.is_pendiente:
                 estado = 'Proyecto pendiente Aprobación'
@@ -56,6 +60,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
                 estado = 'Proyecto aprobado'
                 url = f"/alumno/seccion/proyecto/{proyecto.id}/actividades/"
                 accion = 0
+                documento = f'/proyecto/{proyecto.id}/informe/'
                 
             data.append({
                 'id': alumno_seccion.id,
@@ -68,6 +73,7 @@ class ListarSeccionesAlumno(RoyalGuard,ListView):
                 'url':url,
                 'accion':accion,
                 'motivo_rechazo':motivo_rechazo.upper(),
+                'documento':documento
             })
         return data
     
@@ -257,3 +263,27 @@ class ListarBitacora(ListView):
             'estado': '0',
             'mensaje': 'Comentario enviado!' if not bitacora_padre_id else 'Respuesta enviada!'
         }, status=200,safe=False)
+    
+
+class InformeTituloView(View):
+    def get(self,request,pk):
+        proyecto = Proyecto.objects.get(pk=pk)
+        obj_doc = proyecto.documento
+        if not obj_doc:
+            obj_doc = Documento(
+                responsable = request.user
+            )
+            obj_doc.save()
+            proyecto.documento_id = obj_doc.id
+            proyecto.save()
+        preview = request.GET.get('preview')
+        if not preview:
+            obj_version = VersionDocumento(
+                metadatos = proyecto.data,
+                documento_id = obj_doc.id,
+                responsable = request.user
+            )
+            obj_version.save()
+
+        documento = ProyectoDocx(proyecto)
+        return documento.generar(f'{obj_doc.get_folio()}.pdf')

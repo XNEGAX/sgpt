@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif !important;
+        }
+
+        h4 {
+            font-family: 'Times New Roman', Times, serif !important;
+            color: #2F5496 !important;
+        }
+
+        .img-responsive {
+            display: block;
+            height: auto;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .Image {
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Image">
+        <img src="data:image/png;base64,{{proyecto.logo}}" class="img-responsive">
+    </div>
+    <br>
+    <h3 style="font-family: Arial, Helvetica, sans-serif;font-weight:600;text-align: center;">
+        UNIVERSIDAD DE LAS AMÉRICAS <br>
+        FACULTAD DE INGENIERÍA<br>
+        CARRERA DE INGENIERÍA EN EJECUCIÓN INFORMÁTICA
+    </h3>
+    <br><br><br>
+    <h2 style="font-family: Arial, Helvetica, sans-serif;font-weight:600;text-align: center;vertical-align: top;min-height: 350px !important;">{{proyecto.nombre}}</h2>
+    <p style="font-family: Arial, Helvetica, sans-serif;text-align: right;">
+        <span style="font-weight:600;">Profesor/es responsable/s:</span><br>
+        {{proyecto.data.portada.profesor.first_name|title}}
+        {{proyecto.data.portada.profesor.last_name|title}} 
+    </p>
+    <p style="font-family: Arial, Helvetica, sans-serif;text-align: right;">
+        <span style="font-weight:600;">Estudiante:</span><br>
+        {{proyecto.data.portada.alumno.first_name|title}}
+        {{proyecto.data.portada.alumno.last_name|title}} 
+    </p>
+    <div class="Image" style="font-family: Arial, Helvetica, sans-serif;font-weight:400;text-align: center;vertical-align: bottom;">
+        {{proyecto.data.portada.pie|upper}}
+        <img src="data:image/png;base64,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" class="img-responsive" >
+    </div>
+    <h3 style="font-family: Arial, Helvetica, sans-serif;font-weight:600;text-align: left;">
+        INDICE
+    </h3>
+    <br><br><br>
+    {% for actividad_padre in proyecto.data.actividades %}
+    <h3 style="font-family: Arial, Helvetica, sans-serif;font-weight:600;text-align: left;font-size: 14px !important;">
+        {% if not actividad_padre.ind_base%}{{actividad_padre.orden}}.{%endif%}{{actividad_padre.nombre}}..................................................{% if not actividad_padre.ind_base%}{{actividad_padre.orden}}.{%endif%}
+    </h3>
+        {% for actividad_hija in actividad_padre.actividades %}
+        <h4 style="font-family: Arial, Helvetica, sans-serif;font-weight:400;text-align: left;font-size: 12px !important;margin-left: 10px !important;">
+            {% if not actividad_hija.ind_base%}{{actividad_padre.orden}}.{{actividad_hija.orden}}.{%endif%}{{actividad_hija.nombre}}
+        </h4>
+            {% for actividad_nieta in actividad_hija.actividades %}
+            <h5 style="font-family: Arial, Helvetica, sans-serif;text-align: left;font-size: 12px !important;margin-left: 20px !important;">
+                {% if not actividad_nieta.ind_base%}{{actividad_padre.orden}}.{{actividad_hija.orden}}.{{actividad_nieta.orden}}.{%endif%}{{actividad_nieta.nombre}}
+            </h5>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+    <p style="page-break-before: always" ></p>
+    {% for actividad_padre in proyecto.data.actividades %}
+    <br>
+    <h3 style="font-family: Arial, Helvetica, sans-serif;font-weight:600;text-align: left;font-size: 14px !important;">
+        {% if not actividad_padre.ind_base%}{{actividad_padre.orden}}.{%endif%}{{actividad_padre.nombre}}
+    </h3>
+        {% if actividad_padre.tipo_entrada == 1 %}
+            <br>
+            {{actividad_padre.respuesta|safe|default:''}}
+            
+        {% elif actividad_padre.tipo_entrada == 4 or actividad_padre.tipo_entrada == 2 and 'gantt' not in actividad_padre.nombre %}
+            {%for imagen in actividad_padre.respuesta%}
+            <div class="Image">
+                <img src="data:image/png;base64,{{imagen.ruta_archivo}}" class="img-responsive" >
+            </div>
+            {% endfor %}
+            
+        {%endif%}
+        {% for actividad_hija in actividad_padre.actividades %}
+            <br>
+            <br>
+            <h4 style="font-family: Arial, Helvetica, sans-serif;font-weight:400;text-align: left;font-size: 12px !important;margin-left: 10px !important;">
+                {% if not actividad_hija.ind_base%}{{actividad_padre.orden}}.{{actividad_hija.orden}}.{%endif%}{{actividad_hija.nombre}}
+            </h4>
+                {% if actividad_hija.tipo_entrada == 1 %}
+                    <br>
+                    {{actividad_hija.respuesta|safe|default:''}}
+                    
+                {% elif actividad_hija.tipo_entrada == 4 or actividad_hija.tipo_entrada == 2 and 'gantt' not in actividad_hija.nombre %}
+                    {%for imagen in actividad_hija.respuesta %}
+                    <div class="Image">
+                        <img src="data:image/png;base64,{{imagen.ruta_archivo}}" class="img-responsive" >
+                    </div>
+                    {% endfor %}
+                {%endif%}
+                    {% for actividad_nieta in actividad_hija.actividades %}
+                    <br>
+                    <h5 style="font-family: Arial, Helvetica, sans-serif;text-align: left;font-size: 12px !important;margin-left: 20px !important;">
+                        {% if not actividad_nieta.ind_base%}{{actividad_padre.orden}}.{{actividad_hija.orden}}.{{actividad_nieta.orden}}.{%endif%}{{actividad_nieta.nombre}}
+                    </h5>
+                        {% if actividad_nieta.tipo_entrada == 1 %}
+                            <br>
+                            {{actividad_nieta.respuesta|safe|default:''}}
+                            
+                        {% elif actividad_nieta.tipo_entrada == 4 or actividad_nieta.tipo_entrada == 2 and 'gantt' not in actividad_nieta.nombre %}
+                            {%for imagen in actividad_nieta.respuesta %}
+                            <div class="Image">
+                                <img src="data:image/png;base64,{{imagen.ruta_archivo}}" class="img-responsive" >
+                            </div>
+                            {% endfor %}
+                            
+                        {%endif%}
+                    {% endfor %}
+        {% endfor %}
+        <p style="page-break-before: always" ></p>
+    {% endfor %}
+</body>
+
+</html>

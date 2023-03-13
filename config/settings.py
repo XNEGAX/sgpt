@@ -140,6 +140,7 @@ STATICFILES_DIRS = (
     f'{BASE_DIR}/static/',
 )
 MEDIA_URL = f'{BASE_DIR}/media/'
+MEDIA_ROOT = f'{BASE_DIR}/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -165,21 +166,3 @@ REDIRECT_URI = 'http://localhost:8000/getAToken'
 LOGIN_URL = "/microsoft_authentication/login"
 LOGIN_REDIRECT_URL = "/admin"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# if DEBUG == True:
-#     LOGGING = {
-#         'version': 1,
-#         'handlers': {
-#             'console': {
-#                 'level': 'DEBUG',
-#                 'class': 'logging.FileHandler',
-#                 'filename': 'orm_to_query3.log',
-#             }
-#         },
-#         'loggers': {
-#             'django.db.backends': {
-#                 'level': 'DEBUG',
-#                 'handlers': ['console'],
-#             }
-#         }
-#     }

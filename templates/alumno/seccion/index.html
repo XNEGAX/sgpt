@@ -19,6 +19,9 @@
             <th>Profesor</th>
             <th class="text-center">estado</th>
             <th class="text-center">proyecto</th>
+            {% if object_list.0.documento %}
+            <th class="text-center">documento</th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -44,6 +47,15 @@
               <i class='bx bxs-detail text-gray no-clickeable' title="El docente no ha configurado actividades"></i>
               {% endif %}
             </td>
+            {% if alumno_seccion.documento %}
+            <td class="text-center">
+              <a class="clickeable btn_ver_documento" href="{{alumno_seccion.documento}}" target="_blank"><i class='bx bx-file text-primary'></i></a>
+            </td>
+            {% else %}
+            <td class="text-center">
+              <i class='bx bx-file text-gray no-clickeable'></i>
+            </td>
+            {% endif %}
           </tr>
           {%empty%}
           <tr>

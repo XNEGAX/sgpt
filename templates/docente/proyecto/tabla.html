@@ -1,0 +1,11 @@
+{% for respuesta in actividad.respuesta_formateada %}
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <img src="data:image/png;base64,{{respuesta.archivo}}" class="w-100 p-l-50 p-r-50" style="max-width: 1000px !important;display:block;margin:auto;"/>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center mt-4">
+        <strong>{{respuesta.orden}} {{respuesta.nombre}}</strong>
+    </div>
+    
+</div>
+{% endfor %}

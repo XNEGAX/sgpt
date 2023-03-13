@@ -1,0 +1,51 @@
+{% load static %}
+<div class="gantt-container">
+  <div class="row">
+    <div class="col-md-4 col-sm-12">
+      <div class="mt-2-2">
+        <table class="table table-striped w-100 table-detail-gantt" style="margin-top: 40px !important;">
+          <thead>
+            <tr>
+              <th>Tarea</th>
+              <th width="30%">Inicio</th>
+              <th width="30%">Término</th>
+              <th><i class="bx bx-dots-vertical-rounded"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tarea in object_list.tareas %}
+            <tr>
+              <td>{{tarea.nombre}}</td>
+              <td>{{tarea.fecha_inicio|date:"d-m-Y"}}</td>
+              <td>{{tarea.fecha_termino|date:"d-m-Y"}}</td>
+              <td>
+                <div class="dropdown">
+                  <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i
+                      class="bx bx-dots-vertical-rounded"></i></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item btn_actualizar_tarea" href="javascript:void(0);" url="/alumno/proyecto/tarea/{{tarea.id}}/actualizar/"><i
+                        class="bx bx-edit-alt me-1"></i> Actualizar</a>
+                    <a class="dropdown-item btn_eliminar_tarea" href="javascript:void(0);" url="/alumno/proyecto/tarea/{{tarea.id}}/eliminar/"><i
+                        class="bx bx-trash me-1"></i> Eliminar</a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {%empty%}
+            <tr>
+              <td colspan="3" class="text-center">
+                <strong>No existen tareas</strong>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+      <div class="gantt-graphic-container">
+        <img src="data:image/svg+xml;base64,{{object_list.gantt}}" />
+      </div>
+    </div>
+  </div>
+</div>

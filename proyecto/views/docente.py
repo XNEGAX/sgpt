@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.db.models.deletion import ProtectedError
 from django.db.models import Q
 from django.db.models import Max
-from django.views.generic import ListView,TemplateView
+from django.views.generic import ListView,TemplateView,View
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from rest_framework.generics import DestroyAPIView
@@ -100,6 +100,7 @@ class ListarParticipantes(RoyalGuard,ListView):
             estado = 'No definido por el alumno'
             clase = 'text-gray'
             url =''
+            documento = None
             proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
             if proyecto and proyecto.is_pendiente:
                 estado = 'Pendiente Aprobación'
@@ -113,6 +114,7 @@ class ListarParticipantes(RoyalGuard,ListView):
                 estado = 'Aprobado'
                 clase = 'text-success'
                 url = f'/docente/proyecto/{proyecto.id}/avances/'
+                documento = f'/proyecto/{proyecto.id}/informe/'
 
             data.append({
                 'rut': validar_rut.format_rut_without_dots(rut),
@@ -122,7 +124,8 @@ class ListarParticipantes(RoyalGuard,ListView):
                 'proyecto': proyecto,
                 'estado':estado,
                 'clase':clase,
-                'url':url
+                'url':url,
+                'documento':documento
             })
         return data
 
@@ -244,3 +247,38 @@ class ProyectoActualizar(RoyalGuard,GenericAPIView, UpdateModelMixin):
             'respuesta': f'Proyecto {"aprobado" if proyecto.is_aprobado else "rechazado"}!'
         }, status=200,safe=False)
 """ fin bloque seccion docente"""
+
+
+class DetalleAlumnoProyecto(View):
+    def get(self,request,proyecto_id):
+        proyectos = Proyecto.objects.filter(pk=proyecto_id)
+        if not proyectos.filter(in_activo=True).exists():
+            proyectos.update(in_activo=False)
+            proyectos.filter(pk=proyecto_id).update(in_activo=True)
+        # fin cambio de activo
+        proyecto = Proyecto.objects.get(pk=proyecto_id)
+        if proyecto:
+            request.session['proyecto'] = {
+                'url':proyecto.url_docente,
+                'actividades_menu':proyecto.actividades_menu_docente
+            }
+        breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyecto / </span>{proyecto.nombre.capitalize()}</h5>'
+        actividades= proyecto.actividades_seccion.filter(actividad_padre=self.request.GET.get('actividad')).order_by('orden')
+        if len(actividades)==0:
+            actividades = proyecto.actividades_seccion.filter(id=self.request.GET.get('actividad')).order_by('orden')
+            if len(actividades)==1:
+                if actividades[0].actividad_padre:
+                    breackcrum = f'''<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{proyecto.nombre.capitalize()} / {actividades[0].actividad_padre.nombre.capitalize()} / </span>{actividades[0].nombre.capitalize()}</h5>'''
+                else:
+                    breackcrum = f'''<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{proyecto.nombre.capitalize()} / </span>{actividades[0].nombre.capitalize()}</h5>'''
+        else:
+            if self.request.GET.get('actividad'):
+                breackcrum = f'<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">{proyecto.nombre.capitalize()} / </span>{actividades[0].actividad_padre.nombre.capitalize()}</h5>'
+
+        context = {
+            'actividades_seccion':actividades,
+            'breackcrum':breackcrum,
+            'actividad_enviada':self.request.GET.get('actividad'),
+            'object_list':proyecto
+        }
+        return render(request, 'docente/proyecto/index.html',context=context)

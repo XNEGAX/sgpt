@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from django.db import connections
 from django.http import JsonResponse
@@ -91,10 +92,10 @@ class JsonGenericView(object):
             return JsonResponse({'estado': '1','error':formatear_error(exc)}, status=500,safe=False)
         
 
-
 def is_date(string, fuzzy=False):
     try: 
         parse(string, fuzzy=fuzzy)
         return True
     except ValueError:
         return False
+    

@@ -138,6 +138,50 @@ class Semestre(models.Model):
 
     def __str__(self):
         return f'{self.nombre}'
+    
+class Documento(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_documento',db_column='responsable_id')
+
+    class Meta:
+        managed = True
+        db_table = 'documento'
+
+    def get_folio(self):
+        return f'pry-{self.id}'
+    
+    def __unicode__(self):
+       return self.get_folio()
+
+    def __str__(self):
+        return self.get_folio()
+
+    
+    
+class VersionDocumento(models.Model):
+    id = models.BigAutoField(primary_key=True, editable=False)
+    version = models.IntegerField(blank=False, null=False)
+    metadatos = models.TextField(blank=False, null=False)
+    documento = models.ForeignKey(Documento, on_delete=models.CASCADE,related_name='fk_documento_version_documento',db_column='documento_id')
+    fecha = models.DateTimeField(auto_now_add=True)
+    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_version_documento',db_column='responsable_id')
+
+    class Meta:
+        managed = True
+        db_table = 'version_documento'
+
+    def __str__(self):
+        return f'''{self.documento.get_folio()} (v{self.version})'''
+    
+    def save(self, *args, **kwargs):
+        self.version = 0
+        anterior = VersionDocumento.objects.filter(documento=self.documento).order_by('-version').last()
+        if anterior:
+            self.version = anterior.version
+        self.version += 1
+        return super(VersionDocumento, self).save(*args, **kwargs)
+
 
 class Seccion(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
@@ -358,13 +402,14 @@ class Actividad(models.Model):
     def respuesta_formateada(self):
         if self.respuesta:
             if self.respuesta.respuesta and self.tipo_entrada.ind_archivo and self.tipo_entrada.ind_multiple and 'gantt' not in self.nombre.lower():
-                respuesta = list(self.respuesta.respuesta)
+                respuesta =  list(eval(self.respuesta.respuesta))
                 for r in respuesta:
                     try:
                         with open(r.get('ruta_archivo'), "rb") as image_file:
                             r['archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
                     except:
                         pass
+                    print(f"{self.tipo_entrada.nombre.capitalize()} {self.orden_formateado if not self.ind_base else ''}")
                     r['orden'] = f"{self.tipo_entrada.nombre.capitalize()} {self.orden_formateado if not self.ind_base else ''}"
                     r['tipo'] = self.tipo_entrada.formato
                 return respuesta
@@ -404,6 +449,7 @@ class Proyecto(models.Model):
     alumno_seccion = models.OneToOneField(AlumnoSeccion, on_delete=models.CASCADE,related_name='fk_alumno_seccion_proyecto',db_column='alumno_seccion_id')
     fecha_desde =  models.DateField()
     fecha_hasta =  models.DateField()
+    documento = models.OneToOneField(Documento,blank=True,null=True,on_delete=models.CASCADE,related_name='fk_proyecto_documento',db_column='documento_id')
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_proyecto',db_column='responsable_id')
 
@@ -476,6 +522,10 @@ class Proyecto(models.Model):
         return f'/alumno/seccion/proyecto/{self.id}/actividades/'
     
     @property
+    def url_docente(self):
+        return f'/proyecto/{self.id}/informe/detalle/'
+    
+    @property
     def actividades_menu(self):
         actividades_padre = []
         actividades_padre_proyecto = self.actividades_seccion.filter(actividad_padre=None).order_by('orden')
@@ -492,6 +542,30 @@ class Proyecto(models.Model):
 
             actividades_padre.append({
                 'url':f'{self.url}?actividad={actividad_padre_proyecto.id}' if not actividad_padre_proyecto.is_padre else 'javascript:void(0);',
+                'is_padre': actividad_padre_proyecto.is_padre,
+                'nombre': actividad_padre_proyecto.nombre,
+                'actividades_hijo_url':actividades_hijo_url,
+                'actividades_hijo':actividades_hijo,
+            })
+        return actividades_padre
+    
+    @property
+    def actividades_menu_docente(self):
+        actividades_padre = []
+        actividades_padre_proyecto = self.actividades_seccion.filter(actividad_padre=None).order_by('orden')
+        for actividad_padre_proyecto in actividades_padre_proyecto:
+            actividades_hijo = []
+            actividades_hijo_url = []
+            actividades_hijo_proyecto = self.actividades_seccion.filter(actividad_padre=actividad_padre_proyecto.id).order_by('orden')
+            for actividad_hijo_proyecto in actividades_hijo_proyecto:
+                actividades_hijo_url.append(f'{self.url_docente}?actividad={actividad_hijo_proyecto.id}')
+                actividades_hijo.append({
+                    'url':f'{self.url_docente}?actividad={actividad_hijo_proyecto.id}',
+                    'nombre': actividad_hijo_proyecto.nombre,
+                })
+
+            actividades_padre.append({
+                'url':f'{self.url_docente}?actividad={actividad_padre_proyecto.id}' if not actividad_padre_proyecto.is_padre else 'javascript:void(0);',
                 'is_padre': actividad_padre_proyecto.is_padre,
                 'nombre': actividad_padre_proyecto.nombre,
                 'actividades_hijo_url':actividades_hijo_url,
@@ -530,11 +604,18 @@ class Proyecto(models.Model):
         return True
     
     @property
-    def ruta(self):
+    def ruta_svg(self):
         path = 'proyecto/gantt/'
         if not os.path.exists(path):
             os.makedirs(path)
         return f'{path}{self.id}.svg'
+    
+    @property
+    def ruta_png(self):
+        path = 'proyecto/gantt/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return f'{path}{self.id}.png'
     
     @property
     def tareas(self):
@@ -542,6 +623,7 @@ class Proyecto(models.Model):
 
     @property
     def gantt(self):
+        from dateutil.relativedelta import relativedelta
         try:
             gantt.define_font_attributes(fill='black', stroke='black', stroke_width=0, font_family="Verdana")
             p = CustomProject(color='#35C367')
@@ -551,9 +633,10 @@ class Proyecto(models.Model):
                     p.add_task(gantt.Task(name=tarea.nombre, start=tarea.fecha_inicio, duration=tarea.duration+1))
             else:
                 p.add_task(gantt.Task(name=self.nombre, start=self.fecha_desde, duration=1))
-            p.make_svg_for_tasks(filename=self.ruta, today=getDatetime(), start=self.fecha_desde, end=self.fecha_hasta)
-            self.set_gantt(self.ruta)
-            with open(self.ruta, "rb") as image_file:
+            p.make_svg_for_tasks(filename=self.ruta_svg, today=getDatetime(), start=self.fecha_desde, end=tareas.last().fecha_termino + relativedelta(days=20) if tareas.last() else self.fecha_hasta)
+
+            self.set_gantt(self.ruta_svg)
+            with open(self.ruta_svg, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode('utf-8')
         except Exception as e:
             with open('proyecto/gantt/default.svg', "rb") as image_file:
@@ -609,12 +692,86 @@ class Proyecto(models.Model):
             })
 
         return data
+    
+    @property
+    def logo(self):
+        with open('static/udla/img/logo_udla.png', "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode('utf-8')
+
+    @property
+    def data(self):
+        from django.forms.models import model_to_dict
+        from function import mes_nombre_completo
+        data = model_to_dict(self)
+        hoy = getDatetime()
+        pie = f"{mes_nombre_completo[hoy.strftime('%B').lower()]} - {hoy.year}"
+        data['portada'] = {
+            'profesor': model_to_dict(self.alumno_seccion.seccion.fk_seccion_docente_seccion.last().usuario),
+            'alumno': model_to_dict(self.alumno_seccion.usuario),
+            'pie': pie
+        }
+        actividades_padre = self.actividades_seccion.filter(actividad_padre__isnull=True).order_by('orden')
+        padres = []
+        for actividad_padre in actividades_padre:
+            actividades_hija = self.actividades_seccion.filter(actividad_padre=actividad_padre).order_by('orden')
+            hijas = []
+            for actividad_hija in actividades_hija:
+                actividades_nieta = self.actividades_seccion.filter(actividad_padre=actividad_hija).order_by('orden')
+                nietas = []
+                for actividad_nieta in actividades_nieta:
+                    nieta = model_to_dict(actividad_nieta)
+                    obj_nieta = ActividadRespuestaProyecto.objects.filter(proyecto=self,actividad=actividad_nieta).last()
+                    if obj_nieta:
+                        if actividad_nieta.tipo_entrada_id in (2,4) and 'gantt' not in actividad_nieta.nombre.lower():
+                            archivos = list(eval(model_to_dict(obj_nieta).get('respuesta'))) if obj_nieta else None
+                            if archivos:
+                                for archivo in archivos:
+                                    with open(archivo.get('ruta_archivo'), "rb") as image_file:
+                                        archivo['ruta_archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
+                            nieta['respuesta'] = archivos
+                        # elif 'gantt' in actividad_nieta.nombre.lower():
+                        #     print('no implementado')
+                        else:
+                            nieta['respuesta'] = obj_nieta.respuesta if obj_nieta else ''
+                    nietas.append(nieta)
+                
+                hija = model_to_dict(actividad_hija)
+                obj_hija = ActividadRespuestaProyecto.objects.filter(proyecto=self,actividad=actividad_hija).last()
+                if obj_hija:
+                    if actividad_hija.tipo_entrada_id in (2,4) and 'gantt' not in actividad_hija.nombre.lower():
+                        archivos = list(eval(model_to_dict(obj_hija).get('respuesta'))) if obj_hija else None
+                        if archivos:
+                            for archivo in archivos:
+                                with open(archivo.get('ruta_archivo'), "rb") as image_file:
+                                    archivo['ruta_archivo'] = base64.b64encode(image_file.read()).decode('utf-8')
+                        hija['respuesta'] = archivos
+                    else:
+                        hija['respuesta'] = obj_hija.respuesta if obj_hija else ''
+                    hija['actividades'] = nietas
+                hijas.append(hija)
+
+            padre = model_to_dict(actividad_padre)
+            obj_padre = ActividadRespuestaProyecto.objects.filter(proyecto=self,actividad=actividad_padre).last()
+            padre['respuesta'] = obj_padre.respuesta if obj_padre else ''
+            padre['actividades'] = hijas
+        
+            padres.append(padre)
+
+        data['actividades'] = padres
+
+        return data
+    
+    @property
+    def capitulos_terminados(self):
+        cantidad = 0
+        data = self.avance_x_captulo
+        return cantidad
 
 class ActividadRespuestaProyecto(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE,related_name='fk_proyecto_actividad_respuesta_proyecto',db_column='proyecto_id')
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE,related_name='fk_actividad_actividad_respuesta_usuario',db_column='actividad_id')
-    respuesta = models.JSONField(blank=False, null=False)
+    respuesta = models.TextField(blank=False, null=False)
     ind_publicada = models.BooleanField(default=False)
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_actividad_respuesta_usuario',db_column='responsable_id')
@@ -663,7 +820,6 @@ class ActividadRespuestaProyecto(models.Model):
             if archivo.get('nombre').upper() == nombre.upper():
                 archivo['ruta_archivo'] = ruta_archivo
                 existe= True
-        print(existe)
         if not existe:
             archivos.append({
                 'nombre':nombre.upper(),
@@ -726,86 +882,9 @@ class Gantt(models.Model):
         db_table = 'gantt'
 
     def save(self, *args, **kwargs):
-        from dateutil.relativedelta import relativedelta
         self.nombre = self.nombre.strip().upper()
-        temp_fin = self.fecha_termino + relativedelta(day=1)
         diferencia = self.fecha_termino - self.fecha_inicio
         self.duration = diferencia.days
         super(Gantt, self).save(*args, **kwargs)
-
-class TipoDocumento(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.TextField(blank=False, null=False)
-    mnemonico = models.CharField(max_length=10, blank=False, null=False)
-    folio_correlativo = models.IntegerField(blank=False, null=False)
-    ruta = models.TextField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_tipo_documento',db_column='responsable_id')
-
-    class Meta:
-        managed = True
-        db_table = 'tipo_documento'
-
-    def __str__(self):
-        return self.nombre
-
-class EstadoDocumento(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_estado_documento',db_column='responsable_id')
-
-    class Meta:
-        managed = True
-        db_table = 'estado_documento'
-    
-    def __str__(self):
-        return self.nombre
-
-class Documento(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    folio = models.TextField(blank=False, null=False)
-    nombre = models.TextField(blank=False, null=False)
-    tipo_documento = models.ForeignKey(TipoDocumento, on_delete=models.CASCADE,related_name='fk_tipo_documento_documento',db_column='tipo_documento_id')
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_documento',db_column='responsable_id')
-
-    class Meta:
-        managed = True
-        db_table = 'documento'
-
-    def __str__(self):
-        return f'''{self.folio}-{self.nombre}'''
-
-    def get_folio(self):
-        correlativo_actual = 1
-        if self.tipo_documento.folio_correlativo is not None:
-            correlativo_actual = self.tipo_documento.folio_correlativo + 1
-        self.tipo_documento.folio_correlativo = correlativo_actual
-        self.tipo_documento.save()
-        return f'{self.tipo_documento.mnemonico}{correlativo_actual:09}'
-
-    def save(self, *args, **kwargs):
-        folio = self.get_folio()
-        self.doc_folio = folio
-        self.doc_nombre = f'{folio}.pdf'
-        return super(Documento, self).save(*args, **kwargs)
-    
-class VersionDocumento(models.Model):
-    id = models.BigAutoField(primary_key=True, editable=False)
-    version = models.IntegerField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now=True)
-    metadatos=models.JSONField()
-    documento = models.ForeignKey(Documento, on_delete=models.CASCADE,related_name='fk_documento_version_documento',db_column='documento_id')
-    ruta = models.TextField(blank=False, null=False)
-    fecha = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_version_documento',db_column='responsable_id')
-
-    class Meta:
-        managed = True
-        db_table = 'version_documento'
-
-    def __str__(self):
-        return f'''{self.documento.folio}-{self.documento.nombre}-(v{self.version})'''
 
     

@@ -1,0 +1,30 @@
+<div class="offcanvas offcanvas-end offcanvas-500" tabindex="-1" id="bitacora_canvas" aria-labelledby="offcanvasEndLabel"
+    aria-hidden="true" style="visibility: hidden;">
+    <div class="modal-header">
+        <h5 class="modal-title text-primary fw-bold text-uppercase" id="exampleModalLabel4">Feedbacks</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body mx-0 flex-grow-0 padding-0 gantt-container">
+        <div id="contenido"></div>
+    </div>
+    <div class="offcanvas-footer"style="padding: 1.5rem 1.5rem;">
+        <form action="" method="post" id="form_nuevo_comentario">
+            <div class="mb-3">
+                {% csrf_token %}
+                <label for="nueva_pregunta" class="form-label">Nuevo comentario</label>
+                <textarea class="form-control" id="nueva_pregunta" name="nueva_pregunta" rows="3"
+                    style="resize: none;"></textarea>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <button type="button" class="btn btn-outline-secondary float-start" data-bs-dismiss="offcanvas">
+                    cerrar
+                </button>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <button type="button" class="btn btn-primary btn_enviar_comentario float-end">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>

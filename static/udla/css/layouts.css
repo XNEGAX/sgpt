@@ -244,11 +244,11 @@
    */
 
 .m-t-0 {
-  margin-top: 0px;
+  margin-top: 0px !important;
 }
 
 .m-r-0 {
-  margin-right: 0px;
+  margin-right: 0px !important;
 }
 
 .m-l-0 {

@@ -36,6 +36,9 @@ from proyecto.views.alumno import ActualizaTareaProyecto
 from proyecto.views.alumno import EliminarTareaProyecto
 from proyecto.views.alumno import EliminarArchivoActividad
 from proyecto.views.alumno import ListarBitacora
+from proyecto.views.alumno import InformeTituloView
+
+from proyecto.views.docente import DetalleAlumnoProyecto
 
 app_name = 'proyecto'
 
@@ -78,4 +81,8 @@ urlpatterns = [
     path('alumno/proyecto/<proyecto_id>/actividad/<actividad_id>/archivo/eliminar/', EliminarArchivoActividad.as_view(), name="alumno_proyecto_archivo_eliminar"),
     path('alumno/proyecto/<proyecto_id>/actividad/<actividad_id>/bitacora/listar/', ListarBitacora.as_view(), name="alumno_proyecto_bitacora_listar"),
     
+    path('proyecto/<pk>/informe/', InformeTituloView.as_view(), name="proyecto_informe"),
+
+    path('proyecto/<proyecto_id>/informe/detalle/', DetalleAlumnoProyecto.as_view(), name="alumno_proyecto_detalle"),
+
 ]
