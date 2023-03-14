@@ -117,8 +117,11 @@ class ReporteConfigurable(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_reporte_configurable',db_column='responsable_id')
 
+    def __unicode__(self):
+       return self.nombre
+    
     def __str__(self):
-        return f'{self.nombre}'
+        return self.nombre
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
@@ -875,7 +878,8 @@ class ActividadRespuestaProyecto(models.Model):
     def subir_archivo(self,data,nombre):
         archivos = []
         if self.respuesta:
-            archivos = list(self.respuesta)
+            archivos = list(eval(self.respuesta))
+            print(type(archivos))
         # generamos la ruta si esta no existe
         ruta = f'media/proyecto/{self.proyecto.id}/actividad/{self.actividad.id}/'
         if not os.path.exists(ruta):
