@@ -32,7 +32,6 @@
                     <th style="width: 10%;" class="text-center">Proyecto</th>
                     <th style="width: 10%;" class="text-center">Estado</th>
                     <th class="text-center">documento</th>
-                    <th class="text-center">detale</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,7 +44,7 @@
                     <td class="text-left">{{alumno_seccion.correo}}</td>
                     <td class="text-center" style="width: 10%;">
                         {% if con_actividades and alumno_seccion.proyecto.cantidad_actividades_respondida_todas|default:0 > 0 and alumno_seccion.proyecto.is_aprobado %}
-                        <a href="/docente/seccion/alumno/{{proyecto.id}}/actividades/" target="_blank">
+                        <a href="/proyecto/{{alumno_seccion.proyecto.id}}/informe/detalle/" target="_blank">
                             <i class='bx bxs-detail bx-1-3 text-success clickeable'></i>
                         </a>
                         {% elif not con_actividades %}
@@ -70,15 +69,6 @@
                       <i class='bx bx-file text-gray no-clickeable'></i>
                     </td>
                     {% endif %}
-                    <td class="text-center">
-                      {% if alumno_seccion.proyecto %}
-                      <a href="/proyecto/{{alumno_seccion.proyecto.id}}/informe/detalle/" target="_blank">
-                        <i class='bx bx-search text-success' url=></i>
-                      </a>
-                      {%else%}
-                      <i class='bx bx-search text-gray no-clickeable'></i>
-                      {% endif %}
-                    </td>
                 </tr>
                 {%empty%}
                 <tr>

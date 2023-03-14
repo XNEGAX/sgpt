@@ -3,3 +3,4 @@ from proyecto.content.seccion_model_form import  SeccionModelForm
 from proyecto.content.actividad_model_form import ActividadModelForm
 from proyecto.content.proyecto_model_form import ProyectoModelForm
 from proyecto.content.gantt_model_form import GanttModelForm
+from proyecto.content.reporte_configurable_model_form import ReporteConfigurableModelForm

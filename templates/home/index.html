@@ -111,8 +111,7 @@
       <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4 h-100">
         <div class="card h-100">
           <div class="card-body">
-            <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline m-t-0" autocomplete="off" style="margin-top: 0px !important;">
-              <input type="hidden" name="selected" id="selected" value="">
+            <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline m-t-0" autocomplete="off" style="margin-top: 0px !important;" id="form_secciones_docente_home">
               <div class="form-row">
                 <div class="form-group col-md-2">
                   <label for="year">Año</label>
@@ -124,27 +123,28 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="seccion">Sección</label>
-                  <select id="seccion" name="seccion" class="form-control" style="max-width: 120px !important;appearance: auto !important">
+                  <select id="seccion" name="seccion" class="form-control" style="max-width: 400px !important;appearance: auto !important">
                     {% for seccion_docente in secciones_docente%}
-                      <option value="{{seccion_docente.seccion.id}}">{{seccion_docente.seccion.codigo}}</option>
+                      <option value="{{seccion_docente.seccion.id}}"  {%if seccion_selected == seccion_docente.seccion.id %}selected{%endif%}>{{seccion_docente.seccion}}</option>
                     {% endfor %}
                   </select>
                 </div>
                 <div class="form-group col-md-2">
                   <div class="input-group" style="position: absolute;right: 25px !important;max-width: 300px !important;">
-                    <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}"/>
-                    <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+                    <!-- <input type="text" class="form-control" aria-describedby="button-addon2" name="filter" value="{{filter|default:''}}"/> -->
+                    <!-- <button class="btn btn-outline-primary" type="submit">Filtrar</button> -->
                   </div>
                 </div>
               </div>
             </form>
             {% for seccion_docente in lista_secciones_docente%}
-            <div class="table-responsive text-nowrap mt-2">
+            <div class="table-responsive text-nowrap mt-4 mb-4">
               <table class="table w-100">
                 <thead>
                   <tr>
                     <th class="column_order">rut</th>
                     <th class="column_order">nombre completo</th>
+                    <th class="column_order text-end">avance</th>
                     <th class="text-center column_order">Proyecto</th>
                   </tr>
                 </thead>
@@ -155,6 +155,7 @@
                       <strong>{{alumno.rut | upper}}</strong>
                     </td>
                     <td>{{alumno.nombre_completo| upper}}</td>
+                    <td class="text-end">{{alumno.porcentaje_avance}}%</td>
                     <td class="text-center">
                       {% if alumno.id %}
                       <a href="/proyecto/{{alumno.id}}/informe/detalle/" target="_blank">
@@ -175,80 +176,75 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-4 col-md-4 order-1">
-    <div class="card h-100" style="max-height: 545px !important;margin-left: 10px !important;">
+  <div class="col-lg-4 col-md-4 order-1 col-sm-12 mb-4 p-sm-0 px-lg-3"> 
+    <div class="card">
       <div class="card-header d-flex align-items-center justify-content-between pb-0">
         <div class="card-title mb-0">
-          <h5 class="m-0 me-2">Avances de la sección</h5>
-          <small class="text-muted">10 alumnos</small>
+          <h5 class="m-0 me-2 text-title" style="font-size: 14px !important;">Avances de la sección {{seccion_activa.codigo}}</h5>
+          <small class="text-muted">{{lista_secciones_docente.0.alumnos|length}} alumnos</small>
         </div>
       </div>
       <div class="card-body">
         <div class="d-flex justify-content-center align-items-center mb-3">
           <div class="d-flex flex-column align-items-center gap-1">
-            <h2 class="mb-2">75%</h2>
+            <h2 class="mb-2">{{seccion_activa.porcentaje_avance}}%</h2>
             <span>Completo x la sección</span>
           </div>
         </div>
         <ul class="p-0 m-0">
-          <li class="d-flex mb-4 pb-1">
+          {% for capitulo in seccion_activa.avance_x_captulo %}
+          <li class="d-flex mb-4 pb-1 {% if forloop.counter > 5 %}actividades_del_6_al_10 d-none
+            {% elif forloop.counter > 10 %}actividades_del_11_al_15 d-none{%else%}actividades_del_1_al_5{%endif%}">
             <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-primary"><i class='bx bxs-business'></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class='bx bx-star'></i></span>
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
               <div class="me-2">
-                <h6 class="mb-0">ASPECTOS DE LA EMPRESA</h6>
-                <small class="fw-semibold">10 alumnos de 10</small>
+                <h6 class="mb-0" style="font-size: 12px;">{{capitulo.nombre}}</h6>
+                <small class="fw-semibold">{{capitulo.respondidas}} de {{capitulo.pendientes}}</small>
               </div>
             </div>
           </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-success"><i class='bx bxl-product-hunt'></i></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">SITUACIÓN ACTUAL DEL PROYECTO</h6>
-                <small class="fw-semibold">9 alumnos de 10</small>
-              </div>
-            </div>
-          </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-info"><i class='bx bxl-sketch'></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">PLANTEAMIENTO DE OBJETIVOS</h6>
-                <small class="fw-semibold">7 alumnos de 10</small>
-              </div>
-            </div>
-          </li>
-          <li class="d-flex mb-4 pb-1">
-            <div class="avatar flex-shrink-0 me-3">
-              <span class="avatar-initial rounded bg-label-secondary"><i class='bx bxs-factory'></i></span>
-            </div>
-            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-              <div class="me-2">
-                <h6 class="mb-0">ESTUDIO DE FACTIBILIDAD Y GESTIÓN DE RIESGOS</h6>
-                <small class="fw-semibold">6 alumnos de 10</small>
-              </div>
-            </div>
-          </li>
+          {% endfor%}
         </ul>
-        <i class='bx bxs-chevrons-right float-end'></i>
+        <i class='bx bxs-chevrons-left float-end clickeable d-none' id="btn_volver_actividades_del_1_al_5"></i>
+        <i class='bx bxs-chevrons-right float-end clickeable' id="btn_avanzar_actividades_del_6_al_10"></i>
+        <i class='bx bxs-chevrons-left float-end clickeable d-none' id="btn_volver_actividades_del_6_al_10"></i>
+        <i class='bx bxs-chevrons-right float-end clickeable d-none' id="btn_avanzar_actividades_del_11_al_15"></i>
+        <i class='bx bxs-chevrons-left float-end clickeable d-none' id="btn_volver_actividades_del_11_al_15"></i>
         <br>
       </div>
     </div>
   </div>
 </div>
 <div class="row">
-  <div class="col-lg-12 order-2 order-md-3 order-lg-2 mb-4 h-100">
-    <div class="card">
-      <h5 class="card-header m-0 me-2 pb-3">Avances totales x mes</h5>
-      <div id="totalRevenueChart" class="px-2"></div>
+  {% if lista_secciones_docente.0.alumnos|length > 0 %}
+    <div class="col-lg-8 mb-4 mb-4">
+      <div class="card m-l-10 h-100">
+        <div class="card-body">
+          <div class="table-responsive">
+            <img src="data:image/svg;base64, {{get_avancexseccion}}" />
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+    <div class="col-lg-4 col-md-4 order-md-3 order-lg-2 mb-4">
+      <div class="card m-l-10 h-100">
+        <div class="card-body">
+          <div class="card-header">Horas trabajadas vs totales</div>
+          <div class="table-responsive">
+            <img src="data:image/svg;base64, {{get_trabajadasxpendientes}}" class="mw-100"/>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-header">Horas cumplidas vs restantes</div>
+          <div class="table-responsive">
+            <img src="data:image/svg;base64, {{get_trabajadasxcumplidas}}" class="mw-100"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif%}
 </div>
 {% else %}
 <div class="row p-0 m-0">
@@ -324,4 +320,5 @@
 {% endif %}
 {% endblock content %}
 {% block script %}
+<script src="{% static 'udla/js/home/index.js' %}"></script>
 {% endblock script %}

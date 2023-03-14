@@ -79,6 +79,16 @@ class Command(MigrateCommand):
             VALUES(25, 'Crear proyecto', 'proyecto:alumno_seccion_proyecto_crear', 'tf-icons bx bxs-factory', 14, false, NULL);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(26, 'cambiar estado proyecto', 'proyecto:docente_proyecto_estado', 'tf-icons bx bxs-factory', 15, false, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(27, 'Reportes', 'proyecto:listar_reportes', 'tf-icons bx bx-file', 16, true, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(28, 'Crear reporte', 'proyecto:crea_reporte', 'tf-icons bx bx-file', 17, false, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(29, 'Actualizar reporte', 'proyecto:actualizar_reporte', 'tf-icons bx bx-file', 18, false, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(30, 'Eliminar reporte', 'proyecto:eliminar_reporte', 'tf-icons bx bx-file', 19, false, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(31, 'Exportar reporte', 'proyecto:exportar_reporte', 'tf-icons bx bx-file', 20, false, NULL);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -123,6 +133,13 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id, perfil_id)VALUES(29,24,2);
             INSERT INTO public.perfil_modulo(id, modulo_id,perfil_id)VALUES(30,25,3);
             INSERT INTO public.perfil_modulo(id, modulo_id,perfil_id)VALUES(31,26,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(32,27,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(33,27,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(34,28,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(35,29,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(36,30,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(37,31,1);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(38,31,2);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);
@@ -325,6 +342,26 @@ class Command(MigrateCommand):
             SELECT setval('bitacora_actividad_respuesta_proyecto_id_seq',5, true);
             INSERT INTO public.gantt(nombre,fecha_inicio,fecha_termino,duration,fecha,proyecto_id,responsable_id) VALUES
             ('TAREA 1','2023-03-01','2023-03-03',2,'2023-03-11 01:40:23.435129-03',1,4);
+            --reporte demo
+            INSERT INTO public.reporte_configurable(id, nombre, codigo_fuente, fecha, responsable_id)
+            VALUES(1, 'RESPORTE USUARIOS POR PERFIL', 'lista_perfil_usuarios = PerfilUsuario.objects.filter(
+                usuario__email__icontains=''@edu.udla.cl'',
+            ).exclude(usuario__is_superuser=True)
+            data = []
+            for perfil_usuario in lista_perfil_usuarios:
+                if perfil_usuario.is_perfil_habilitado:
+                    rut = perfil_usuario.usuario.username.split(''@'')[0]
+                    data.append({
+                        ''rut'': validar_rut.format_rut_without_dots(rut),
+                        ''nombre_completo'': perfil_usuario.usuario.get_full_name(),
+                        ''correo'': perfil_usuario.usuario.email,
+                        ''perfil'': perfil_usuario.perfiles,
+                        ''id'': perfil_usuario.usuario.id,
+                        ''is_staff'': perfil_usuario.usuario.is_staff,
+                    })
+
+            respuesta = data', '2023-03-14 01:06:20.174', 1);
+            SELECT setval('reporte_configurable_id_seq',2, true);
             """
             ConsultaBD(query).execute_lines()
         except Exception as exc:

@@ -5,6 +5,9 @@ from django.http import JsonResponse
 from datetime import datetime
 from django.utils.html import strip_tags
 from dateutil.parser import parse
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
+from django.http import HttpResponse
 
 mes_nombre_completo = {
     'january': 'Enero',
@@ -99,3 +102,72 @@ def is_date(string, fuzzy=False):
     except ValueError:
         return False
     
+
+
+LISTA_ALFEBETO = [
+    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+    'AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ',
+    'BA','BB','BC','BD','BE','BF','BG','BH','BI','AJ','BK','BL','BM','BN','BO','BP','BQ','BR','BS','BT','BU','BV','BW','BX','BY','BZ',
+    'CA','BC','CC','CD','CE','CF','CG','CH','CI','AJ','CK','CL','CM','CN','CO','CP','CQ','CR','CS','CT','CU','CV','CW','CX','CY','CZ',
+]
+class FuncListDicttoExcel:
+    def __init__(self,title,data):
+        try:
+            self.title = title
+            self.data = data
+        except Exception as identifier:
+            print(formatear_error(identifier))
+    def set_atributes_cell(self,cell,align,bold):
+        try:
+            cell.alignment = Alignment(horizontal=align, vertical='center', wrap_text=True)
+            cell.font = Font(bold=bold,name='Arial',)
+            cell.border = Border(left=Side(style='thin'),right=Side(style='thin'),top=Side(style='thin'),bottom=Side(style='thin'))
+        except Exception as identifier:
+            print(formatear_error(identifier))
+
+    def position(self,value):
+        try:
+            position = 'left'
+            if isinstance(value, int):
+                position = 'right'
+            elif isinstance(value, datetime):
+                position = 'center'
+            return position
+        except Exception as identifier:
+            print(formatear_error(identifier))
+            return 'left'
+    def get_excel(self):
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',)
+        response['Content-Disposition'] = f'''attachment; filename={self.title.replace(' ','_')}.xlsx'''
+        try:
+            workbook = Workbook()
+            worksheet = workbook.active
+            worksheet.title = self.title
+            if len(self.data)>0:
+                vl_contador = 0
+                # Set column width
+                for key, value in self.data[0].items():
+                    vl_width = 0
+                    if int(len(str(value))) > int(len(str(key))):
+                        vl_width = int(len(str(value)))
+                    else:
+                        vl_width = int(len(str(key)))
+                    worksheet.column_dimensions[LISTA_ALFEBETO[vl_contador]].width = vl_width + 10
+                    worksheet.cell(row=1, column=vl_contador+1,value = key)
+                    vl_contador +=1
+                # Set column Name
+                row_num = 2
+                # encabezados
+                for elemento in self.data:
+                    col_num = 1
+                    for key, value in elemento.items():
+                        worksheet.cell(row=row_num, column=col_num,value = value)
+                        col_num += 1
+                    row_num += 1
+                workbook.save(response)
+                return response
+            else:
+                return response
+        except Exception as identifier:
+            print(formatear_error(identifier))
+            return response

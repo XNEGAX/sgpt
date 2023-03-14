@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden">
+  <div class="card-header">
+    <h5 class="card-title text-primary fw-bold text-uppercase">Movimientos</h5>
+    <form method="get" action="{{ request.path }}" class="demo-vertical-spacing demo-only-element form-inline" autocomplete="off" id="form_auditoria">
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          Modelo
+          <select id="modelo" name="modelo" class="form-control" style="max-width: 450px !important;appearance: auto !important">
+            {% for modelo in data_combo_modelo%}
+              <option value="{{modelo.id}}" {%if model_selected == modelo.id %}selected{%endif%}>{{modelo.tabla}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered w-100" id="lista_seccion">
+        <thead>
+          <tr>
+            {% if object_list|length == 0 %}
+            {% for field in fields %}
+            <th class="text-nowrap text-center">{{field}}</th>
+            {%endfor%}
+            {% else %}
+            {% for field in object_list.0 %}
+            <th class="text-nowrap text-center">{{field}}</th>
+            {%endfor%}
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in object_list %}
+          <tr>
+            {% for k,v in log.items  %}
+            <td class="sub-word-wrap text-center">
+              {{v|safe}}
+            </td>
+            {% endfor %}
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="6" class="text-center">
+              <strong>Sin información</strong>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer">
+    {% include "layouts/paginate.html" %}
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/admin/auditoria/index.js' %}?q={{csrf_token}}"></script>
+{% endblock script %}

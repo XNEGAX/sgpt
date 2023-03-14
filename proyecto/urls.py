@@ -40,6 +40,14 @@ from proyecto.views.alumno import InformeTituloView
 
 from proyecto.views.docente import DetalleAlumnoProyecto
 
+from proyecto.views.control import Auditoria
+
+from proyecto.views.reportes import ListarReporteConfigurable
+from proyecto.views.reportes import CrearReporteConfigurable
+from proyecto.views.reportes import ActualizaReporteConfigurable
+from proyecto.views.reportes import EliminarReporteConfigurable
+from proyecto.views.reportes import ExportarReporte
+
 app_name = 'proyecto'
 
 urlpatterns = [
@@ -84,5 +92,13 @@ urlpatterns = [
     path('proyecto/<pk>/informe/', InformeTituloView.as_view(), name="proyecto_informe"),
 
     path('proyecto/<proyecto_id>/informe/detalle/', DetalleAlumnoProyecto.as_view(), name="alumno_proyecto_detalle"),
+    path('admin/auditoria', Auditoria.as_view(), name="admin_auditoria"),
+
+    path('reportes/listar/', ListarReporteConfigurable.as_view(), name="listar_reportes"),
+    path('reporte/crear/', CrearReporteConfigurable.as_view(), name="crea_reporte"),
+    path('reporte/<pk>/actualizar/', ActualizaReporteConfigurable.as_view(), name="actualizar_reporte"),
+    path('reporte/<pk>/eliminar/', EliminarReporteConfigurable.as_view(), name="eliminar_reporte"),
+    path('reporte/<pk>/exportar/', ExportarReporte.as_view(), name="exportar_reporte"),
+
 
 ]

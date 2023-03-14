@@ -584,6 +584,10 @@ table.table th {
   word-wrap: break-word
 }
 
+.sub-word-wrap p{
+  word-wrap: break-word
+}
+
 .background-primary {
   background-color: #EB6923 !important;
 }
@@ -642,15 +646,16 @@ form.no-card {
 }
 
 
-.gantt-graphic-container {
-  overflow: auto;
-  overflow-x: scroll;
-}
+
 
 @media screen and (max-height: 400px) {
   .gantt-container {
     overflow: auto;
     overflow-y: scroll;
+  }
+  .gantt-graphic-container {
+    overflow: auto;
+    overflow-x: scroll;
   }
 }
 

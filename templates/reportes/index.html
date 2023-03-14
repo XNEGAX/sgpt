@@ -1,0 +1,86 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block modal %}
+{% endblock modal%}
+{% block content %}
+<div class="card overflow-hidden p-b-20">
+  <div class="card-header" style="padding-bottom: 30px !important;">
+    <h5 class="card-title text-primary fw-bold text-uppercase">Reportes</h5>
+  </div>
+  <div class="card-body">
+    {% if request.session.perfil_activo|lower == 'administrador'%}
+    <div class="table-responsive text-nowrap">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="text-left" width="70%">Reporte</th>
+            <th class="text-center">Editar</th>
+            <th class="text-center">Eliminar</th>
+            <th class="text-center">Exportar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for reporte in object_list %}
+          <tr>
+            <td>
+              <strong>{{reporte.nombre}}</strong>
+            </td>
+            <td class="text-center">
+              <a href="/reporte/{{reporte.id}}/actualizar/" rel="noopener noreferrer">
+                <i class='bx bx-edit text-success'></i>
+              </a>
+            </td>
+            <td class="text-center">
+              <a href="/reporte/{{reporte.id}}/eliminar/" rel="noopener noreferrer">
+                <i class='bx bx-x text-danger'></i>
+              </a>
+            </td>
+            <td class="text-center">
+              <a href="/reporte/{{reporte.id}}/exportar/" target="_blank" rel="noopener noreferrer">
+                <i class='bx bx-download text-info'></i>
+              </a>
+            </td>
+          </tr>
+          {%empty%}
+          <tr>
+            <td colspan="6" class="text-center">
+              <strong>Sin información</strong>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="table-responsive text-nowrap">
+      {% for reporte in object_list %}
+      <div class="shadow mt-2 p-2">
+        <a href="/reporte/{{reporte.id}}/exportar/" target="_blank" class="accordion-button collapsed text-title fw-bold"
+        style="color: #fff;background-color: rgba(133,146,163,.85) !important;box-shadow: 0 0.25rem 1rem rgba(133,146,163,.4);">
+          {{reporte.nombre}}
+        </a>
+    </div>
+      {%empty%}
+      <div class="alert alert-warning text-uppercase w-100" role="alert">
+        No existen reportes actualmente
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="card-footer">
+    {% include "layouts/paginate.html" %}
+    <div class="btn-footer-table">
+      {% if request.session.perfil_activo|lower == 'administrador'%}
+      <a href="/reporte/crear/" rel="noopener noreferrer" class="btn btn-primary">
+        Nuevo
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script src="{% static 'udla/js/alumno/seccion/index.js' %}?q={{csrf_token}}"></script>
+{% endblock script %}

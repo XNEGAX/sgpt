@@ -118,7 +118,7 @@ class ReporteConfigurable(models.Model):
     responsable = models.ForeignKey(User, models.CASCADE, blank=False, null=False,related_name='fk_responsable_crud_reporte_configurable',db_column='responsable_id')
 
     def __str__(self):
-        return f'{self.nombre} {self.tipo_salida_reporte.nombre}'
+        return f'{self.nombre}'
 
     def save(self, *args, **kwargs):
         self.nombre = self.nombre.strip().upper()
@@ -285,15 +285,93 @@ class Seccion(models.Model):
         return (self.fecha_hasta - self.fecha_desde).days
     
     @property
+    def dias_cumplidos(self):
+        return (getDatetime().date() - self.fecha_desde).days
+    
+    @property
+    def horas_cumplidas(self):
+        return self.dias_cumplidos * 24
+    
+    @property
     def horas_duracion(self):
         return self.dias_duracion * 24
     
     @property
     def tiempo_esperado_actividad(self):
-        cantidad_actividades = len(self.fk_seccion_actividad.all())
+        cantidad_actividades = self.cantidad_actividades_seccion_para_responder
         if self.horas_duracion>0 and cantidad_actividades>0:
             return self.horas_duracion / cantidad_actividades
         return 0
+    
+    @property
+    def actividades_seccion(self):
+        return self.fk_seccion_actividad.all()
+    
+    @property
+    def cantidad_actividades_seccion_para_responder(self):
+        cantidad_sin_respuesta = 0
+        padres = self.actividades_seccion.filter(actividad_padre__isnull=True,ind_base=False)
+        for padre in padres:
+            if not padre.is_padre and not padre.is_abuelo:
+                cantidad_sin_respuesta += 1
+            else:
+                hijas = self.actividades_seccion.filter(actividad_padre=padre)
+                for hija in hijas:
+                    if not hija.is_padre:
+                        cantidad_sin_respuesta += 1
+                    else:
+                        cantidad_sin_respuesta += len(self.actividades_seccion.filter(actividad_padre=hija))
+        return cantidad_sin_respuesta
+    
+    @property
+    def cantidad_actividades_seccion_para_responder_totales(self):
+        return self.cantidad_actividades_seccion_para_responder * len(self.fk_seccion_alumno_seccion.all())
+    
+    @property
+    def cantidad_actividades_seccion_respondidas(self):
+        cantidad_con_respuesta = 0
+        for alumno_seccion in self.fk_seccion_alumno_seccion.all():
+            proyecto = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
+            if proyecto:
+                cantidad_con_respuesta += len(proyecto.actividades_respondida_todas.filter(actividad__ind_base=False))
+        return cantidad_con_respuesta
+    
+    @property
+    def porcentaje_avance(self):
+        if self.cantidad_actividades_seccion_para_responder_totales>0:
+            return"{:.1f}".format((self.cantidad_actividades_seccion_respondidas*100)/self.cantidad_actividades_seccion_para_responder_totales)
+        return 0
+    
+    @property
+    def avance_x_captulo(self):
+        data = []
+        padres = self.actividades_seccion.filter(actividad_padre__isnull=True,ind_base=False).order_by('orden')
+        for padre in padres:
+            pendientes = 0
+            respondidas = 0
+            if not padre.is_padre and not padre.is_abuelo:
+                pendientes += 1
+                respondidas += len(ActividadRespuestaProyecto.objects.filter(proyecto__alumno_seccion__seccion=self,actividad=padre))
+            else:
+                hijas = self.actividades_seccion.filter(actividad_padre=padre)
+                for hija in hijas:
+                    if not hija.is_padre:
+                        pendientes += 1
+                        respondidas += len(ActividadRespuestaProyecto.objects.filter(proyecto__alumno_seccion__seccion=self,actividad=hija))
+                    else:
+                        pendientes += len(self.actividades_seccion.filter(actividad_padre=hija))
+                        nietas = self.actividades_seccion.filter(actividad_padre=hija)
+                        for nieta in nietas:
+                            respondidas += len(ActividadRespuestaProyecto.objects.filter(proyecto__alumno_seccion__seccion=self,actividad=nieta))
+
+
+            data.append({
+                'nombre': padre.nombre,
+                'pendientes':pendientes * len(self.fk_seccion_alumno_seccion.all()),
+                'respondidas':respondidas,
+            })
+
+        return data
 
 
     class Meta:

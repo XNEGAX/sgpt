@@ -80,6 +80,103 @@ def getGraphActividadesxMes(proyecto):
     buffer.close()
     return graph
 
+def getGraphAvanceSeccion(seccion):
+    meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+    actividades = [0,0,0,0,0,0,0,0,0,0,0,0]
+    for indice in range(len(meses)):
+        proyectos_seccion = Proyecto.objects.filter(alumno_seccion__seccion=seccion)
+        for proyecto in proyectos_seccion:
+            cantidad = ActividadRespuestaProyecto.objects.filter(proyecto=proyecto,fecha__month=indice+1,actividad__ind_base=False).count()
+            actividades[indice] = cantidad
+        
+    
+    X_axis = np.arange(len(meses))
+    plt.figure(figsize=(8,6))
+    plt.bar(X_axis + 0.3, actividades, 0.3, label = 'Actividades', align='center')
+    plt.xticks(X_axis, meses, rotation='vertical')
+    plt.xlabel("2023")
+    plt.setp(plt.ylabel("actividades completas x mes "), color='#EB6923')
+    plt.setp(plt.title(f"Avances de la sección {seccion}"), color='#EB6923')
+    plt.subplots_adjust(bottom=0.25)
+    plt.legend()
+    
+    plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png).decode('utf-8')
+    plt.close()
+    buffer.close()
+    return graph
+
+def getGraphHorasTrabajadasVSHoraspendientes(seccion):
+    trabajadas = 0
+    proyectos_seccion = Proyecto.objects.filter(alumno_seccion__seccion=seccion)
+    for proyecto in proyectos_seccion:
+        cantidad = ActividadRespuestaProyecto.objects.filter(proyecto=proyecto,actividad__ind_base=False).count()
+        trabajadas += cantidad * seccion.tiempo_esperado_actividad
+
+    restantes = (seccion.horas_duracion * (seccion.fk_seccion_alumno_seccion.count() or 0)) - trabajadas
+    sizes = [trabajadas, restantes]
+    labels = ['Trabajadas', 'Restantes']
+    colors = ['#35C367', '#FF0000']
+    explode = (0.05, 0.05)
+    
+    plt.figure(figsize=(6,4))
+    plt.pie(sizes, colors=colors, labels=labels,
+            autopct='%1.1f%%', pctdistance=0.85, 
+            explode=explode)
+    
+    # plt.title('Horas Sección')
+    plt.legend(labels, loc="upper right")
+
+    plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', bbox_inches='tight')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png).decode('utf-8')
+    plt.close()
+    buffer.close()
+    return graph
+
+def getGraphHorasTrabajadasVSHorascumplidas(seccion):
+
+    cumplidas = seccion.horas_cumplidas
+    if cumplidas<0:
+        cumplidas = 0
+
+    restantes =  seccion.horas_duracion - cumplidas
+    if restantes<0:
+        restantes=0
+
+    sizes = [restantes,cumplidas]
+  
+    labels = ['Restantes','Cumplidas']
+
+    colors = ['#FF0000', '#35C367']
+    
+    explode = (0.05, 0.05)
+    
+    plt.figure(figsize=(6,4))
+    plt.pie(sizes, colors=colors, labels=labels,
+            autopct='%1.1f%%', #pctdistance=0.85, 
+            explode=explode)
+    
+    # plt.title('Horas Sección')
+    plt.legend(labels, loc="upper right")
+
+    plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', bbox_inches='tight')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png).decode('utf-8')
+    plt.close()
+    buffer.close()
+    return graph
+
 class Home(RoyalGuard,View):
     def get(self, request):
         context = {}
@@ -102,26 +199,41 @@ class Home(RoyalGuard,View):
 
         elif request.session.get('perfil_activo').upper() =='PROFESOR':
             secciones_docente = self.request.user.fk_usuario_docente_seccion.all()
-            lista_agnos = (list(secciones_docente.values_list('seccion__fecha_desde__year',flat=True)) or [])
+            lista_agnos = (list(secciones_docente.values_list('seccion__fecha_desde__year',flat=True).distinct()) or [])
+
             year_selected = self.request.GET.get('year',getDatetime().year)
-            context['secciones_docente'] = secciones_docente.filter(seccion__fecha_desde__year=year_selected)
+            secciones_docente = secciones_docente.filter(seccion__fecha_desde__year=year_selected)
+            if secciones_docente.first():
+                seccion_selected = self.request.GET.get('seccion',secciones_docente.first().seccion.id)
+                secciones_docente = secciones_docente.filter(seccion__fecha_desde__year=year_selected)
+            else:
+                seccion_selected = self.request.GET.get('seccion')
+
+            context['seccion_selected'] = int(seccion_selected)
+            context['secciones_docente'] = secciones_docente.order_by('id')
+            context['seccion_activa'] = secciones_docente.filter(seccion__fecha_desde__year=year_selected,seccion=seccion_selected).last().seccion
             context['years'] = lista_agnos
             context['year_selected'] = year_selected
 
             data = []
-            for seccion_docente in secciones_docente.filter(seccion__fecha_desde__year=year_selected):
+            for seccion_docente in secciones_docente.filter(seccion__fecha_desde__year=year_selected,seccion=seccion_selected):
                 temp_seccion = model_to_dict(seccion_docente.seccion)
                 temp_seccion['alumnos'] = []
-                for alumno_seccion in seccion_docente.seccion.fk_seccion_alumno_seccion.all():
+                for alumno_seccion in seccion_docente.seccion.fk_seccion_alumno_seccion.all().order_by('usuario__username'):
                     rut = alumno_seccion.usuario.username.split('@')[0]
                     temp_proy = Proyecto.objects.filter(alumno_seccion=alumno_seccion).last()
                     temp_seccion['alumnos'].append({
                         'rut': validar_rut.format_rut_without_dots(rut),
                         'nombre_completo': alumno_seccion.usuario.get_full_name(),
                         'id': temp_proy.id if temp_proy else None,
+                        'porcentaje_avance': temp_proy.porcentaje_avance if temp_proy else 0
                     })
                 data.append(temp_seccion)
             context['lista_secciones_docente'] = data
+            context['get_avancexseccion'] = getGraphAvanceSeccion(context['seccion_activa'])
+            context['get_trabajadasxpendientes'] = getGraphHorasTrabajadasVSHoraspendientes(context['seccion_activa'])
+            context['get_trabajadasxcumplidas'] = getGraphHorasTrabajadasVSHorascumplidas(context['seccion_activa'])
+
         else:
             context['porcentaje_avance'] = 0
             context['avance_x_captulo'] = []
