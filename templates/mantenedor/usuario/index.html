@@ -46,7 +46,7 @@
               <form action="/usuario/impersonar/" method="POST" autocomplete="off">
                 <input type="hidden" name="usuario_id" value="{{usuario.id}}">
                 {% csrf_token %}
-                {% if usuario.is_staff%}
+                {% if usuario.is_staff and usuario.id != request.user.id %}
                 <i class='bx bx-accessibility text-warning clickeable btn_impersonar_usuario'></i>
                 {% else %}
                 <i class='bx bx-accessibility text-gray'></i>

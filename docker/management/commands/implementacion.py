@@ -89,6 +89,8 @@ class Command(MigrateCommand):
             VALUES(30, 'Eliminar reporte', 'proyecto:eliminar_reporte', 'tf-icons bx bx-file', 19, false, NULL);
             INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
             VALUES(31, 'Exportar reporte', 'proyecto:exportar_reporte', 'tf-icons bx bx-file', 20, false, NULL);
+            INSERT INTO public.modulo(id, nombre, url, icono, orden, ind_url, modulo_padre_id)
+            VALUES(32, 'Auditoria', 'proyecto:admin_auditoria', 'tf-icons bx bx-book-reader', 21, true, NULL);
             --PERFIL
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(1,'ADMINISTRADOR',true);
             INSERT INTO public.perfil(id,nombre,ind_asignable)VALUES(2,'PROFESOR',true);
@@ -140,6 +142,7 @@ class Command(MigrateCommand):
             INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(36,30,1);
             INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(37,31,1);
             INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(38,31,2);
+            INSERT INTO public.perfil_modulo(id,modulo_id,perfil_id)VALUES(39,32,1);
             --ACCESSO USUARIO DEMO
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),1,0,1);
             INSERT INTO public.perfil_usuario(fecha, perfil_id, responsable_id, usuario_id)VALUES(now(),2,0,2);

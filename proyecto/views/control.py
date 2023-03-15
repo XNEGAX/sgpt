@@ -80,7 +80,8 @@ class Auditoria(ListView):
         'parametro',
         'tipoentrada',
         'log',
-        'semestre'
+        'semestre',
+        'perfilusuarioactivo'
     ]
 
     def get_context_data(self, **kwargs):
@@ -95,7 +96,7 @@ class Auditoria(ListView):
                 'tabla':modelo.model_class()._meta.db_table
             })
         context['data_combo_modelo'] = data_combo_modelo
-        context['model_selected'] = int(self.request.GET.get('modelo')) if self.request.GET.get('modelo') else ContentType.objects.all().distinct().order_by('model').fisrt().id
+        context['model_selected'] = int(self.request.GET.get('modelo')) if self.request.GET.get('modelo') else ContentType.objects.all().distinct().order_by('model').first().id
 
         fields = ['accion']
         for f in ContentType.objects.get(pk=context.get('model_selected')).model_class()._meta.get_fields():
@@ -114,7 +115,7 @@ class Auditoria(ListView):
                 temp['usuario'] = User.objects.get(pk=temp.get('usuario')).get_full_name()
             temp.update({
                 'accion':log.accion_nombre,
-                'fecha':log.fecha.strftime('%d-%m-%Y'),
+                'fecha':log.fecha.strftime('%Y-%m-%d %H:%M'),
                 'responsable':log.responsable.get_full_name()
             })
             data_logs.append(temp)
